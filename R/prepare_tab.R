@@ -202,8 +202,10 @@ make_tab_survival <- function(tab, vardep, passage, dateSortie = NULL, dateInclu
   attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
   if (!is.null(dateSortie)  && dateSortie != "") {
     tab$.time <- as.numeric(tab[[dateSortie]] - tab[[dateInclusion]])
+    tab %<>% select(-one_of(dateSortie, dateInclusion))
   } else if (!is.null(var_time) && var_time != ""){
     tab$.time <- tab[[var_time]]
+    tab %<>% select(-one_of(var_time))
   }
   exLabel <- label(tab[[vardep]])
   tab[[vardep]] %<>%
