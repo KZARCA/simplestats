@@ -1,0 +1,114 @@
+create_spline <- function(tab, vardep, vars, type){
+  mod <- NULL
+  if (type == "survival") vars <- vars[!vars %in% ".time"]
+  varsnum <- select_if(tab[, vars, drop = FALSE], is.numeric) %>% colnames
+  varsnumGam <- varsnum %>%
+    map_chr(function(x) {
+      if (length(table(tab[, x, drop = FALSE])) < 20){
+        k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
+        paste0(x, ", k = ", k)
+      } else
+        as.character(x)
+    })
+
+  varsfac <- select_if(tab[, vars, drop = FALSE], is.factor)
+  if(length(varsnum) > 0){
+    right <- paste0("s(", varsnumGam, ")", collapse=" + ")
+    rightLin <- paste0(varsnum, collapse=" + ")
+    if (length(varsfac) > 0) {
+      right <- paste(right, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
+      rightLin <- paste(rightLin, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
+    }
+    if (type %in% c("linear", "logistic")) {
+      formule <- paste(vardep, "~", right)
+      formuleLin <- paste(vardep, "~", rightLin)
+    } else if (type == "survival") {
+      formule <- paste(".time ~", right)
+      formuleLin <- paste0("Surv(.time, ", vardep, ") ~", rightLin)
+    }
+    suppressWarnings({
+      if (type == "logistic"){
+        graph <- gam(as.formula(formule), data=tab, family = "binomial")
+        mLin <- bayesglm(as.formula(formuleLin), data=tab, family = "binomial", drop.unused.levels = FALSE)
+        lin <- termplot(mLin, plot = FALSE)
+      }
+      else if (type == "linear") {
+        graph <- gam(as.formula(formule), data=tab)
+        mLin <- lm(as.formula(formuleLin), data=tab)
+        lin <- termplot(mLin, plot = FALSE)
+      }
+      else if (type == "survival"){
+        graph <- gam(as.formula(formule), family = cox.ph(), data = tab, weights = tab[[vardep]])
+        mLin <- coxph(as.formula(formuleLin), data = tab)
+        lin <- termplot(mLin,  rug = TRUE, se = TRUE, plot = FALSE)
+      }
+    })
+    return(list(graph = graph, lin = lin, mod = mLin))
+  }
+}
+
+plot_nth_spline <- function(spline_gen, n){
+    coord <- plot(spline_gen$graph, select = n)[[n]]
+    lin <- spline_gen$lin[[n]]
+    abline(line(lin)$coef, col = 2)
+}
+
+
+#' Plots splines
+#'
+#' @param tab The data frame
+#' @param vardep A character string of dependent variable
+#' @param varindep A character vector of independant variables
+#' @param var_ajust A character vector of adjustment variables
+#' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
+#'
+#' @return All plots
+#' @export
+#'
+#' @examples
+plot_all_splines <- function(tab, vardep, varindep, var_ajust, type){
+  varSpline <- tab %>%
+    dplyr::select(one_of(varindep)) %>%
+    select_if(is.numeric) %>%
+    colnames()
+
+  spline_gen <- create_spline(tab, vardep, c(varindep, var_ajust), type)
+  for (n in seq_along(varSpline)){
+    plot_nth_spline(spline_gen, n)
+  }
+}
+
+prepare_zph <- function(tab, vardep, varindep, var_ajust) {
+  allVars <- c(varindep, var_ajust)
+  formule <- as.formula(paste0("Surv(.time, ", vardep, ")", " ~ ", paste(allVars, collapse = " + ")))
+  coxph(formule, data = tab)
+}
+
+plot_nth_zph <- function(mod, n){
+  plot(cox.zph(mod), var = n, resid = FALSE)
+  abline(h = mod$coefficients[n], col = 2)
+}
+
+#' Title
+#'
+#' @param tab The data frame
+#' @param vardep A character string of dependent variable
+#' @param varindep A character vector of independant variables
+#' @param var_ajust A character vector of adjustment variables
+#'
+#' @return All plots
+#' @export
+#'
+#' @examples
+plot_all_zph <- function(tab, vardep, varindep, var_ajust){
+  mod <- prepare_zph(tab, vardep, varindep, var_ajust)
+  nb <- map_dbl(varindep, function(x){
+    if (is.numeric(tab[[x]]))
+      1
+    else
+      nlevels(tab[[x]]) - 1
+  })
+  for(n in nb){
+    plot_nth_zph(mod, n)
+  }
+}
