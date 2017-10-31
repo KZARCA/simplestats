@@ -59,7 +59,7 @@ is_homoscedatic.lm <- function(x, ...){
     nb_breaks <- max(2, min(floor(nrow(model$model)/20), 5))
     x <- res
     y <- cut(model$fitted.values,
-             breaks = quantile(model$fitted.values, probs = seq(0,1,1/nb_breaks)), include.lowest = TRUE)
+             breaks = unique(quantile(model$fitted.values, probs = seq(0,1,1/nb_breaks)), include.lowest = TRUE))
     is_homoscedatic.default(y, x)
   } else {
     is_homoscedatic.default(model$model[[2]], model$model[[1]])
@@ -73,7 +73,7 @@ is_homoscedatic.default <- function(x, y, ...){
     dplyr::group_by(x) %>%
     dplyr::summarise(variance = var(y, na.rm = TRUE)) %>%
     magrittr::extract2("variance")
-  if (max(vari) < 3 * min(vari)) TRUE else FALSE
+  if (max(vari, na.rm = TRUE) < 3 * min(vari, na.rm = TRUE)) TRUE else FALSE
 }
 
 #' Can it be considered as normal?

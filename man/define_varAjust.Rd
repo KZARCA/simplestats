@@ -4,7 +4,7 @@
 \alias{define_varAjust}
 \title{Detect adjustment variables}
 \usage{
-define_varAjust(tab, vardep, varindep, type, var_time = NULL)
+define_varAjust(tab, vardep, varindep, type)
 }
 \arguments{
 \item{tab}{A data frame}
@@ -14,8 +14,6 @@ define_varAjust(tab, vardep, varindep, type, var_time = NULL)
 \item{varindep}{A character vector of the independant variables}
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
-
-\item{var_time}{The column name of the time to follow-up (only relevant for survival analysis)}
 }
 \description{
 Detect adjustment variables

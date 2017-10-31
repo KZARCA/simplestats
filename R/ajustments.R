@@ -4,22 +4,20 @@
 #' @param vardep A character string of the dependant variable
 #' @param varindep  A character vector of the independant variables
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
-#' @param var_time The column name of the time to follow-up (only relevant for survival analysis)
 #'
 #' @return
 #' @export
 #'
 #' @examples
-define_varAjust <- function(tab, vardep, varindep, type, var_time = NULL){
+define_varAjust <- function(tab, vardep, varindep, type){
   a <- NULL
-  vars <- get_choix_var(tab)
+  vars <- get_choix_var(tab, vardep)
   seuil <- min(0.2, 5/length(vars))
 
   pvalue <- map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
-    if (vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time" &
-        (type != "survival" | (type == "survival" && (is.null(var_time) || vars[i] != var_time)))){
+    if (vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time"){
       varsi <- ifelse(is.numeric(tab[[vars[i]]]),
                       paste0(ifelse(type == "survival", "ns(","ns("), vars[i], ")"),
                       vars[i])
