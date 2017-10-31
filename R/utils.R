@@ -9,7 +9,7 @@
 #' @examples
 extract_from_model <- function(mod, vector){
   extracted <- mod %>%
-    broom::tidy %>%
+    broom::tidy() %>%
     dplyr::filter(term != "(Intercept)" & term != "Residuals")
 
   extract2(extracted, vector) %>%
@@ -19,6 +19,7 @@ extract_from_model <- function(mod, vector){
 is_model_possible <- function(mod){
   isTRUE(class(mod)[[1]] == "lm" && df.residual(mod) != 0 & deviance(mod) >= sqrt(.Machine$double.eps) | class(mod)[[1]] != "lm")
 }
+
 
 get_choix_var <- function(tab){
   lab <- Hmisc::label(tab)
@@ -154,6 +155,33 @@ add_varname.factor <- function(tab, x, noms, one_line = FALSE, add_niveau = TRUE
   }
 }
 
+#' @export
+add_varname.boot <- function(tableRet, resBoot, noms){
+  map2_df(resBoot$data[-1], names(resBoot$data[-1]), function(x,y){
+    if(is.numeric(x)) {
+      variable <- label(x)
+      if(grepl("^I\\(", y)){
+        rec <- stringr::str_match(y, "^I\\((.*?)/([0-9]\\.?[0-9]*)\\)")
+        multiple <- as.numeric(rec[[3]])
+        id <- rec[[2]]
+      } else {
+        multiple <- 1
+        id <- y
+      }
+      niveau <- ""
+    }
+    else {
+      id <- rep(y, nlevels(x) - 1)
+      variable <- rep(label(x), nlevels(x) - 1)
+      niveau <- sprintf("%s vs %s", levels(x)[-1], rep(levels(x)[1], nlevels(x) - 1))
+      multiple <- NA
+    }
+    data_frame(id = id, variable = variable, niveau = niveau, multiple = multiple)
+  }) %>%
+    bind_cols(as_data_frame(tableRet)) %>%
+    add_class("tabboot")
+}
+
 #' Get the number(s) formatted in percentage
 #'
 #' @param nb a numeric vector
@@ -212,4 +240,12 @@ prepare_table_export <- function(tab){
     tab$id[2:nrow(tab)] <- NA
   }
   tab
+}
+
+are_enough_levels <- function(tab, x){
+  extract2(tab, x) %>%
+    as.factor() %>%
+    fct_drop() %>%
+    nlevels() %>%
+    is_greater_than(1)
 }

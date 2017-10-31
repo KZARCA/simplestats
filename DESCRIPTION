@@ -1,6 +1,6 @@
 Package: simplestats
 Type: Package
-Title: The Companion Package of Biostatisticians
+Title: What the Package Does (Title Case)
 Version: 0.1.0
 Author: person("Kevin", "Zarca", email = "kevin@pvalue.io", role = c("aut", "cre"))
 Maintainer: Kevin Zarca <kevin@free.fr>
@@ -31,6 +31,6 @@ Imports:
   scales(>= 0.4),
   stringi(>= 1.1.5),
   arm(>= 1.9),
-  splines(>= 3.3),
+  splines(>= 3.4),
   mgcv(>= 1.8)
 RoxygenNote: 6.0.1

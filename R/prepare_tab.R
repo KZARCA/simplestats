@@ -126,7 +126,7 @@ standardize_names <- function(names, trunc = FALSE){
     str_replace("\n"," ") %>%
     capitalize()
   if (trunc == TRUE){
-    noms %<>% str_trunc(30)
+    noms %<>% str_trunc(40)
   }
   noms
 }
@@ -161,7 +161,7 @@ remove_guillemets <- function(tab){
 #' @examples
 standardize_tab <- function(tab){
   tab <- tab[!is.na(names(tab)) & names(tab) != ""]
-  labs <- standardize_names(names(tab))
+  labs <- standardize_names(names(tab), trunc = TRUE)
 
   tab %<>%
     remove_na_lines() %>%
