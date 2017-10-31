@@ -11,7 +11,7 @@
 #' @examples
 define_varAjust <- function(tab, vardep, varindep, type){
   a <- NULL
-  vars <- get_choix_var(tab, vardep)
+  vars <- get_choix_var(tab)
   seuil <- min(0.2, 5/length(vars))
 
   pvalue <- map(seq_along(vars), function(i){
