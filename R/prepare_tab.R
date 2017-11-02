@@ -82,29 +82,6 @@ transform_date <- function(tab){
 }
 
 
-search_date <- function(tab){
-  a <- as.data.frame(
-    lapply(tab, function(x) {
-      if (!all(is.na(x))) {
-        if (all(grepl("^[0-3][0-9]/[0-1][0-9]/[1-2][0-9][0-9][0-9]$",x) | is.na(x),na.rm = TRUE))
-          as.Date(x, "%d/%m/%Y")
-        else if (all(grepl("^[0-3][0-9]/[0-1][0-9]/[0-9][0-9]$",x) | is.na(x),na.rm = TRUE))
-          as.Date(x, "%d/%m/%y")
-        else if (all(grepl("^[0-3][0-9]-[0-1][0-9]-[1-2][0-9][0-9][0-9]$",x) | is.na(x),na.rm = TRUE))
-          as.Date(x, "%d-%m-%Y")
-        else if (all(grepl("^[0-3][0-9]-[0-1][0-9]-[0-9][0-9]$",x) | is.na(x),na.rm = TRUE))
-          as.Date(x, "%d-%m-%y")
-        else if (all(grepl("^[1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]$",x) | is.na(x),na.rm = TRUE))
-          as.Date(x)
-        else
-          x
-      }
-      else
-        x
-    }), stringsAsFactors = FALSE
-  )
-}
-
 #' Create better colnames
 #'
 #' @param names character vector
@@ -196,7 +173,7 @@ standardize_tab <- function(tab){
 #' @export
 #'
 #' @examples
-make_tab_survival <- function(tab, vardep, passage, dateSortie = NULL, dateInclusion = NULL, var_time = NULL){
+make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateInclusion = NULL, var_time = NULL){
   lev <- levels(tab[[vardep]])
   tab[[vardep]] <- relevel(tab[[vardep]], ref=ifelse(passage == 1, lev[1], lev[2]))
   attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])

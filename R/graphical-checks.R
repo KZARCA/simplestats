@@ -51,6 +51,7 @@ plot_nth_spline <- function(spline_gen, n){
     coord <- plot(spline_gen$graph, select = n)[[n]]
     lin <- spline_gen$lin[[n]]
     abline(line(lin)$coef, col = 2)
+    return(list(coord = coord, lin = lin))
 }
 
 

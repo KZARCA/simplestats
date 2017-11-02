@@ -1,16 +1,16 @@
 #' Get proportion of missing data
 #'
-#' @param tab A data frame
+#' @param x A data frame or a vector
 #'
 #' @return The proportion of observations having at least one missing value.
 #' @export
 #'
 #' @examples
-get_propDM <- function(tab){
-  if (is.data.frame(tab))
-    1 - nrow(na.exclude(tab))/nrow(tab)
+get_propDM <- function(x){
+  if (is.data.frame(x))
+    1 - nrow(na.exclude(x))/nrow(x)
   else
-    sum(is.na(tab)/length(tab))
+    sum(is.na(x)/length(x))
 }
 
 #' Imputation strategy

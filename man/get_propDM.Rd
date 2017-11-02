@@ -4,10 +4,10 @@
 \alias{get_propDM}
 \title{Get proportion of missing data}
 \usage{
-get_propDM(tab)
+get_propDM(x)
 }
 \arguments{
-\item{tab}{A data frame}
+\item{x}{A data frame or a vector}
 }
 \value{
 The proportion of observations having at least one missing value.

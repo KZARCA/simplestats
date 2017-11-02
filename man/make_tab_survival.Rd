@@ -4,7 +4,7 @@
 \alias{make_tab_survival}
 \title{Add column .time}
 \usage{
-make_tab_survival(tab, vardep, passage, dateSortie = NULL,
+make_tab_survival(tab, vardep, passage = 1, dateSortie = NULL,
   dateInclusion = NULL, var_time = NULL)
 }
 \arguments{
