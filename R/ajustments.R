@@ -9,12 +9,12 @@
 #' @export
 #'
 #' @examples
-define_varAjust <- function(tab, vardep, varindep, type){
+define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
   a <- NULL
-  vars <- get_choix_var(tab)
+  vars <- create_tabi(tab, univ = FALSE) %>%
+    get_choix_var()
   seuil <- min(0.2, 5/length(vars))
-
-  pvalue <- map(seq_along(vars), function(i){
+  map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
     if (vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time"){
@@ -38,7 +38,7 @@ define_varAjust <- function(tab, vardep, varindep, type){
       if(!is.null(mod)){
         p <- extract_pval_glob(mod, show_df1 = TRUE)[1]
         names(p) <- vars[i]
-        if (p < seuil) return(p)
+        if (p < seuil | test == TRUE) return(p)
         else return(NULL)
       }
     }
@@ -66,103 +66,50 @@ define_varAjust <- function(tab, vardep, varindep, type){
 recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   vars <- c(varindep, varAjust)
   elimine <- NULL
-  if (type == "survival")
+  if (type == "survival") {
     tab <- na.exclude(tab[, c(vardep, vars, ".time"), drop = FALSE])
-  else
+  } else {
     tab <- na.exclude(tab[, c(vardep, vars), drop = FALSE])
+  }
   analysables <- map_lgl(tab, function(x){
     if (is.factor(x)){
-      if (length(table(droplevels(x))) > 1)
-        TRUE
-      else
-        FALSE
-    }
-    else
-      TRUE
+      if (length(table(droplevels(x))) > 1) TRUE else FALSE
+    } else TRUE
   })
   elimine <- names(tab)[!analysables]
-  if (length(elimine) > 0)
+  if (length(elimine) > 0) {
     vars <- vars[-match(elimine, vars)]
-  tab <- tab[, analysables, drop = FALSE]
-  formule <- paste(vardep, "~", paste(vars, collapse = " + "))
+  }
+  tab <- tab[analysables]
+  formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
   if (type == "logistic"){
-    mod <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
+    mod <- arm::bayesglm(formule, data = tab, family = "binomial")
   } else if (type == "linear")
-    mod <- lm(as.formula(formule), data = tab)
+    mod <- lm(formule, data = tab)
   else if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + "))
-    mod <- survival::coxph(formula = as.formula(formule), data = tab)
+    mod <- survival::coxph(formula = formule, data = tab)
   }
   if(!is_model_possible(mod)){
-    if (length(varAjust)) {
+    if (length(varAjust) > 0) {
       elimine <- varAjust
       vars <- vars[-match(elimine, vars)]
       mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(varAjust, collapse = " - "))))
     } else return("ERROR_MODEL")
-  }
-
-  if (is_model_possible(mod)){
-    if(any(is.na(coef(mod)))){
-      alias <- names(base::which(is.na(coef(mod))))
+  } else {
+    if(any(is.na(coef(mod)))){ #remove alias
+      alias <- names(which(is.na(coef(mod))))
       vari <- map_lgl(vars, ~ any(grepl(., alias)))
       elimine <- append(elimine, vars[vari])
       vars <-  vars[!vari]
       mod <- stats::update(mod, as.formula(paste(vardep, "~", paste(vars, collapse = " + "))))
     }
-    if (length(vars) > 1){
+    if (length(vars) > 1){ #remove big vif
       infl <- suppressWarnings(car::vif(mod))
-      if(!is.null(dim(infl)))
-        infl <- infl[, 1, drop = TRUE]
-      ajust <- infl[base::which(names(infl) %in% varAjust)]
-      while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
-        gros <- names(ajust[which.max(ajust)])
-        varAjust <- varAjust[varAjust != gros]
-        vars <- vars[vars != gros]
-        elimine <- append(elimine, gros)
-        if (length(vars) > 1){
-          formule <- paste(vardep, "~", paste(vars, collapse = "+"))
-          if (type == "logistic")
-            mod <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
-          else if (type == "linear")
-            mod <- lm(as.formula(formule), data = tab)
-          else if (type == "survival"){
-            tab2 <- dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars)) %>%
-              na.exclude
-            formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
-            mod <- survival::coxph(formula = as.formula(formule), data = tab2)
-          }
-          infl <- suppressWarnings(car::vif(mod))
-          if(!is.null(dim(infl)))
-            infl <- infl[, 1, drop = TRUE]
-          ajust <- infl[base::which(names(infl) %in% varAjust)]
-        }
-      }
-
+      if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      elimine <- remove_big_vif(tab, varAjust, vardep, vars, infl, elimine) # in priority, remove varAjust
       varindep <-  varindep[-1]
-      ajust <- infl[base::which(names(infl) %in% varindep)]
-      while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
-        gros <- names(ajust[which.max(ajust)])
-        varindep <- varindep[varindep != gros]
-        vars <- vars[vars != gros]
-        elimine <- append(elimine, gros)
-        if (length(vars) > 1){
-          formule <- paste(vardep, "~", paste(vars, collapse = "+"))
-          if (type == "logistic")
-            mod <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
-          else if (type == "linear")
-            mod <- lm(as.formula(formule), data = tab)
-          else if (type == "survival"){
-            tab2 <- dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars)) %>%
-              na.exclude
-            formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
-            mod <- survival::coxph(formula = as.formula(formule), data = tab2)
-          }
-          infl <- suppressWarnings(car::vif(mod))
-          if(!is.null(dim(infl)))
-            infl <- infl[, 1, drop = TRUE]
-          ajust <- infl[base::which(names(infl) %in% varindep)]
-        }
-      }
+      elimine <- remove_big_vif(tab, varindep, vardep, vars, infl, elimine) # if necessary, remove varindep
     }
     return(elimine)
   }

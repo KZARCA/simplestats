@@ -23,7 +23,7 @@ is_model_possible <- function(mod){
 
 get_choix_var <- function(tab){
   lab <- Hmisc::label(tab)
-  nom <- names(tab) %>%
+  names(tab) %>%
     setNames(lab) %>%
     sort
 }
@@ -248,4 +248,56 @@ are_enough_levels <- function(tab, x){
     fct_drop() %>%
     nlevels() %>%
     is_greater_than(1)
+}
+
+#' @export
+tidy.anova <- function(x, ...){
+  renamers <- c(Df = "df", `Sum Sq` = "sumsq", `Mean Sq` = "meansq",
+                `F value` = "statistic", `Pr(>F)` = "p.value", Res.Df = "res.df",
+                RSS = "rss", `Sum of Sq` = "sumsq", F = "statistic",
+                Chisq = "statistic", `P(>|Chi|)` = "p.value", Pr..Chisq. = "p.value",
+                p.value = "p.value", Chi.sq = "statistic", edf = "edf",
+                Ref.df = "ref.df", LR.Chisq = "statistic", `Pr(>|Chi|)` = "p.value",
+                loglik = "logLik")
+  names(renamers) <- make.names(names(renamers))
+  x <- fix_data_frame(x)
+  unknown_cols <- base::setdiff(colnames(x), c("term", names(renamers)))
+  if (length(unknown_cols) > 0) {
+    warning("The following column names in ANOVA output were not ",
+            "recognized or transformed: ", paste(unknown_cols,
+                                                 collapse = ", "))
+  }
+  ret <- plyr::rename(x, renamers, warn_missing = FALSE)
+  if (!is.null(ret$term)) {
+    ret <- ret %>% mutate(term = stringr::str_trim(term))
+  }
+  ret
+}
+
+remove_big_vif <- function(tab, type_var, vardep, vars, infl, elimine) {
+  ajust <- infl[base::which(names(infl) %in% type_var)]
+  while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
+    gros <- names(ajust[which.max(ajust)])
+    type_var <- type_var[type_var != gros]
+    vars <- vars[vars != gros]
+    elimine <- append(elimine, gros)
+    if (length(vars) > 1){
+      formule <- paste(vardep, "~", paste(vars, collapse = "+"))
+      if (type == "logistic")
+        mod <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
+      else if (type == "linear")
+        mod <- lm(as.formula(formule), data = tab)
+      else if (type == "survival"){
+        tab2 <- dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars)) %>%
+          na.exclude()
+        formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
+        mod <- survival::coxph(formula = as.formula(formule), data = tab2)
+      }
+      infl <- suppressWarnings(car::vif(mod))
+      if(!is.null(dim(infl)))
+        infl <- infl[, 1, drop = TRUE]
+      ajust <- infl[base::which(names(infl) %in% type_var)]
+    }
+  }
+  elimine
 }

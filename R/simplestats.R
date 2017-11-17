@@ -78,11 +78,13 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom shiny modalButton
 #' @importFrom car vif
 #' @importFrom broom tidy
+#' @importFrom broom fix_data_frame
 #' @importFrom knitr kable
 #' @importFrom mice mice
 #' @importFrom stringi stri_trans_general
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
+#' @importFrom stringr str_replace_all
 #' @importFrom stringr str_trunc
 #' @importFrom Hmisc impute
 #' @importFrom Hmisc label
@@ -100,6 +102,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom arm bayesglm
 #' @importFrom mgcv gam
 #' @importFrom mgcv cox.ph
+#' @importFrom splines ns
 #' @import ggplot2
 #' @import magrittr
 NULL

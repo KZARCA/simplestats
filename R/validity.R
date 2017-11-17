@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-is_number_enough <- function(tab, vars, vardep){
+is_number_enough <- function(tab, vardep, vars){
   tab <- na.exclude(tab[, c(vars, vardep), drop = FALSE])
   nVars <- map_dbl(vars, function(x){
     tvars <- tab[[x]]

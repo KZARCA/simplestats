@@ -1,8 +1,7 @@
 
 remove_na_lines <- function(tab){
-  max <- base::which(base::rowSums(is.na(tab)) == ncol(tab))[1]
-  if(!is.na(max))
-    tab <- tab[1:(max-1),]
+  max <- which(rowSums(is.na(tab)) == ncol(tab))[1]
+  if(!is.na(max)) tab <- tab[1:(max-1),]
   return(tab)
 }
 
@@ -25,11 +24,8 @@ factor_strings <- function(tab){
 lower_tab <- function(tab){
   as.data.frame(
     lapply(tab, function(x) {
-      if(is.character(x)) {
-        if (!all(grepl("^[[:upper:]]+$", x), na.rm = TRUE))
-          tolower(x)
-        else
-          x
+      if(is.character(x) | is.factor(x)) {
+        if (!all(grepl("^[A-Z]+$", x), na.rm = TRUE)) tolower(x) else x
       }
       else x
     }), stringsAsFactors = FALSE
@@ -90,20 +86,23 @@ transform_date <- function(tab){
 #' @export
 #'
 #' @examples
-standardize_names <- function(names, trunc = FALSE){
+standardize_names <- function(names, trunc = FALSE, length = 40){
   noms <- trimws(names) %>%
     str_replace("^[\"\'](.*)[\"\']$", "\\1") %>%
-    str_replace("[\\.]+"," ") %>%
+    str_replace_all("[\\.]+"," ") %>%
+    str_replace_all("[ ]+", " ") %>%
+    str_replace_all("_", " ") %>%
     str_replace("^L ","L'") %>%
-    str_replace(" l "," l'") %>%
+    str_replace_all(" l "," l'") %>%
     str_replace("^C ","C'") %>%
-    str_replace(" c "," c'") %>%
+    str_replace_all(" c "," c'") %>%
     str_replace("^D ","D'") %>%
-    str_replace(" d "," d'") %>%
-    str_replace("\n"," ") %>%
+    str_replace_all(" d "," d'") %>%
+    str_replace_all("\n"," ") %>%
+    trimws() %>%
     capitalize()
   if (trunc == TRUE){
-    noms %<>% str_trunc(40)
+    noms %<>% str_trunc(length)
   }
   noms
 }
@@ -148,7 +147,6 @@ standardize_tab <- function(tab){
     factor_strings() %>%
     remove_guillemets()
 
-
   names(tab) %<>%
     str_replace("^X\\.(.*)\\.$", "\\1") %>%
     stringi::stri_trans_general("latin-ascii") %>%
@@ -176,7 +174,7 @@ standardize_tab <- function(tab){
 make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateInclusion = NULL, var_time = NULL){
   lev <- levels(tab[[vardep]])
   tab[[vardep]] <- relevel(tab[[vardep]], ref=ifelse(passage == 1, lev[1], lev[2]))
-  attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
+  #attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
   if (!is.null(dateSortie)  && dateSortie != "") {
     tab$.time <- as.numeric(tab[[dateSortie]] - tab[[dateInclusion]])
     tab %<>% select(-one_of(dateSortie, dateInclusion))
@@ -190,4 +188,19 @@ make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateI
     subtract(1)
   label(tab[[vardep]]) <- exLabel
   tab
+}
+
+
+#' Create intermediate table
+#'
+#' @param tab a data frame
+#' @param univ a logical vector: TRUE if univariate analysis, FALSE otherwise
+#'
+#' @return a curated data frame
+#' @export
+#'
+#' @examples
+create_tabi <- function(tab, univ){
+  select_if(tab, function(x) is.factor(x) | is.numeric(x) & length(table(x)) > 1) %>%
+    select_if(function(x) get_propDM(x) <= 0.2 | univ)
 }

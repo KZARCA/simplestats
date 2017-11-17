@@ -24,19 +24,27 @@ get_propDM <- function(x){
 #' @export
 #'
 #' @examples
-imputer <- function(tab, type, vardep, n_imputation = 1){
-  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x))
-  if (type == "survival")
-    tabm <- dplyr::select(tabm, -.time, -!!rlang::sym(vardep))
-  for (i in 1:length(tabm)){
-    if (get_propDM(tabm[[i]]) < 0.05)
-      tab[[names(tabm)[i]]] <- Hmisc::impute(tabm[[i]]) #Hmisc : médiane
-  }
-  if (any(is.na(tab))){
-    tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation)
+imputer <- function(tab, vardep, type, n_imputation = 1){
+  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x)) %>%
+    dplyr::select(-!!rlang::sym(vardep))
+  if (type == "survival") tabm <- dplyr::select(tabm, -.time)
+  if(get_propDM(tabm) < 0.05){
+    return(tab)
   } else {
-    tabimp <- tab
+    for (i in 1:length(tabm)){
+      if (get_propDM(tabm[[i]]) < 0.05) {
+        tab[[names(tabm)[i]]] <- Hmisc::impute(tabm[[i]]) #Hmisc : médiane
+      }
+    }
+    if (any(is.na(tab[names(tabm)]))){
+      where <- data.frame(is.na(tab))
+      where[[vardep]] <- rep(FALSE, nrow(where))
+      if (type == "survival") where[[".time"]] <- FALSE
+      tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation, where = where)
+    } else {
+      tabimp <- tab
+    }
+    return(tabimp)
   }
-  return(tabimp)
 }
 
