@@ -26,7 +26,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, ...){
       cont <- table(x, y)
       prop <- prop.table(cont, margin) %>% map_chr(pourcent)
       d <- map2_chr(cont, prop, function(x, y) {
-        sprintf_number_table("%s (%s)", x, y)
+        sprintf_number_table("%s (%s)", x, y)
       }) %>%
         matrix(ncol = nlevels(y)) %>% as_tibble
       colnames(d) <- sprintf("%s %s", label(y), levels(y))#column_names
@@ -77,7 +77,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, ...){ #num~fac
     y <- no_na$y
     d <- no_na %>%
       group_by(y) %>%
-      summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
+      summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
       base::t() %>%
       as_tibble
     colnames(d) <- paste(label(y), d[1,])#column_names
@@ -118,7 +118,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
     resume <- base::summary(surv)$table
     max_time <- map_dbl(seq_along(surv$strata), ~ max(surv[.]$time))
     median <- map_chr(seq_along(surv$strata), function(i){
-      sprintf_number_table("%s (%s - %s)",
+      sprintf_number_table("%s (%s; %s)",
                            resume[i, "median"],
                            resume[i, "0.95LCL"],
                            resume[i, "0.95UCL"])

@@ -79,8 +79,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom car vif
 #' @importFrom broom tidy
 #' @importFrom broom fix_data_frame
-#' @importFrom knitr kable
-#' @importFrom mice mice
+#' @import mice
 #' @importFrom stringi stri_trans_general
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace

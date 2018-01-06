@@ -6,3 +6,4 @@ test_that("read_tab_imp is working with csv", {
   expect_equal(readed[[1]],  colon2)
   expect_equal(readed[[2]],  names(colon))
 })
+

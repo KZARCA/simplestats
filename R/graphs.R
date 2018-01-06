@@ -45,7 +45,7 @@ print_plot_bivar <- function(tab, vardep, var_n, type = "linear"){
     if (is.numeric(tvarn)){
       boxplot_bivar(tab, var_n, vardep)
     } else if (is.factor(tvarn)){
-      barplot_bivar(tab, vardep, var_n)
+      barplot_bivar(tab, var_n, vardep)
     }
   } else {
     if (is.factor(tvarn)){
@@ -73,7 +73,12 @@ boxplot_bivar <- function(tab, x, y) {
   ggplot(tab) + aes_string(y, x, y, fill = y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
 }
 
-
+#' @export
+#' @rdname boxplot_bivar
+boxplot_bivar_bw <- function(tab, x, y) {
+  tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
+  ggplot(tab) + aes_string(y, x, y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE) + scale_fill_grey()
+}
 
 #' Easy Barplot
 #'

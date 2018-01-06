@@ -15,3 +15,33 @@ test_that("is_number_enough works", {
   is_number_enough(t1, "sex", c("age", "rx")) %>%
     expect_false()
 })
+
+test_that("is_normal is working", {
+  replicate(100, expect_true(is_normal(rnorm(100))))
+  replicate(100, expect_false(is_normal(rlnorm(1000))))
+  replicate(100, expect_false(is_normal(rchisq(100, 1))))
+  replicate(100, expect_false(is_normal(rf(100, 1, 1))))
+  replicate(100, expect_true(is_normal(rpois(1000, 30))))
+})
+
+test_that("is_homoscedatic is working", {
+  a <- c(rnorm(1000, 0, 1), rnorm(1000, 0, 1), rnorm(1000, 0, 1))
+  b <- c(rep("A", 1000),rep("B", 1000),rep("C", 1000))
+  c <- c(rnorm(1000, 0, 1), rnorm(1000, 0, sqrt(2)), rnorm(1000, 0, 1))
+  d <- c(rnorm(1000, 0, 1), rnorm(1000, 0, 2), rnorm(1000, 0, 1))
+
+  tab <- data.frame(a, b, c, d)
+
+  expect_true(is_homoscedatic(b, a))
+  expect_true(is_homoscedatic(b, c))
+  expect_false(is_homoscedatic(b, d))
+
+  mod <- lm(a ~ b, data = tab)
+  expect_true(is_homoscedatic(mod))
+  mod <- lm(c ~ b, data = tab)
+  expect_true(is_homoscedatic(mod))
+  mod <- lm(d ~ b, data = tab)
+  expect_false(is_homoscedatic(mod))
+
+  #find other examples with models
+})

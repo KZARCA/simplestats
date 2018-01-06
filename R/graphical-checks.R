@@ -106,7 +106,7 @@ plot_all_zph <- function(tab, vardep, varindep, var_ajust){
   nb <- map_dbl(varindep, function(x){
     if (is.numeric(tab[[x]])) 1 else nlevels(tab[[x]]) - 1
   })
-  for(n in nb){
+  for(n in seq_len(sum(nb))){
     plot_nth_zph(mod, n)
   }
 }

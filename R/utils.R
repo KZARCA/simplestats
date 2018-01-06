@@ -17,7 +17,7 @@ extract_from_model <- function(mod, vector){
 }
 
 is_model_possible <- function(mod){
-  isTRUE(class(mod)[[1]] == "lm" && df.residual(mod) != 0 & deviance(mod) >= sqrt(.Machine$double.eps) | class(mod)[[1]] != "lm")
+  isTRUE(class(mod)[[1]] == "lm" && df.residual(mod) != 0 && deviance(mod) >= sqrt(.Machine$double.eps) | class(mod)[[1]] != "lm")
 }
 
 
@@ -156,7 +156,7 @@ add_varname.factor <- function(tab, x, noms, one_line = FALSE, add_niveau = TRUE
 }
 
 #' @export
-add_varname.boot <- function(tableRet, resBoot, noms){
+add_varname.boot <- function(tableRet, resBoot){
   map2_df(resBoot$data[-1], names(resBoot$data[-1]), function(x,y){
     if(is.numeric(x)) {
       variable <- label(x)
@@ -176,16 +176,16 @@ add_varname.boot <- function(tableRet, resBoot, noms){
       niveau <- sprintf("%s vs %s", levels(x)[-1], rep(levels(x)[1], nlevels(x) - 1))
       multiple <- NA
     }
-    data_frame(id = id, variable = variable, niveau = niveau, multiple = multiple)
+    tibble(id = id, variable = variable, niveau = niveau, multiple = multiple)
   }) %>%
-    bind_cols(as_data_frame(tableRet)) %>%
+    bind_cols(as_tibble(tableRet)) %>%
     add_class("tabboot")
 }
 
 #' Get the number(s) formatted in percentage
 #'
 #' @param nb a numeric vector
-#' @param symbol displays "%"
+#' @param symbol displays "\%"
 #'
 #' @return a character vector
 #' @export
@@ -230,8 +230,7 @@ get_nb_decimals <- function(x){
 #' @examples
 show_table_markdown <- function(table){
   table %>%
-    prepare_table_export() %>%
-    knitr::kable()
+    prepare_table_export()
 }
 
 prepare_table_export <- function(tab){
@@ -274,7 +273,7 @@ tidy.anova <- function(x, ...){
   ret
 }
 
-remove_big_vif <- function(tab, type_var, vardep, vars, infl, elimine) {
+remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
   ajust <- infl[base::which(names(infl) %in% type_var)]
   while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
     gros <- names(ajust[which.max(ajust)])
@@ -300,4 +299,9 @@ remove_big_vif <- function(tab, type_var, vardep, vars, infl, elimine) {
     }
   }
   elimine
+}
+
+#' @export
+add_class <- function(x, classe){
+  structure(x, class = c(classe, class(x)))
 }

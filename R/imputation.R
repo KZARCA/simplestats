@@ -37,6 +37,7 @@ imputer <- function(tab, vardep, type, n_imputation = 1){
       }
     }
     if (any(is.na(tab[names(tabm)]))){
+      require(mice)
       where <- data.frame(is.na(tab))
       where[[vardep]] <- rep(FALSE, nrow(where))
       if (type == "survival") where[[".time"]] <- FALSE

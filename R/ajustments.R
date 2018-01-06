@@ -67,9 +67,9 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   vars <- c(varindep, varAjust)
   elimine <- NULL
   if (type == "survival") {
-    tab <- na.exclude(tab[, c(vardep, vars, ".time"), drop = FALSE])
+    tab <- na.exclude(tab[c(vardep, vars, ".time")])
   } else {
-    tab <- na.exclude(tab[, c(vardep, vars), drop = FALSE])
+    tab <- na.exclude(tab[c(vardep, vars)])
   }
   analysables <- map_lgl(tab, function(x){
     if (is.factor(x)){
@@ -87,7 +87,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   } else if (type == "linear")
     mod <- lm(formule, data = tab)
   else if (type == "survival"){
-    formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + "))
+    formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")) %>% as.formula()
     mod <- survival::coxph(formula = formule, data = tab)
   }
   if(!is_model_possible(mod)){
@@ -107,9 +107,9 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
     if (length(vars) > 1){ #remove big vif
       infl <- suppressWarnings(car::vif(mod))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-      elimine <- remove_big_vif(tab, varAjust, vardep, vars, infl, elimine) # in priority, remove varAjust
+      elimine <- remove_big_vif(tab, varAjust, vardep, vars, type, infl, elimine) # in priority, remove varAjust
       varindep <-  varindep[-1]
-      elimine <- remove_big_vif(tab, varindep, vardep, vars, infl, elimine) # if necessary, remove varindep
+      elimine <- remove_big_vif(tab, varindep, vardep, vars, type, infl, elimine) # if necessary, remove varindep
     }
     return(elimine)
   }

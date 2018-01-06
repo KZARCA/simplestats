@@ -14,7 +14,7 @@ test_that("plot_nth_zph is working", {
     make_tab_survival("status", var_time = "time")
   mod <- coxph(Surv(.time, status) ~ age + obstruct + rx + sex, data = tab)
   expect_error(plot_nth_zph(mod, 6))
-  walk(seq_len(5), function(i) expect_error(plot_nth_zph(mod, i), NA))
+  walk(seq_len(5), function(i) expect_error(simplestats:::plot_nth_zph(mod, i), NA))
 })
 
 test_that("create_spline returns NULL when no independent variable is numeric", {
@@ -65,11 +65,11 @@ test_that("plot_nth_spline is working", {
   nth_spline <- function(tab, vardep, varindep, type, n){
     walk(n, function(i){
     create_spline(tab, vardep, varindep, type) %>%
-      plot_nth_spline(i)
+        plot_nth_spline(i)
     })
   }
 
-  expect_error(nth_spline(tab, "age", c("sex", "rx"), "linear", 1))
+  suppressWarnings(expect_error(nth_spline(tab, "age", c("sex", "rx"), "linear", 1)))
   expect_error(nth_spline(tab, "age", c("sex", "nodes"), "linear", 1), NA)
   expect_error(nth_spline(tab, "age", c("sex", "nodes"), "linear", 1:2))
   expect_error(nth_spline(tab, "sex", c("age", "nodes"), "logistic", 1:2), NA)

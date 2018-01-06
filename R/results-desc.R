@@ -27,7 +27,7 @@ create_ligne_desc.numeric <- function(x, noms, ...){ #si la variable est numéri
     n
   )
   names(d) <- c(gettext("moyenne (écart-type)"), gettext("médiane [Q25-75]"), gettext("min"), gettext("max"), "n")
-  d %<>% add_varname(x, noms)
+  add_varname(d, x, noms)
 }
 
 #' @export
@@ -36,7 +36,7 @@ create_ligne_desc.factor <- function(x, noms, ...){
   cont <- table(x)
   prop <- prop.table(cont) %>%  pourcent
   map2(cont, prop, function(x, y) {
-    sprintf_number_table("%s (%s)", x, y)
+    sprintf_number_table("%s (%s)", x, y)
   }) %>%
     as_tibble %>%
     add_varname(x, noms, one_line = TRUE)
@@ -65,7 +65,7 @@ create_ligne_surv_desc <- function(time, censure){
     nEvent <- resume["events"]
     max <- max(surv$time, na.rm = TRUE)
     d <- tibble(
-      sprintf_number_table("%s (%s - %s)", med, CI[1], CI[2]),
+      sprintf_number_table("%s (%s; %s)", med, CI[1], CI[2]),
       max,
       n,
       nEvent
@@ -87,10 +87,10 @@ create_ligne_desc_export.factor <- function(x, noms, ...){
   cont <- table(x)
   prop <- prop.table(cont) %>%  pourcent
   d <- map2_df(cont, prop, function(x, y) {
-    sprintf_number_table("%s (%s)", x, y)  %>% tibble
+    sprintf_number_table("%s (%s)", x, y)  %>% tibble
   }, .id="")
   d %<>% add_varname(x, noms, add_niveau = TRUE)
-  colnames(d) <- c("id", "variable", "niveau", "n (%)")
+  colnames(d) <- c("id", "variable", "niveau", "n (%)")
   d$niveau <- as.character(d$niveau)
   d
 }
