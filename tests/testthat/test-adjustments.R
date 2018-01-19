@@ -77,6 +77,7 @@ test_that("recherche_multicol removes aliased coefficients", {
 })
 
 test_that("recherche_multicol removes high vif covariates", {
+  #recherche_multicol(car::Duncan, "prestige", c("education", "type"), NULL, type = "linear")
   #find examples
 })
 
