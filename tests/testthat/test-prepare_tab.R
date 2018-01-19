@@ -22,13 +22,11 @@ test_that("make_tab_survival works with var_time, passage 1 & 2", {
 
 test_that("make_tab_survival works with dateSortie & Inclusion", {
   tab <- colon
-  tab$inclusion <- as.Date(runif(nrow(tab), 1, 5000), "1990-01-01")
-  tab$sortie <- as.Date(tab$inclusion + tab$time)
+  inclusion <- as.Date(runif(nrow(tab), 1, 5000), "1990-01-01")
+  sortie <- as.Date(inclusion + tab$time, "1990-01-01")
   tab %<>% standardize_tab()
-  tab_modif <- make_tab_survival(tab, "status", dateSortie = "sortie", dateInclusion = "inclusion")
-  expect_null(tab_modif$sortie)
-  expect_null(tab_modif$inclusion)
-  expect_equal(tab_modif$.time, as.numeric(tab$sortie - tab$inclusion))
+  tab_modif <- make_tab_survival(tab, "status", dateSortie = sortie, dateInclusion = inclusion)
+  expect_equal(tab_modif$.time, as.numeric(sortie - inclusion))
 })
 
 test_that("create_tabi works", {

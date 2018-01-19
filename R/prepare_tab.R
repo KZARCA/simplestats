@@ -175,9 +175,8 @@ make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateI
   lev <- levels(tab[[vardep]])
   tab[[vardep]] <- relevel(tab[[vardep]], ref=ifelse(passage == 1, lev[1], lev[2]))
   #attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
-  if (!is.null(dateSortie)  && dateSortie != "") {
-    tab$.time <- as.numeric(tab[[dateSortie]] - tab[[dateInclusion]])
-    tab %<>% select(-one_of(dateSortie, dateInclusion))
+  if (!is.null(dateSortie)) {
+    tab$.time <- as.numeric(dateSortie - dateInclusion)
   } else if (!is.null(var_time) && var_time != ""){
     tab$.time <- tab[[var_time]]
     tab %<>% select(-one_of(var_time))
