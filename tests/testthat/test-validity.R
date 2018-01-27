@@ -43,5 +43,13 @@ test_that("is_homoscedatic is working", {
   mod <- lm(d ~ b, data = tab)
   expect_false(is_homoscedatic(mod))
 
-  #find other examples with models
+  n <- rep(1:100, 2)
+  a <- 0
+  b <- 1
+  sigma <- n^1.3
+  eps <- rnorm(n, 0, sqrt(sigma))
+  y <- a + b * n + eps
+  mod <- lm(y ~ n)
+
+  expect_false(is_homoscedatic(mod))
 })

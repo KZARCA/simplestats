@@ -77,9 +77,25 @@ test_that("recherche_multicol removes aliased coefficients", {
 })
 
 test_that("recherche_multicol removes high vif covariates", {
-  #recherche_multicol(car::Duncan, "prestige", c("education", "type"), NULL, type = "linear")
-  #find examples
+  recherche_multicol(mtcars, "mpg", c("disp", "hp", "wt", "qsec"), NULL, type = "linear") %>%
+  expect_equal("disp")
+  recherche_multicol(mtcars, "mpg", c("disp", "hp", "wt", "qsec", "cyl"), NULL, type = "linear") %>%
+  expect_equal(c("disp", "cyl"))
+  recherche_multicol(mtcars, "mpg", c("hp", "wt", "qsec"), "disp", type = "linear") %>%
+  expect_equal("disp")
+  recherche_multicol(car::Duncan, "prestige", c("income", "education"), NULL, type = "linear") %>%
+    expect_equal(character(0))
+  recherche_multicol(car::Duncan, "prestige", c("income", "education", "type"), NULL, type = "linear") %>%
+    expect_equal("education")
+
+  mtcars$x1 <- rnorm(32)
+  mtcars$x2 <- 2 * mtcars$x1
+
+  recherche_multicol(mtcars, "mpg", c("disp", "hp", "wt", "qsec", "cyl", "x1", "x2"), NULL, type = "linear") %>%
+    expect_equal(c("x2", "disp", "cyl"))
 })
 
 test_that("recherche_multicol removes high vif varAjust in priority over varindep", {
+  recherche_multicol(mtcars, "mpg", c("hp", "wt", "qsec", "disp"), "cyl", type = "linear") %>%
+    expect_equal(c("cyl", "disp"))
 })
