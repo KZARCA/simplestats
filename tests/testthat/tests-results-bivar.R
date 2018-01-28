@@ -74,7 +74,7 @@ test_that("create_ligne_bivar.factor_fac is working", {
   expect_equal(line$test, c("Chi2", NA))
 })
 
-test_that("create_ligne_bivar.numeric is working", {
+test_that("create_ligne_bivar.num_fac is working", {
   line <- create_ligne_bivar(tab$nodes, tab$differ, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$variable, "Nodes")
@@ -90,6 +90,15 @@ test_that("create_ligne_bivar.numeric is working", {
   expect_equal(line$.n, nrow(na.exclude(tab[c("nodes", "differ")])))
   expect_equal(line$p, kruskal.test(nodes ~ differ, data = tab)$p.value)
   expect_equal(line$test, "Kruskal-Wallis")
+})
+
+test_that("create_ligne_bivar.num_num is working", {
+  line <- create_ligne_bivar(tab$nodes, tab$age, noms = "nodes")
+  expect_equal(line$id, "nodes")
+  expect_equal(line$variable, "Nodes")
+  co <- cor.test(tab$nodes, tab$age) %>% broom::tidy()
+  expect_equal(line$`Coefficient de corrélation (IC95)`, sprintf_number_table("%s (%s; %s)", co$estimate, co$conf.low, co$conf.high))
+  expect_equal(line$p, co$p.value)
 })
 
 test_that("create_ligne_surv_bivar is working", {

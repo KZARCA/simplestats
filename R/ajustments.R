@@ -84,9 +84,9 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
   if (type == "logistic"){
     mod <- arm::bayesglm(formule, data = tab, family = "binomial")
-  } else if (type == "linear")
+  } else if (type == "linear") {
     mod <- lm(formule, data = tab)
-  else if (type == "survival"){
+  } else if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")) %>% as.formula()
     mod <- survival::coxph(formula = formule, data = tab)
   }
@@ -107,8 +107,14 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
     if (length(vars) > 1){ #remove big vif
       infl <- suppressWarnings(car::vif(mod))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      old_elimine <- elimine
       elimine <- remove_big_vif(tab, varAjust, vardep, vars, type, infl, elimine) # in priority, remove varAjust
-      varindep <-  varindep[-1]
+      if(length(elimine) - length(old_elimine) > 0){
+        vars <- vars[-match(elimine, vars)]
+        mod <- stats::update(mod, as.formula(paste(vardep, "~", paste(vars, collapse = " + "))))
+        infl <- suppressWarnings(car::vif(mod))
+        if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      }
       elimine <- remove_big_vif(tab, varindep, vardep, vars, type, infl, elimine) # if necessary, remove varindep
     }
     return(elimine)

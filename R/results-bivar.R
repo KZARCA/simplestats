@@ -69,30 +69,40 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, ...){
 #' @export
 #' @rdname create_ligne_bivar
 create_ligne_bivar.numeric <- function(x, y, noms, ...){ #num~fac
-  #column_names <- sprintf("%s\n(N=%s)", levels(y), table(y))
-  no_na <- remove_na(x, y)
-  cont <- table(no_na$y)
-  if (nrow(no_na) > 0){
-    x <- no_na$x
-    y <- no_na$y
-    d <- no_na %>%
-      group_by(y) %>%
-      summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
-      base::t() %>%
-      as_tibble
-    colnames(d) <- paste(label(y), d[1,])#column_names
-    d <- d[2, ]
-    d$.n <- sum(cont)
-    pval_test <- extract_pval(x,y) %>%
-      as_tibble
-    names(pval_test) <- c("p", "test")
+  if(is.factor(y)){
+    no_na <- remove_na(x, y)
+    cont <- table(no_na$y)
+    if (nrow(no_na) > 0){
+      x <- no_na$x
+      y <- no_na$y
+      d <- no_na %>%
+        group_by(y) %>%
+        summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
+        base::t() %>%
+        as_tibble
+      colnames(d) <- paste(label(y), d[1,])#column_names
+      d <- d[2, ]
+      d$.n <- sum(cont)
+      pval_test <- extract_pval(x,y) %>%
+        as_tibble
+      names(pval_test) <- c("p", "test")
 
-    ligne <- bind_cols(d, pval_test) %>%
+      ligne <- bind_cols(d, pval_test) %>%
+        add_varname(x, noms)
+      #add_column(label(x), .before = 1)
+      attr(ligne, "colSums") <- table(fct_drop(no_na$y))
+      #names(ligne)[1] <- "variable"
+      ligne
+    }
+  } else {
+    no_na <- remove_na(x, y, drop_factor = TRUE)
+    res <- broom::tidy(cor.test(no_na$x, no_na$y))
+    ligne <- tibble("Coefficient de corrélation (IC95)" = sprintf_number_table("%s (%s; %s)",
+                                                                               res$estimate, res$conf.low, res$conf.high),
+                    n = nrow(no_na),
+                    p = res$p.value,
+                    test = "Pearson") %>%
       add_varname(x, noms)
-    #add_column(label(x), .before = 1)
-    attr(ligne, "colSums") <- table(fct_drop(no_na$y))
-    #names(ligne)[1] <- "variable"
-    ligne
   }
 }
 

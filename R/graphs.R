@@ -40,7 +40,11 @@ print_plot_desc <- function(tab, vardep, var_n, type = "linear"){
 print_plot_bivar <- function(tab, vardep, var_n, type = "linear"){
   tvarn <- tab[[var_n]]
   if (type == "linear"){
-    boxplot_bivar(tab, vardep, var_n)
+    if (factor(tvarn)){
+      boxplot_bivar(tab, vardep, var_n)
+    } else {
+      plot_reglin(tab, vardep, var_n)
+    }
   } else if (type != "survival"){
     if (is.numeric(tvarn)){
       boxplot_bivar(tab, var_n, vardep)
@@ -57,6 +61,20 @@ print_plot_bivar <- function(tab, vardep, var_n, type = "linear"){
   }
 }
 
+#' Plots the relationship between 2 quantitative variables
+#'
+#' @param tab a data frame
+#' @param x the independant variable
+#' @param y the dependant variable
+#'
+#' @return a ggplot plot
+#' @export
+#'
+#' @examples
+plot_reglin <- function(tab, x, y, method = "lm"){
+  tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
+  ggplot(tab) + aes_string(x, y) + geom_point() + geom_smooth(method=method) + theme_bw()
+}
 
 #' Easy Boxplot
 #'
