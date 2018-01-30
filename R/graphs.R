@@ -40,7 +40,7 @@ print_plot_desc <- function(tab, vardep, var_n, type = "linear"){
 print_plot_bivar <- function(tab, vardep, var_n, type = "linear"){
   tvarn <- tab[[var_n]]
   if (type == "linear"){
-    if (factor(tvarn)){
+    if (is.factor(tvarn)){
       boxplot_bivar(tab, vardep, var_n)
     } else {
       plot_reglin(tab, vardep, var_n)
