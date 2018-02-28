@@ -28,8 +28,7 @@ read_tab_imp <- function(file, firstImport, sep, dec){
         }
       }
       if ("try-error" %in% class(tries)){
-        stop(shiny::safeError(gettext("Impossible de charger ce fichier, en raison de la présence de caractères illisibles dans le nom des colonnes.
-                     Supprimez ces caractères, ou convertissez votre fichier en format Excel")))
+        stop(shiny::safeError(gettext("Unable to load this file because of unreadable characters in the column names. Delete these characters, or convert your file to Excel format", domain = "R-simplestats")))
       }
     }
     ## correspondance : colnames, same as in the original csv file

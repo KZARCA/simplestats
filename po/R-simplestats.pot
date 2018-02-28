@@ -1,0 +1,62 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: simplestats 0.1.0\n"
+"POT-Creation-Date: 2018-02-23 16:01\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "Computation of Estimates..."
+msgstr ""
+
+msgid "P-values computation..."
+msgstr ""
+
+msgid "Global p-value computation..."
+msgstr ""
+
+msgid "Confidence Intervals Computation"
+msgstr ""
+
+msgid "Proportion"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Unable to load this file because of unreadable characters in the column names. Delete these characters, or convert your file to Excel format"
+msgstr ""
+
+msgid "mean (sd)"
+msgstr ""
+
+msgid "median [Q25-75]"
+msgstr ""
+
+msgid "min"
+msgstr ""
+
+msgid "max"
+msgstr ""
+
+msgid "median (CI95)"
+msgstr ""
+
+msgid "max follow-up"
+msgstr ""
+
+msgid "n events"
+msgstr ""
+
+msgid "The following column names in ANOVA output were not"
+msgstr ""
+
+msgid "recognized or transformed:"
+msgstr ""
+
+msgid ","
+msgstr ""

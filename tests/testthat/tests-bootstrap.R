@@ -87,4 +87,9 @@ boot_tests(tab, "age", c("sex", "nodes", "rx"), c("obstruct", "differ"))
 boot_tests(tab, "nodes", c("rx", "age", "sex"), c("obstruct", "differ"))
 
 
+test_that("print_all_boots works", {
+  mod <- lm(age ~ nodes + sex, data = tab)
+  booted <- print_all_boots(mod, nCPU = 3)
+  expect_equal(booted$term, c("nodes", "sex1"))
+})
 

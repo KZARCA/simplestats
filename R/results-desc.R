@@ -26,7 +26,10 @@ create_ligne_desc.numeric <- function(x, noms, ...){ #si la variable est numéri
     sprintf_number_table("%s", quant[5]),
     n
   )
-  names(d) <- c(gettext("moyenne (écart-type)"), gettext("médiane [Q25-75]"), gettext("min"), gettext("max"), "n")
+  names(d) <- c(gettext("mean (sd)", domain = "R-simplestats"),
+                gettext("median [Q25-75]", domain = "R-simplestats"),
+                gettext("min", domain = "R-simplestats"),
+                gettext("max", domain = "R-simplestats"), "n")
   add_varname(d, x, noms)
 }
 
@@ -70,8 +73,11 @@ create_ligne_surv_desc <- function(time, censure){
       n,
       nEvent
     )
-    names(d) <- c(gettext("médiane (IC95)"), gettext("suivi max"), "n", gettext("n événements"))
-    d %<>% add_column(id = "survival", variable = gettext("suivi max"), .before = 1)
+
+    names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
+                  gettext("max follow-up", domain = "R-simplestats"), "n", gettext("n events", domain = "R-simplestats"))
+
+    d %<>% add_column(id = "survival", variable = gettext("max follow-up", domain = "R-simplestats"), .before = 1)
   }
 }
 
@@ -109,7 +115,7 @@ create_ligne_desc_export.default <- create_ligne_desc
 #' @export
 #'
 #' @examples
-print_line_desc <- function(x, varname = NA, type = "linear", time = NULL){
+print_line_desc <- function(x, varname = label(x), type = "linear", time = NULL){
   shown <- if (type == "survival"){
     create_ligne_surv_desc(time, x)
   } else {

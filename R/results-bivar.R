@@ -52,7 +52,10 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, ...){
                   max = sprintf_number_table("%s", max(y, na.rm=TRUE)),
                   n = n()
         )
-      names(d) <- c("niveau", gettext("moyenne (écart-type)"), gettext("médiane [Q25-75]"), gettext("min"), gettext("max"), "n")
+      names(d) <- c("niveau", gettext("mean (sd)", domain = "R-simplestats"),
+                    gettext("median [Q25-75]", domain = "R-simplestats"),
+                    gettext("min", domain = "R-simplestats"),
+                    gettext("max", domain = "R-simplestats"), "n")
       pval_test <- extract_pval(x,y) %>%
         map_df(~ c(., rep(NA, max(0, nlevels(x) - 1))))
       names(pval_test) <- c("p", "test")
@@ -142,7 +145,8 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
       n,
       nEvent
     )
-    names(d) <- c(gettext("médiane (IC95)"), gettext("suivi max"), "n", gettext("n événements"))
+    names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
+                  gettext("max follow-up", domain = "R-simplestats"), "n", gettext("n events", domain = "R-simplestats"))
 
     pval_test <- survdiff(formule, data = tab_cens) %>%
       extract_pval %>%
@@ -165,7 +169,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
 #' @export
 #'
 #' @examples
-print_line_bivar <- function(x, y, varname = NA, censure = NULL, type = "linear"){
+print_line_bivar <- function(x, y, varname = label(x), censure = NULL, type = "linear"){
   shown <- if (type == "survival"){
     create_ligne_surv_bivar(x = x, time = y, noms = varname, censure = censure)
   } else {

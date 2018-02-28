@@ -20,7 +20,7 @@ modify_boot_formula <- function(tab, model_base){
 
 
 get_boot <- function(data, indices, progression, model_base, vec.out, nvar_mod) {
-  progression(detail = gettext("Calcul des coefficients..."))
+  progression(detail = gettext("Computation of Estimates...", domain = "R-simplestats"))
   data %<>%
     dplyr::slice(indices) %>%
     drop_levels
@@ -38,7 +38,7 @@ get_boot <- function(data, indices, progression, model_base, vec.out, nvar_mod) 
 }
 
 get_boot_p <- function(data, indices, progression, model_base, vec.out, nvar_mod){
-  progression(detail = gettext("Calcul des p values..."))
+  progression(detail = gettext("P-values computation...", domain = "R-simplestats"))
   data$.vardep <- data$.vardep[indices]
   data %<>% drop_levels
   formule <- modify_boot_formula(data, model_base)
@@ -54,7 +54,7 @@ get_boot_p <- function(data, indices, progression, model_base, vec.out, nvar_mod
 }
 
 get_boot_anova <- function(data, indices, progression, model_base, nvar){
-  progression(detail = gettext("Calcul des p globaux"))
+  progression(detail = gettext("Global p-value computation...", domain = "R-simplestats"))
   data$.vardep <- data$.vardep[indices]
   data %<>% drop_levels
   formule <- modify_boot_formula(data, model_base)
@@ -85,7 +85,7 @@ get_confint_p_boot <- function(resBoot, resBoot_p){
   l <- length(resBoot$t0)*2
   ok_bca <- isTRUE(nrow(resBoot$data) < 1000 & resBoot$R >=1000)
   if((!is.null(shiny::getDefaultReactiveDomain()))){
-    shiny::withProgress(message = gettext("Calcul des intervalles de confiance"), value = 0, {
+    shiny::withProgress(message = gettext("Confidence Intervals Computation", domain = "R-simplestats"), value = 0, {
       ci <-
         map(seq_along(resBoot$t0), function(i){
           shiny::incProgress(1/l,detail = names(resBoot$t0)[i])
@@ -144,11 +144,11 @@ get_confint_p_boot <- function(resBoot, resBoot_p){
 #' @return An object of class boot
 #'
 #' @examples
-#' 
-#' 
+#'
+#'
 #' @export
 #' @describeIn get_resBoot Performs bootstrap to further compute the confidence interval
-get_resBoot <- function(tab, R, model_base, nCPU, updateProgress = NULL, var_ajust = NULL){
+get_resBoot <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, var_ajust = NULL){
   set.seed(124567)
   vec.out <- extract_from_model(model_base, "estimate")
   nvar_mod <- get_nvar_mod(tab, var_ajust)
@@ -167,7 +167,7 @@ get_resBoot <- function(tab, R, model_base, nCPU, updateProgress = NULL, var_aju
 
 #' @export
 #' @describeIn get_resBoot Permutation test for p-values
-get_resBoot_p <- function(tab, R, model_base, nCPU, updateProgress = NULL, var_ajust = NULL){
+get_resBoot_p <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, var_ajust = NULL){
   set.seed(124567)
   vec.out <- extract_from_model(model_base, "estimate")
   nvar_mod <- get_nvar_mod(tab, var_ajust)
@@ -183,7 +183,7 @@ get_resBoot_p <- function(tab, R, model_base, nCPU, updateProgress = NULL, var_a
 
 #' @export
 #' @describeIn get_resBoot Permutation test for anova p-values
-get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = NULL, var_ajust = NULL){
+get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, var_ajust = NULL){
   set.seed(124567)
   xlevels <- model_base$xlevels %>%
     magrittr::extract(!names(model_base$xlevels) %in% var_ajust)

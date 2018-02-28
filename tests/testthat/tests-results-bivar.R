@@ -9,13 +9,13 @@ test_that("create_ligne_bivar.factor_num is working", {
     group_by(differ) %>%
     summarise(m = sprintf_number_table("%s (±%s)", mean(age), sd(age))) %>%
     extract2("m") %>%
-    expect_equal(line$`moyenne (écart-type)`)
+    expect_equal(line$`mean (sd)`)
   filter(tab, !is.na(differ)) %>%
     group_by(differ) %>%
     summarise(m = sprintf_number_table("%s [%s - %s]",
                                        median(age), quantile(age, 0.25), quantile(age, 0.75))) %>%
     extract2("m") %>%
-    expect_equal(line$`médiane [Q25-75]`)
+    expect_equal(line$`median [Q25-75]`)
   filter(tab, !is.na(differ)) %>%
     group_by(differ) %>%
     summarise(m = sprintf_number_table("%s", min(age))) %>%
@@ -109,11 +109,11 @@ test_that("create_ligne_surv_bivar is working", {
   surv <- survfit(Surv(.time, status) ~ differ, data = tab)
   table_surv <- summary(surv) %>%
     extract2("table")
-  expect_equal(line$`médiane (IC95)`,
+  expect_equal(line$`median (CI95)`,
                sprintf_number_table("%s (%s; %s)", table_surv[, "median"], table_surv[, "0.95LCL"], table_surv[, "0.95UCL"]))
-  expect_equal(line$`suivi max`, surv$time[cumsum(surv$strata)])
+  expect_equal(line$`max follow-up`, surv$time[cumsum(surv$strata)])
   expect_equal(line$n, table_surv[, "n.max"] %>% unname())
-  expect_equal(line$`n événements`, table_surv[, "events"] %>% unname())
+  expect_equal(line$`n events`, table_surv[, "events"] %>% unname())
   expect_equal(round(line$p, 10), c(3.39E-7, NA, NA))
   expect_equal(line$test, c("Logrank", NA, NA))
 })

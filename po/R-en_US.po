@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: simplestats 0.1.0\n"
+"POT-Creation-Date: 2018-02-23 16:01\n"
+"PO-Revision-Date: 2018-02-25 10:31+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Computation of Estimates..."
+msgstr "Computation of Estimates..."
+
+msgid "P-values computation..."
+msgstr "P-values computation..."
+
+msgid "Global p-value computation..."
+msgstr "Global p-value computation..."
+
+msgid "Confidence Intervals Computation"
+msgstr "Confidence Intervals Computation"
+
+msgid "Proportion"
+msgstr "Proportion"
+
+msgid "Number"
+msgstr "Number"
+
+msgid ""
+"Unable to load this file because of unreadable characters in the column "
+"names. Delete these characters, or convert your file to Excel format"
+msgstr ""
+"Unable to load this file because of unreadable characters in the column "
+"names. Delete these characters, or convert your file to Excel format"
+
+msgid "mean (sd)"
+msgstr "mean (sd)"
+
+msgid "median [Q25-75]"
+msgstr "median [Q25-75]"
+
+msgid "min"
+msgstr "min"
+
+msgid "max"
+msgstr "max"
+
+msgid "median (CI95)"
+msgstr "median (CI95)"
+
+msgid "max follow-up"
+msgstr "max follow-up"
+
+msgid "n events"
+msgstr "n events"
+
+msgid "The following column names in ANOVA output were not"
+msgstr ""
+
+msgid "recognized or transformed:"
+msgstr ""
+
+msgid ","
+msgstr ""

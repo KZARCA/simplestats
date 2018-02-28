@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: simplestats 0.1.0\n"
+"POT-Creation-Date: 2018-02-23 16:01\n"
+"PO-Revision-Date: 2018-02-23 16:03+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Computation of Estimates..."
+msgstr "Calcul des coefficients"
+
+msgid "P-values computation..."
+msgstr "Calcul des p-values..."
+
+msgid "Global p-value computation..."
+msgstr "Calcul des p globaux..."
+
+msgid "Confidence Intervals Computation"
+msgstr "Calcul des intervalles de confiance..."
+
+msgid "Proportion"
+msgstr "Proportion"
+
+msgid "Number"
+msgstr "Nombre"
+
+msgid ""
+"Unable to load this file because of unreadable characters in the column "
+"names. Delete these characters, or convert your file to Excel format"
+msgstr ""
+"Impossible de charger ce fichier, en raison de la présence de caractères "
+"illisibles dans le nom des colonnes. Supprimez ces caractères, ou "
+"convertissez votre fichier en format Excel"
+
+msgid "mean (sd)"
+msgstr "moyenne (écart-type)"
+
+msgid "median [Q25-75]"
+msgstr "médiane [Q25-75]"
+
+msgid "min"
+msgstr "min"
+
+msgid "max"
+msgstr "max"
+
+msgid "median (CI95)"
+msgstr "médiane (IC95)"
+
+msgid "max follow-up"
+msgstr "suivi max"
+
+msgid "n events"
+msgstr "n événements"
+
+msgid "The following column names in ANOVA output were not"
+msgstr ""
+
+msgid "recognized or transformed:"
+msgstr ""
+
+msgid ","
+msgstr ""

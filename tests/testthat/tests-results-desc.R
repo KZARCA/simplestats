@@ -3,12 +3,12 @@ test_that("create_ligne_desc.numeric is working", {
   line <- create_ligne_desc(tab$age, noms = "age")
   expect_equal(line$id, "age")
   expect_equal(line$variable, "Age")
-  expect_equal(line$`moyenne (écart-type)`,
+  expect_equal(line$`mean (sd)`,
                sprintf_number_table("%s (%s)", mean(tab$age), sd(tab$age)))
-  expect_equal(line$`moyenne (écart-type)`, "59.8 (11.9)")
-  expect_equal(line$`médiane [Q25-75]`,
+  expect_equal(line$`mean (sd)`, "59.8 (11.9)")
+  expect_equal(line$`median [Q25-75]`,
                sprintf_number_table("%s [%s; %s]", median(tab$age), quantile(tab$age, 0.25), quantile(tab$age, 0.75)))
-  expect_equal(line$`médiane [Q25-75]`, "61.0 [53.0; 69.0]")
+  expect_equal(line$`median [Q25-75]`, "61.0 [53.0; 69.0]")
   expect_equal(line$min,
                sprintf_number_table("%s",min(tab$age)))
   expect_equal(line$min, "18.0")
@@ -56,10 +56,10 @@ test_that("create_ligne_surv_desc is working", {
     extract2("table")
   line <- create_ligne_surv_desc(tab$.time, tab$status)
   expect_equal(line$id, "survival")
-  expect_equal(line$variable, "suivi max")
-  expect_equal(line$`médiane (IC95)`,
+  expect_equal(line$variable, "max follow-up")
+  expect_equal(line$`median (CI95)`,
                sprintf_number_table("%s (%s; %s)",
                                     table_surv[["median"]], table_surv[["0.95LCL"]], table_surv[["0.95UCL"]]))
   expect_equal(line$n, table_surv[["n.start"]])
-  expect_equal(line$`n événements`, table_surv[["events"]])
+  expect_equal(line$`n events`, table_surv[["events"]])
 })

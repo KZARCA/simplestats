@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-print_plot_desc <- function(tab, vardep, var_n, type = "linear"){
+print_plot_desc <- function(tab, vardep = NULL, var_n = NULL, type = "linear"){
   if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ 1", vardep)
     r <- survfit(as.formula(formule), data = tab)
@@ -122,7 +122,7 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
       ggplot(remove_missing(tab2, na.rm = TRUE, vars = y))
 
     graph <- ggtab2 + aes_string(x = x, fill = x, y = "perc") + geom_bar(stat = "identity")  +
-      facet_grid(reformulate(paste(". ~ ", y))) + scale_y_continuous(labels = scales::percent) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Proportion"))
+      facet_grid(reformulate(paste(". ~ ", y))) + scale_y_continuous(labels = scales::percent) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Proportion", domain = "R-simplestats"))
   } else {
     ggtab <- if (!is.null(showGraphNA) && !showGraphNA) {
       ggplot(remove_missing(tab, na.rm = TRUE, vars = c(x, y)))
@@ -131,7 +131,7 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
     }
 
     graph <- ggtab + aes_string(x, fill = x) + geom_bar(position = "dodge") +
-      facet_grid(reformulate(paste(".~ ", y))) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Number"))
+      facet_grid(reformulate(paste(".~ ", y))) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Number", domain = "R-simplestats"))
   }
 
   if (nlevels(tab[[y]]) < 4)
