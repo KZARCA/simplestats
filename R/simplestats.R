@@ -62,6 +62,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom purrr map_chr
 #' @importFrom purrr map_df
 #' @importFrom purrr walk
+#' @importFrom purrr modify_if
 #' @importFrom boot boot
 #' @importFrom boot boot.ci
 #' @importFrom survival coxph
@@ -80,7 +81,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom broom tidy
 #' @importFrom broom fix_data_frame
 #' @import mice
-#' @importFrom stringi stri_trans_general
+#' @importFrom stringi stri_enc_isutf8
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_replace_all

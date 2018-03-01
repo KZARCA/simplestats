@@ -88,6 +88,7 @@ test_that("recherche_multicol removes high vif covariates", {
   recherche_multicol(car::Duncan, "prestige", c("income", "education", "type"), NULL, type = "linear") %>%
     expect_equal("education")
 
+  set.seed(1)
   mtcars$x1 <- rnorm(32)
   mtcars$x2 <- 2 * mtcars$x1
 

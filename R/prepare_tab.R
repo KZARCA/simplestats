@@ -87,10 +87,7 @@ transform_date <- function(tab){
 #'
 #' @examples
 standardize_names <- function(names, trunc = FALSE, length = 40){
-  noms <- trimws(names) %>%
-    str_replace("^[\"\'](.*)[\"\']$", "\\1") %>%
-    str_replace_all("[\\.]+"," ") %>%
-    str_replace_all("[ ]+", " ") %>%
+  noms <- standardize_names_basic(names) %>%
     str_replace_all("_", " ") %>%
     str_replace("^L ","L'") %>%
     str_replace_all(" l "," l'") %>%
@@ -105,6 +102,14 @@ standardize_names <- function(names, trunc = FALSE, length = 40){
     noms %<>% str_trunc(length)
   }
   noms
+}
+
+standardize_names_basic <- function(names){
+  remove_multibyte_if_any(names) %>%
+    str_replace("^[\"\'](.*)[\"\']$", "\\1") %>%
+    str_replace_all("[\\.]+"," ") %>%
+    str_replace_all("[ ]+", " ") %>%
+    trimws()
 }
 
 remove_guillemets <- function(tab){
@@ -149,7 +154,7 @@ standardize_tab <- function(tab){
 
   names(tab) %<>%
     str_replace("^X\\.(.*)\\.$", "\\1") %>%
-    stringi::stri_trans_general("latin-ascii") %>%
+    #stringi::stri_trans_general("latin-ascii") %>%
     make.names(unique = TRUE)
 
   label(tab, self = FALSE) <- labs

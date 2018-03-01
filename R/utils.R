@@ -305,3 +305,41 @@ remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
 add_class <- function(x, classe){
   structure(x, class = c(classe, class(x)))
 }
+
+
+no_multibyte <- function(x){
+  UseMethod("no_multibyte")
+}
+
+no_multibyte.data.frame <- function(x){
+  map_lgl(x, function(y){
+    no_multibyte.default(y)
+  }) %>%
+    all(na.rm = TRUE)
+}
+
+no_multibyte.default <- function(x){
+  stri_enc_isutf8(x) %>%
+    all(na.rm = TRUE)
+}
+
+remove_multibyte <- function(x){
+  UseMethod("remove_multibyte")
+}
+remove_multibyte.data.frame <- function(x){
+  modify_if(x, Negate(no_multibyte.default), function(y) {
+    remove_multibyte.default(y)
+  })
+}
+
+remove_multibyte.default <- function(x){
+  iconv(x, sub="")
+}
+
+remove_multibyte_if_any <- function(x){
+  if(!no_multibyte(x)){
+    remove_multibyte(x)
+  } else {
+    x
+  }
+}
