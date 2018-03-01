@@ -1,18 +1,18 @@
-import_delim <- function(file, firstImport = TRUE, sep = "\t", dec = "."){
+import_delim <- function(file, sep, dec){
   tab <- NULL
   enc <- readr::guess_encoding(file, threshold = .9)$encoding[1]
-  if(is.na(enc)) enc <- ""
-  if (tolower(tools::file_ext(file)) == "txt"){
+  if (is.na(enc)) enc <- ""
+  if (tolower(tools::file_ext(file)) == "txt" | sep != "\t" | dec != "."){
     tab <- read.delim(file, strip.white = TRUE, fileEncoding = enc,  na.strings=c("NA", "", " ", "."),
                       stringsAsFactors = FALSE, check.names = FALSE, sep = sep, dec = dec)
   } else if (tolower(tools::file_ext(file)) == "csv"){
-    tab <- import_csv(file, firstImport, enc = enc)
+    tab <- import_csv(file, enc = enc)
   }
   tab <- remove_multibyte_if_any(tab)
   return(tab)
 }
 
-import_csv <- function(file, firstImport, enc = "") {
+import_csv <- function(file, enc = "") {
   tab <- NULL
   try({tab <- read.csv2(file, na.strings=c("NA", "", " ", "."), fileEncoding = enc,
                        strip.white = TRUE, stringsAsFactors = FALSE, check.names = FALSE)})
@@ -25,12 +25,23 @@ import_csv <- function(file, firstImport, enc = "") {
   tab
 }
 
-read_tab_imp <- function(file, firstImport, sep, dec){
+#' Read file
+#'
+#' import txt, csv and xls files
+#' @param file The file to read
+#' @param sep The field separator character. Values on each line of the file are separated by this character.
+#' @param dec The character used in the file for decimal points.
+#'
+#' @return A data.frame
+#' @export
+#'
+#' @examples
+read_tab_import <- function(file, sep = "\t", dec = "."){
   ext <- tolower(tools::file_ext(file))
   tab <- NULL
 
   if(ext %in% c("csv", "txt")){
-    tab <- import_delim(file, firstImport, sep = sep, dec = dec)
+    tab <- import_delim(file, sep = sep, dec = dec)
     #tries <- try(make.names(names(tab)), silent = TRUE)
 
     # if("try-error" %in% class(tries)) {
@@ -61,17 +72,3 @@ read_tab_imp <- function(file, firstImport, sep, dec){
   return(list(tab, correspondance))
 }
 
-#' Read file
-#'
-#' This is a wrapper of read_tab_imp
-#' @param file The file to read
-#' @param sep The field separator character. Values on each line of the file are separated by this character. If sep = "" (the default for read.table) the separator is ‘white space’, that is one or more spaces, tabs, newlines or carriage returns.
-#' @param dec The character used in the file for decimal points.
-#'
-#' @return A data.frame
-#' @export
-#'
-#' @examples
-read_tab_export <- function(file, sep = ",", dec = "."){
-  read_tab_imp(file, TRUE, sep, dec)[[1]]
-}
