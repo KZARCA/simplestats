@@ -106,6 +106,7 @@ standardize_names <- function(names, trunc = FALSE, length = 40){
 
 standardize_names_basic <- function(names){
   remove_multibyte_if_any(names) %>%
+    trimws() %>%
     str_replace("^[\"\'](.*)[\"\']$", "\\1") %>%
     str_replace_all("[\\.]+"," ") %>%
     str_replace_all("[ ]+", " ") %>%

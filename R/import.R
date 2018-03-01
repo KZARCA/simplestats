@@ -1,21 +1,20 @@
 import_delim <- function(file, firstImport = TRUE, sep = "\t", dec = "."){
   tab <- NULL
-  enc <- system2("file", args = c("-b", "--mime-encoding", shQuote(file, type = "cmd")), stdout = TRUE) %>%
-    toupper()
-  if (grepl("UNKNOWN", enc, ignore.case = TRUE)) enc <- ""
+  enc <- readr::guess_encoding(file, threshold = .9)$encoding[1]
+  if(is.na(enc)) enc <- ""
   if (tolower(tools::file_ext(file)) == "txt"){
     tab <- read.delim(file, strip.white = TRUE, fileEncoding = enc,  na.strings=c("NA", "", " ", "."),
                       stringsAsFactors = FALSE, check.names = FALSE, sep = sep, dec = dec)
   } else if (tolower(tools::file_ext(file)) == "csv"){
-    tab <- import_csv(file, firstImport, enc = enc, sep=";", dec=",")
+    tab <- import_csv(file, firstImport, enc = enc)
   }
   tab <- remove_multibyte_if_any(tab)
   return(tab)
 }
 
-import_csv <- function(file, firstImport, enc = "", sep, dec) {
+import_csv <- function(file, firstImport, enc = "") {
   tab <- NULL
-  try({tab <- read.csv(file, na.strings=c("NA", "", " ", "."), sep = sep, dec = dec, fileEncoding = enc,
+  try({tab <- read.csv2(file, na.strings=c("NA", "", " ", "."), fileEncoding = enc,
                        strip.white = TRUE, stringsAsFactors = FALSE, check.names = FALSE)})
   #if (firstImport) {
     if(length(tab) == 1 | is.null(tab)){

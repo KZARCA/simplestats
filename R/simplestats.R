@@ -93,6 +93,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom tibble tibble
 #' @importFrom tibble as_tibble
 #' @importFrom tibble add_column
+#' @importFrom readr guess_encoding
 #' @importFrom rlang sym
 #' @importFrom rlang ":="
 #' @importFrom rlang "%||%"
