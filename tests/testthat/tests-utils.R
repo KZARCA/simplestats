@@ -1,7 +1,7 @@
 test_that("get_choix_var works", {
   tab <- standardize_tab(colon)
   expect_equal(unname(get_choix_var(tab)), sort(names(tab)))
-  expect_equal(names(get_choix_var(tab)), sort(Hmisc::capitalize(names(tab))))
+  expect_equal(names(get_choix_var(tab)), sort(capitalize(names(tab))))
 })
 
 test_that("pourcent works", {

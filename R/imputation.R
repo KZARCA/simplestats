@@ -33,7 +33,7 @@ imputer <- function(tab, vardep, type, n_imputation = 1){
   } else {
     for (i in 1:length(tabm)){
       if (get_propDM(tabm[[i]]) < 0.05) {
-        tab[[names(tabm)[i]]] <- Hmisc::impute(tabm[[i]]) #Hmisc : médiane
+        tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
       }
     }
     if (any(is.na(tab[names(tabm)]))){

@@ -22,16 +22,16 @@ is_model_possible <- function(mod){
 
 
 get_choix_var <- function(tab){
-  lab <- Hmisc::label(tab)
+  lab <- label(tab)
   names(tab) %>%
     setNames(lab) %>%
     sort
 }
 
 drop_levels <- function(tab){
-  exLabels <- Hmisc::label(tab)
+  exLabels <- label(tab)
   tab %<>% droplevels()
-  Hmisc::label(tab, self = FALSE) <- exLabels
+  label(tab, self = FALSE) <- exLabels
   tab
 }
 

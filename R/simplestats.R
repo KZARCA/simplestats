@@ -86,10 +86,6 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_trunc
-#' @importFrom Hmisc impute
-#' @importFrom Hmisc label
-#' @importFrom Hmisc label<-
-#' @importFrom Hmisc capitalize
 #' @importFrom tibble tibble
 #' @importFrom tibble as_tibble
 #' @importFrom tibble add_column

@@ -19,7 +19,7 @@ test_that("read_tab_import is working with txt utf16", {
   expect_equal(names(readed[[1]])[1], "id.ée")
   expect_equal(as.character(readed[[1]][1,2]), "idée")
   expect_equal(readed[[2]][1], "id ée")
-  expect_equivalent(Hmisc::label(readed[[1]])[1], "Id ée")
+  expect_equivalent(label(readed[[1]])[1], "Id ée")
 })
 
 

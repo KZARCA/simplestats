@@ -22,7 +22,7 @@ test_that("imputer does not impute when less than 5% of missing data", {
   expect_null(attr(tab2$d, "imputed"))
 })
 
-test_that("imputer uses Hmisc::impute for variables with less than 5% of missing data", {
+test_that("imputer uses impute for variables with less than 5% of missing data", {
   tab <- data.frame(
     a = c(rep(NA, 3), seq_len(97)),
     b = c(as.character(seq_len(96)), rep(NA, 4)),
