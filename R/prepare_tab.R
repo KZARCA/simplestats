@@ -10,10 +10,11 @@ factor_strings <- function(tab){
     lapply(tab, function(x) {
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
-        if (nlevels(b) < 10)
-          x <- reorder(b, b,function(y)-length(y))
+        if (nlevels(b) < 10) x <- reorder(b, b,function(y)-length(y))
+        levels(x) %<>% str_trunc(20)
       } else if (length(table(x)) < 5){
         x <- factor(x)
+        levels(x) %<>% str_trunc(20)
       }
       if (is.factor(x) & nlevels(x) < 2) x <- as.character(x)
       return(x)
