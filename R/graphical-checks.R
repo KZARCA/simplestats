@@ -1,7 +1,7 @@
-create_spline <- function(tab, vardep, vars, type){
+create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
   mod <- NULL
-  if (type == "survival") vars <- vars[!vars %in% ".time"]
-  varsnum <- select_if(tab[, vars, drop = FALSE], is.numeric) %>% colnames
+  if (type == "survival") varindep <- varindep[!varindep %in% ".time"]
+  varsnum <- Filter(is.numeric, tab[varindep]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
       if (length(table(tab[, x, drop = FALSE])) < 20){
@@ -10,14 +10,24 @@ create_spline <- function(tab, vardep, vars, type){
       } else
         as.character(x)
     })
+  var_ajust_num <- Filter(is.numeric, tab[var_ajust]) %>% colnames()
 
-  varsfac <- select_if(tab[, vars, drop = FALSE], is.factor)
-  if(length(varsnum) > 0){
+  varsfac <- Filter(is.factor, tab[varindep]) %>% colnames()
+  var_ajust_fac <- Filter(is.factor, tab[var_ajust]) %>% colnames()
+  if(length(varsnum)){
     right <- paste0("s(", varsnumGam, ")", collapse=" + ")
     rightLin <- paste0(varsnum, collapse=" + ")
-    if (length(varsfac) > 0) {
+    if (length(varsfac)) {
       right <- paste(right, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
       rightLin <- paste(rightLin, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
+    }
+    if (length(var_ajust_num)){
+      right <- paste(right, "+", paste0("ns(", var_ajust_num, ")", collapse=" + "))
+      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(var_ajust_num, collapse = " + ")))
+    }
+    if (length(var_ajust_fac)){
+      right <- paste(right, sprintf("+ %s", paste0(var_ajust_fac, collapse = " + ")))
+      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(var_ajust_fac, collapse = " + ")))
     }
     if (type %in% c("linear", "logistic")) {
       formule <- paste(vardep, "~", right)
@@ -48,7 +58,7 @@ create_spline <- function(tab, vardep, vars, type){
 }
 
 plot_nth_spline <- function(spline_gen, n){
-    coord <- plot(spline_gen$graph, select = n)[[n]]
+    coord <- plot(spline_gen$graph, select = n, scale = 0)[[n]]
     lin <- spline_gen$lin[[n]]
     abline(line(lin)$coef, col = 2)
     return(list(coord = coord, lin = lin))
@@ -73,7 +83,7 @@ plot_all_splines <- function(tab, vardep, varindep, var_ajust, type){
     select_if(is.numeric) %>%
     colnames()
 
-  spline_gen <- create_spline(tab, vardep, c(varindep, var_ajust), type)
+  spline_gen <- create_spline(tab, vardep, varindep, var_ajust, type)
   for (n in seq_along(varSpline)){
     plot_nth_spline(spline_gen, n)
   }
