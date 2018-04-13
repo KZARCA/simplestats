@@ -78,7 +78,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   })
   elimine <- names(tab)[!analysables]
   if (length(elimine) > 0) {
-    vars <- vars[-match(elimine, vars)]
+    vars <- vars[-na.omit(match(elimine, vars))]
   }
   tab <- tab[analysables]
   formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
@@ -93,7 +93,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   if(!is_model_possible(mod)){
     if (length(varAjust) > 0) {
       elimine <- varAjust
-      vars <- vars[-match(elimine, vars)]
+      vars <- vars[-na.omit(match(elimine, vars))]
       mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(varAjust, collapse = " - "))))
     } else return("ERROR_MODEL")
   } else {
@@ -110,7 +110,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
       old_elimine <- elimine
       elimine <- remove_big_vif(tab, varAjust, vardep, vars, type, infl, elimine) # in priority, remove varAjust
       if(length(elimine) - length(old_elimine) > 0){
-        vars <- vars[-match(elimine, vars)]
+        vars <- vars[-na.omit(match(elimine, vars))]
         mod <- stats::update(mod, as.formula(paste(vardep, "~", paste(vars, collapse = " + "))))
         infl <- suppressWarnings(car::vif(mod))
         if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]

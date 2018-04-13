@@ -54,6 +54,8 @@ test_that("define_varAjust returns variables with a univariate pvalue < any thre
 
 })
 
+
+
 test_that("recherche_multicol removes 1-level factors", {
   tab <- standardize_tab(colon) %>% make_tab_survival("status", var_time = "time")
   tab$elim1 <- rep(1, nrow(tab)) %>% as.factor()
@@ -65,6 +67,8 @@ test_that("recherche_multicol removes 1-level factors", {
     expect_equal(character(0))
   recherche_multicol(tab, "status", c("sex", "nodes"), varAjust = character(0), type = "survival") %>%
     expect_equal(character(0))
+  recherche_multicol(tab, "age", "sex", character(0), "linear")
+
 })
 
 test_that("recherche_multicol removes aliased coefficients", {
