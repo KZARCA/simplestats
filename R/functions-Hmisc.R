@@ -66,8 +66,8 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
 
   attr(x, 'label') <- value
 
-  if(!'labelled' %in% class(x)) {
-    class(x) <- c('labelled', class(x))
+  if(!'labelled_simplestat' %in% class(x)) {
+    class(x) <- c('labelled_simplestat', class(x))
   }
   return(x)
 }
@@ -104,7 +104,7 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
 
 #' @export
 #' @rdname label
-"[.labelled"<- function(x, ...) {
+"[.labelled_simplestat"<- function(x, ...) {
   tags <- valueTags(x)
   x <- NextMethod("[")
   valueTags(x) <- tags
@@ -113,7 +113,7 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
 
 #' @export
 #' @rdname label
-print.labelled <- function(x, ...) {
+print.labelled_simplestat <- function(x, ...) {
   x.orig <- x
   u <- attr(x, 'units', exact=TRUE)
   if(length(u))
@@ -126,10 +126,10 @@ print.labelled <- function(x, ...) {
 
   attr(x, "label") <- NULL
   class(x) <-
-    if(length(class(x))==1 && class(x)=='labelled')
+    if(length(class(x))==1 && class(x)=='labelled_simplestat')
       NULL
   else
-    class(x)[class(x) != 'labelled']
+    class(x)[class(x) != 'labelled_simplestat']
 
   ## next line works around print bug
   if(!length(attr(x,'class')))
@@ -141,11 +141,11 @@ print.labelled <- function(x, ...) {
 
 #' @export
 #' @rdname label
-as.data.frame.labelled <- as.data.frame.vector
+as.data.frame.labelled_simplestat <- as.data.frame.vector
 
 #' @export
 #' @rdname label
-relevel.labelled <- function(x, ...) {
+relevel.labelled_simplestat <- function(x, ...) {
   lab <- label(x)
   x <- NextMethod(x)
   label(x) <- lab
@@ -163,7 +163,7 @@ valueTags <- function(x)
 "valueTags<-" <- function(x, value) {
   if(is.null(value) || length(value) == 0) {
     attributes(x)[names(attributes(x)) %in% .valueTagAttrs] <- NULL
-    class(x) <- class(x)[class(x) != 'labelled']
+    class(x) <- class(x)[class(x) != 'labelled_simplestat']
     return(x)
   }
 
@@ -176,7 +176,7 @@ valueTags <- function(x)
 
   if(length(value) == 0) {
     attributes(x)[names(attributes(x)) %in% .valueTagAttrs] <- NULL
-    class(x) <- class(x)[class(x) != 'labelled']
+    class(x) <- class(x)[class(x) != 'labelled_simplestat']
     return(x)
   }
 
@@ -186,8 +186,8 @@ valueTags <- function(x)
 
   consolidate(attributes(x)) <- value
 
-  if(all(class(x) != 'labelled'))
-    class(x) <- c('labelled', class(x))
+  if(all(class(x) != 'labelled_simplestat'))
+    class(x) <- c('labelled_simplestat', class(x))
 
   return(x)
 }

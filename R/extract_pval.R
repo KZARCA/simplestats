@@ -73,6 +73,7 @@ extract_pval.default <- function(x, y, ...){
         test <- "Fisher"
       }, silent = TRUE)
       if (is.null(f)){
+        set.seed(1)
         f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
         test <- "Fisher"
       }
