@@ -1,9 +1,9 @@
 Package: simplestats
 Type: Package
 Title: Simplifies descriptive/bivariate tables and plot generations
-Version: 0.2.6
+Version: 0.2.7
 Author: person("Kevin", "Zarca", email = "kevin@pvalue.io", role = c("aut", "cre"))
-Maintainer: Kevin Zarca <kevin@free.fr>
+Maintainer: Kevin Zarca <kevin@pvalue.io>
 Description: Pvalue.io Companion
 License: GPL (>=3)
 Encoding: UTF-8

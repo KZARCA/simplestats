@@ -343,3 +343,11 @@ remove_multibyte_if_any <- function(x){
     x
   }
 }
+
+solve_contrast <- function(tab, vardep, x) {
+  if(!is.null(x)){
+    tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
+      na.exclude()
+    are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
+  } else FALSE
+}

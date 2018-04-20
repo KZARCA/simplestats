@@ -1,3 +1,4 @@
+context("results-bivar")
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 
 test_that("create_ligne_bivar.factor_num is working", {

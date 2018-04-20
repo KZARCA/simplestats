@@ -1,3 +1,4 @@
+context("adjustment")
 library(survival)
 
 test_def <- function(tab, threshold, args){
@@ -34,6 +35,11 @@ test_that("define_varAjust returns variables with a univariate pvalue < 0.2", {
   tab <- make_tab_survival(tab, "status", var_time = "time")
   test_def(tab, .2, args = c(list("status"), list(varindep), list("survival")))
 
+})
+
+test_that("define_varAjust removes variables with contrasts problems", {
+  tab <- data.frame(V1 = c(rep("non", 49), "oui"), V2 = c((1:49)^2, NA), V3 = rnorm(50), V4 = 1:50)
+  expect_equal(names(define_varAjust(tab, "V2", "V3", "linear")), "V4")
 })
 
 test_that("define_varAjust returns variables with a univariate pvalue < any threshold", {

@@ -1,3 +1,4 @@
+context("prepare_tab")
 library(survival)
 test_that("make_tab_survival works with var_time, passage 1 & 2", {
   tab <- colon

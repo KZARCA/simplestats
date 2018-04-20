@@ -17,7 +17,8 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
   map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
-    if (vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time"){
+    if (vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time" &
+        solve_contrast(tab, vardep, tab[[vars[i]]])){
       varsi <- ifelse(is.numeric(tab[[vars[i]]]),
                       paste0(ifelse(type == "survival", "ns(","ns("), vars[i], ")"),
                       vars[i])

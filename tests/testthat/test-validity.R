@@ -1,3 +1,4 @@
+context("validity")
 test_that("is_number_enough works", {
   slice(colon, 1:31) %>%
     is_number_enough("age", c("rx", "sex")) %>%

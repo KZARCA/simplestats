@@ -1,3 +1,4 @@
+context("graphical-checks")
 test_that("prepare_zph is working", {
   tab <- standardize_tab(colon) %>%
     make_tab_survival("status", var_time = "time")
@@ -33,13 +34,13 @@ test_that("create_spline returns a length 3 list when at least 1 independant var
   expect_length(create_spline(tab, "status", c("rx", "differ", "age"), type = "survival"), 3)
 })
 
-test_that("create_spline returns a length 3 list with as many graph and lin as numeric independant variables", {
+test_that("create_spline returns a list with as many graph and lin as numeric independant variables", {
   tab <- standardize_tab(colon)
   test_splines_graph <- function(tab, vardep, varindep, type){
     l <- length(select_if(tab[varindep], is.numeric))
     create_spline(tab, vardep, varindep, type = type) %>%
       extract2("graph") %>%
-      extract2("var.summary") %>%
+      extract2("smooth") %>%
       expect_length(l)
   }
   test_splines_lin <- function(tab, vardep, varindep, type){
@@ -52,7 +53,7 @@ test_that("create_spline returns a length 3 list with as many graph and lin as n
   test_splines_graph(tab, "sex", c("age", "nodes"), "logistic")
   tab %<>% make_tab_survival("status", var_time = "time")
   test_splines_graph(tab, "status", c("age", "nodes"), "survival")
-  test_splines_lin(tab, "age", c("sex", "nodes"), "linear")
+  test_splines_lin(tab, "age", c("nodes"), "linear")
   test_splines_lin(tab, "sex", c("age", "nodes"), "logistic")
   test_splines_lin(tab, "status", c("age", "nodes"), "survival")
 })

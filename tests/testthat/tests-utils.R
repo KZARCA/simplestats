@@ -1,3 +1,4 @@
+context("utils")
 test_that("get_choix_var works", {
   tab <- standardize_tab(colon)
   expect_equal(unname(get_choix_var(tab)), sort(names(tab)))

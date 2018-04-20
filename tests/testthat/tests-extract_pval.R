@@ -1,3 +1,4 @@
+context("extract_pval")
 test_that("extract_pval_glob.lm works", {
   tab <- standardize_tab(colon)
   mod <- lm(age ~ rx + nodes + extent + sex, data = tab)
