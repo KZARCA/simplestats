@@ -287,7 +287,7 @@ remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
       else if (type == "linear")
         mod <- lm(as.formula(formule), data = tab)
       else if (type == "survival"){
-        tab2 <- dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars)) %>%
+        tab2 <- tab[, c(".time", vardep, vars)] %>%
           na.exclude()
         formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
         mod <- survival::coxph(formula = as.formula(formule), data = tab2)
@@ -350,4 +350,14 @@ solve_contrast <- function(tab, vardep, x) {
       na.exclude()
     are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
   } else FALSE
+}
+
+update_mod <- function(tab, mod, vardep, vars, type, left_form = NULL){
+  mod <- stats::update(mod,
+                       as.formula(
+                         sprintf("%s ~ %s",
+                                 ifelse(type == "survival", left_form, vardep),
+                                 paste(vars, collapse = " + ")
+                         )),
+                       data = tab)
 }

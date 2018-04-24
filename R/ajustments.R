@@ -33,7 +33,11 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
         tab2 <- dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars[i])) %>%
           na.exclude
         formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
-        mod <- survival::coxph(formula = as.formula(formule), data = tab2)
+        mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab2),
+                        warning=function(w) w)
+        if(is(mod, "warning") && grepl("beta may be infinite", mod$message)) {
+          mod <- NULL
+        }
       }
       else mod <- NULL
       if(!is.null(mod)){
@@ -83,12 +87,14 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
   }
   tab <- tab[analysables]
   formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
+  left_form <- NULL
   if (type == "logistic"){
     mod <- arm::bayesglm(formule, data = tab, family = "binomial")
   } else if (type == "linear") {
     mod <- lm(formule, data = tab)
   } else if (type == "survival"){
-    formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")) %>% as.formula()
+    left_form <- sprintf("Surv(.time, %s)", vardep)
+    formule <- sprintf("%s ~ %s", left_form, paste(vars, collapse = " + ")) %>% as.formula()
     mod <- survival::coxph(formula = formule, data = tab)
   }
   if(!is_model_possible(mod)){
@@ -103,7 +109,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
       vari <- map_lgl(vars, ~ any(grepl(., alias)))
       elimine <- append(elimine, vars[vari])
       vars <-  vars[!vari]
-      mod <- stats::update(mod, as.formula(paste(vardep, "~", paste(vars, collapse = " + "))))
+      mod <- update_mod(tab, mod, vardep, vars, type, left_form)
     }
     if (length(vars) > 1){ #remove big vif
       infl <- suppressWarnings(car::vif(mod))
@@ -112,7 +118,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
       elimine <- remove_big_vif(tab, varAjust, vardep, vars, type, infl, elimine) # in priority, remove varAjust
       if(length(elimine) - length(old_elimine) > 0){
         vars <- vars[-na.omit(match(elimine, vars))]
-        mod <- stats::update(mod, as.formula(paste(vardep, "~", paste(vars, collapse = " + "))))
+        mod <- update_mod(tab, mod, vardep, vars, type, left_form)
         infl <- suppressWarnings(car::vif(mod))
         if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       }

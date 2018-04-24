@@ -74,7 +74,25 @@ test_that("recherche_multicol removes 1-level factors", {
   recherche_multicol(tab, "status", c("sex", "nodes"), varAjust = character(0), type = "survival") %>%
     expect_equal(character(0))
   recherche_multicol(tab, "age", "sex", character(0), "linear")
+})
 
+test_that("recherche_multicol works with all types of models", {
+  tab <- standardize_tab(colon) %>% make_tab_survival("status", var_time = "time")
+  vardep <- "age"
+  varindep <- "sex"
+  var_ajust <- define_varAjust(tab, vardep, varindep, "linear")
+  recherche_multicol(tab, vardep, varindep , names(var_ajust), "linear") %>%
+    expect_error(NA)
+  vardep <- "sex"
+  varindep <- "age"
+  var_ajust <- define_varAjust(tab, vardep, varindep, "logistic")
+  recherche_multicol(tab, vardep, varindep , names(var_ajust), "logistic") %>%
+    expect_error(NA)
+  vardep <- "status"
+  varindep <- "sex"
+  var_ajust <- define_varAjust(tab, vardep, varindep, "survival")
+  recherche_multicol(tab, vardep, varindep , names(var_ajust), "survival") %>%
+    expect_error(NA)
 })
 
 test_that("recherche_multicol removes aliased coefficients", {
