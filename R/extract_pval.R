@@ -84,7 +84,8 @@ extract_pval.default <- function(x, y, ...){
       broom::tidy() %>%
       magrittr::extract("p.value") %>%
       dplyr::slice(1) %>%
-      purrr::as_vector("double")
+      purrr::as_vector("double") %>%
+      round(10)
     return(list(pval = pval, test = test))
   } else {
     return(list(pval = NA, test = "-"))
