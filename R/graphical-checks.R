@@ -1,5 +1,5 @@
 create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
-  mod <- NULL
+  model <- NULL
   if (type == "survival") varindep <- varindep[!varindep %in% ".time"]
   varsnum <- Filter(is.numeric, tab[varindep]) %>% colnames()
   varsnumGam <- varsnum %>%
@@ -95,9 +95,9 @@ prepare_zph <- function(tab, vardep, varindep, var_ajust) {
   coxph(formule, data = tab)
 }
 
-plot_nth_zph <- function(mod, n){
-  plot(cox.zph(mod), var = n, resid = FALSE)
-  abline(h = mod$coefficients[n], col = 2)
+plot_nth_zph <- function(model, n){
+  plot(cox.zph(model), var = n, resid = FALSE)
+  abline(h = model$coefficients[n], col = 2)
 }
 
 #' Title
@@ -112,11 +112,11 @@ plot_nth_zph <- function(mod, n){
 #'
 #' @examples
 plot_all_zph <- function(tab, vardep, varindep, var_ajust){
-  mod <- prepare_zph(tab, vardep, varindep, var_ajust)
+  model <- prepare_zph(tab, vardep, varindep, var_ajust)
   nb <- map_dbl(varindep, function(x){
     if (is.numeric(tab[[x]])) 1 else nlevels(tab[[x]]) - 1
   })
   for(n in seq_len(sum(nb))){
-    plot_nth_zph(mod, n)
+    plot_nth_zph(model, n)
   }
 }

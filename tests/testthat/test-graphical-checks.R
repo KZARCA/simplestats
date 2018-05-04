@@ -1,4 +1,7 @@
 context("graphical-checks")
+
+pdf(NULL) #prevents the creation of a Rplots.pdf file
+
 test_that("prepare_zph is working", {
   tab <- standardize_tab(colon) %>%
     make_tab_survival("status", var_time = "time")
@@ -86,3 +89,4 @@ test_that("plot_nth_spline is working", {
   expect_error(nth_spline(tab, "sex", c("age", "nodes"), "logistic", 1:2), NA)
   expect_error(nth_spline(tab, "status", c("age", "nodes"), "survival", 1:2), NA)
 })
+

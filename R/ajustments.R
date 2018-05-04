@@ -68,8 +68,8 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
 #' @export
 #'
 #' @examples
-recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
-  vars <- c(varindep, varAjust)
+recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
+  vars <- c(varindep, var_ajust)
   elimine <- NULL
   if (type == "survival") {
     tab <- na.exclude(tab[c(vardep, vars, ".time")])
@@ -98,10 +98,10 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
     mod <- survival::coxph(formula = formule, data = tab)
   }
   if(!is_model_possible(mod)){
-    if (length(varAjust) > 0) {
-      elimine <- varAjust
+    if (length(var_ajust) > 0) {
+      elimine <- var_ajust
       vars <- vars[-na.omit(match(elimine, vars))]
-      mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(varAjust, collapse = " - "))))
+      mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(var_ajust, collapse = " - "))))
     } else return("ERROR_MODEL")
   } else {
     if(any(is.na(coef(mod)))){ #remove alias
@@ -115,7 +115,7 @@ recherche_multicol <- function(tab, vardep, varindep, varAjust, type){
       infl <- suppressWarnings(car::vif(mod))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       old_elimine <- elimine
-      elimine <- remove_big_vif(tab, varAjust, vardep, vars, type, infl, elimine) # in priority, remove varAjust
+      elimine <- remove_big_vif(tab, var_ajust, vardep, vars, type, infl, elimine) # in priority, remove var_ajust
       if(length(elimine) - length(old_elimine) > 0){
         vars <- vars[-na.omit(match(elimine, vars))]
         mod <- update_mod(tab, mod, vardep, vars, type, left_form)

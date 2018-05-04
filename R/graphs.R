@@ -2,25 +2,25 @@
 #'
 #' @param tab The data frame
 #' @param vardep The dependent variable
-#' @param var_n The independant variable
+#' @param varindep The independant variable
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
 #'
 #' @return a ggplot2 graph
 #' @export
 #'
 #' @examples
-print_plot_desc <- function(tab, vardep = NULL, var_n = NULL, type = "linear"){
+print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"){
   if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ 1", vardep)
     r <- survfit(as.formula(formule), data = tab)
     ggsurv(r, ylab=label(tab[[vardep]]), cens.shape = "|", back.white = TRUE)  + scale_y_continuous(labels = scales::percent)
-  } else if (is.numeric(tab[[var_n]])){
-    ggplot(remove_missing(tab, na.rm = TRUE, vars = var_n)) + aes_string(x = var_n) + geom_histogram() + theme_bw() + labs(y = "Number")
+  } else if (is.numeric(tab[[varindep]])){
+    ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
-    if (nlevels(tab[[var_n]]) < 5){
-      ggplot(tab) + aes_string(x = var_n, fill=var_n) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent) + guides(fill=FALSE) + labs(y = "Proportion")
+    if (nlevels(tab[[varindep]]) < 5){
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent) + guides(fill=FALSE) + labs(y = "Proportion")
     } else {
-      ggplot(tab) + aes_string(x = var_n, fill=var_n) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent) + labs(y = "Proportion", fill=label(tab[[var_n]])) + scale_x_discrete(breaks = NULL)
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent) + labs(y = "Proportion", fill=label(tab[[varindep]])) + scale_x_discrete(breaks = NULL)
     }
   }
 }
@@ -30,32 +30,32 @@ print_plot_desc <- function(tab, vardep = NULL, var_n = NULL, type = "linear"){
 #'
 #' @param tab The data frame
 #' @param vardep The dependent variable
-#' @param var_n The independant variable
+#' @param varindep The independant variable
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
 #'
 #' @return a ggplot2 graph
 #' @export
 #'
 #' @examples
-print_plot_bivar <- function(tab, vardep, var_n, type = "linear"){
-  tvarn <- tab[[var_n]]
+print_plot_bivar <- function(tab, vardep, varindep, type = "linear"){
+  tvarn <- tab[[varindep]]
   if (type == "linear"){
     if (is.factor(tvarn)){
-      boxplot_bivar(tab, vardep, var_n)
+      boxplot_bivar(tab, vardep, varindep)
     } else {
-      plot_reglin(tab, vardep, var_n)
+      plot_reglin(tab, vardep, varindep)
     }
   } else if (type != "survival"){
     if (is.numeric(tvarn)){
-      boxplot_bivar(tab, var_n, vardep)
+      boxplot_bivar(tab, varindep, vardep)
     } else if (is.factor(tvarn)){
-      barplot_bivar(tab, var_n, vardep)
+      barplot_bivar(tab, varindep, vardep)
     }
   } else {
     if (is.factor(tvarn)){
-      formule <- sprintf("Surv(.time, %s) ~ %s", vardep, var_n)
+      formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varindep)
       r <- survfit(as.formula(formule), data = tab)
-      names(r$strata) <- gsub(var_n, label(tvarn), names(r$strata))
+      names(r$strata) <- gsub(varindep, label(tvarn), names(r$strata))
       ggsurv(r, ylab=label(tab[[vardep]]), back.white = TRUE, cens.shape = "|") + scale_y_continuous(labels = scales::percent)
     }
   }

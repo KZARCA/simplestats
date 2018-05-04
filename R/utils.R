@@ -1,14 +1,14 @@
 #' Extract objects from a model
 #'
-#' @param mod an object of type "lm" or "coxph"
+#' @param model an object of type "lm" or "coxph"
 #' @param vector A character vector of object to extract
 #'
 #' @return A vector
 #' @export
 #'
 #' @examples
-extract_from_model <- function(mod, vector){
-  extracted <- mod %>%
+extract_from_model <- function(model, vector){
+  extracted <- model %>%
     broom::tidy() %>%
     dplyr::filter(term != "(Intercept)" & term != "Residuals")
 
@@ -16,8 +16,8 @@ extract_from_model <- function(mod, vector){
     setNames(extracted$term)
 }
 
-is_model_possible <- function(mod){
-  isTRUE(class(mod)[[1]] == "lm" && df.residual(mod) != 0 && deviance(mod) >= sqrt(.Machine$double.eps) | class(mod)[[1]] != "lm")
+is_model_possible <- function(model){
+  isTRUE(class(model)[[1]] == "lm" && df.residual(model) != 0 && deviance(model) >= sqrt(.Machine$double.eps) | class(model)[[1]] != "lm")
 }
 
 
@@ -283,16 +283,16 @@ remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
     if (length(vars) > 1){
       formule <- paste(vardep, "~", paste(vars, collapse = "+"))
       if (type == "logistic")
-        mod <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
+        model <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
       else if (type == "linear")
-        mod <- lm(as.formula(formule), data = tab)
+        model <- lm(as.formula(formule), data = tab)
       else if (type == "survival"){
         tab2 <- tab[, c(".time", vardep, vars)] %>%
           na.exclude()
         formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
-        mod <- survival::coxph(formula = as.formula(formule), data = tab2)
+        model <- survival::coxph(formula = as.formula(formule), data = tab2)
       }
-      infl <- suppressWarnings(car::vif(mod))
+      infl <- suppressWarnings(car::vif(model))
       if(!is.null(dim(infl)))
         infl <- infl[, 1, drop = TRUE]
       ajust <- infl[base::which(names(infl) %in% type_var)]
@@ -352,8 +352,8 @@ solve_contrast <- function(tab, vardep, x) {
   } else FALSE
 }
 
-update_mod <- function(tab, mod, vardep, vars, type, left_form = NULL){
-  mod <- stats::update(mod,
+update_mod <- function(tab, model, vardep, vars, type, left_form = NULL){
+  stats::update(model,
                        as.formula(
                          sprintf("%s ~ %s",
                                  ifelse(type == "survival", left_form, vardep),

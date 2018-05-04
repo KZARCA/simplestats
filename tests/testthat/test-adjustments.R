@@ -69,9 +69,9 @@ test_that("recherche_multicol removes 1-level factors", {
     expect_equal("elim1")
   recherche_multicol(tab, "age", c("sex", "elim1"), c("obstruct"), type = "linear") %>%
     expect_equal("elim1")
-  recherche_multicol(tab, "node4", "sex", varAjust = character(0), type = "logistic") %>%
+  recherche_multicol(tab, "node4", "sex", var_ajust = character(0), type = "logistic") %>%
     expect_equal(character(0))
-  recherche_multicol(tab, "status", c("sex", "nodes"), varAjust = character(0), type = "survival") %>%
+  recherche_multicol(tab, "status", c("sex", "nodes"), var_ajust = character(0), type = "survival") %>%
     expect_equal(character(0))
   recherche_multicol(tab, "age", "sex", character(0), "linear")
 })
@@ -100,7 +100,7 @@ test_that("recherche_multicol removes aliased coefficients", {
   x2 <- 2 * x1
   y <- rnorm( 100 )
   tab <- data.frame(x1, x2, y)
-  recherche_multicol(tab, "y", c("x1", "x2"), varAjust=character(0), type="linear") %>%
+  recherche_multicol(tab, "y", c("x1", "x2"), var_ajust=character(0), type="linear") %>%
     expect_equal("x2")
 })
 
