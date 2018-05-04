@@ -35,7 +35,8 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
         formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
         mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab2),
                         warning=function(w) w)
-        if(is(mod, "warning") && grepl("beta may be infinite", mod$message)) {
+        if (is(mod, "warning") && (grepl("beta may be infinite", mod$message) |
+                                  grepl("converge", mod$message))) {
           mod <- NULL
         }
       }
