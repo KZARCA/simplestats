@@ -361,3 +361,21 @@ update_mod <- function(tab, model, vardep, vars, type, left_form = NULL){
                          )),
                        data = tab)
 }
+
+identical_model_frame <- function(tab, formula){
+  mf <- model.frame(formula, data = tab)
+  l <- length(mf)
+  ide <- map(seq_len(l), function(i){
+    if (i < l){
+      map(seq.int(i + 1, l), function(j){
+        if(all(as.numeric(mf[[i]]) == as.numeric(mf[[j]]))){
+          names(mf)[c(i, j)]
+        }
+      }) %>% compact()
+    }
+  }) %>%
+    compact()
+  if(length(ide)){
+    reduce(ide, union)
+  } else NULL
+}

@@ -88,6 +88,13 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   }
   tab <- tab[analysables]
   formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
+
+  ide <- identical_model_frame(tab, formule)
+  if (length(ide)){
+    elimine <- map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique()
+    vars <- vars[-na.omit(match(elimine, vars))]
+  }
+
   left_form <- NULL
   if (type == "logistic"){
     mod <- arm::bayesglm(formule, data = tab, family = "binomial")
@@ -98,6 +105,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     formule <- sprintf("%s ~ %s", left_form, paste(vars, collapse = " + ")) %>% as.formula()
     mod <- survival::coxph(formula = formule, data = tab)
   }
+
   if(!is_model_possible(mod)){
     if (length(var_ajust) > 0) {
       elimine <- var_ajust
