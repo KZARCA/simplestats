@@ -12,7 +12,7 @@ factor_strings <- function(tab){
         b <- factor(x)
         if (nlevels(b) < 10) x <- reorder(b, b,function(y)-length(y))
         levels(x) %<>% str_trunc(20)
-      } else if (length(table(x)) < 5){
+      } else if (length(table(x)) < 5 & is_entier(x)){
         x <- factor(x)
         levels(x) %<>% str_trunc(20)
       }
