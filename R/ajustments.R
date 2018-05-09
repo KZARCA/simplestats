@@ -22,7 +22,7 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
       varsi <- ifelse(is.numeric(tab[[vars[i]]]),
                       paste0(ifelse(type == "survival", "ns(","ns("), vars[i], ")"),
                       vars[i])
-      formule = paste(vardep, "~", varsi)
+      formule <- paste(vardep, "~", varsi)
       if (type == "logistic"){
         formule2 <- paste(vardep, "~", vars[i])
         mod <- arm::bayesglm(formula = as.formula(formule), data = tab, family = "binomial")
@@ -42,10 +42,15 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
       }
       else mod <- NULL
       if(!is.null(mod)){
-        p <- extract_pval_glob(mod, show_df1 = TRUE)[1]
-        names(p) <- vars[i]
-        if (p < seuil | test == TRUE) return(p)
-        else return(NULL)
+        p <- tryCatch(extract_pval_glob(mod, show_df1 = TRUE)[1],
+                      error = function(e)e)
+        if (is(p, "error") && (grepl("residual sum of squares is 0", p$message))) {
+          return(NULL)
+        } else {
+          names(p) <- vars[i]
+          if (p < seuil | test == TRUE) return(p)
+          else return(NULL)
+        }
       }
     }
     return(p)
