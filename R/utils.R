@@ -381,13 +381,15 @@ identical_model_frame <- function(tab, formula){
 }
 
 #' @export
-is_entier <- function(x){
+is_entier <- function(x, include2 = FALSE){
   if(is.factor(x)) {
     lev <- suppressWarnings(as.numeric(as.character(levels(x))))
-    all(is_wholenumber(lev), na.rm = TRUE) & nlevels(x) <= 10 & nlevels(x) >= 2
+    nlevsup2 <- ifelse(include2, nlevels(x) >= 2, nlevels(x) > 2)
+    all(is_wholenumber(lev), na.rm = TRUE) & nlevels(x) <= 10 & nlevsup2
   } else {
     lev <- unique(na.exclude(x))
-    all(is_wholenumber(lev), na.rm = TRUE) & length(lev) <= 10 & length(lev) >= 2
+    nlevsup2 <- ifelse(include2, length(lev) >= 2, length(lev) > 2)
+    all(is_wholenumber(lev), na.rm = TRUE) & length(lev) <= 10 & nlevsup2
   }
 }
 
