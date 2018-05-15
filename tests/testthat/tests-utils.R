@@ -1,4 +1,5 @@
 context("utils")
+library(survival)
 test_that("get_choix_var works", {
   tab <- standardize_tab(colon)
   expect_equal(unname(get_choix_var(tab)), sort(names(tab)))
@@ -33,6 +34,22 @@ test_that("extract_from_model is working",{
   expect_equivalent(extract_from_model(car::Anova(mod), "statistic"), broom::tidy(car::Anova(mod))$statistic[seq_len(3)])
   mod2 <- coxph(Surv(.time, status) ~ sex + rx + nodes, data = tab)
   expect_equal(extract_from_model(mod2, "estimate"), coef(mod2))
+})
+
+test_that("is_entier is working", {
+  expect_true(
+    is_entier(
+      round(runif(100, 1, 8),0)
+  ))
+  expect_false(
+    is_entier(
+      round(runif(100, 1, 2),0)
+    ))
+  expect_true(
+    is_entier(
+      round(runif(100, 1, 2),0),
+      TRUE
+    ))
 })
 
 
