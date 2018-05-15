@@ -380,7 +380,6 @@ identical_model_frame <- function(tab, formula){
   } else NULL
 }
 
-#' @export
 is_entier <- function(x){
   if(is.factor(x)) {
     lev <- suppressWarnings(as.numeric(as.character(levels(x))))

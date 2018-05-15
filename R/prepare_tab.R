@@ -16,7 +16,7 @@ factor_strings <- function(tab){
         x <- factor(x)
         levels(x) %<>% str_trunc(20)
       }
-      if (is.factor(x) & nlevels(x) < 2) x <- as.character(x)
+      if (is.factor(x) & nlevels(x) < 2 | is.numeric(x) & length(table(x)) < 2) x <- as.character(x)
       return(x)
     }), stringsAsFactors = FALSE
   )
