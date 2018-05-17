@@ -9,7 +9,7 @@ test_def <- function(tab, threshold, args){
     formule <- sprintf("%s ~ adhere", args[[1]]) %>% as.formula()
     i <- 1
   } else if (args[[3]] == "logistic"){
-    .fun <- arm::bayesglm
+    .fun <- glm
     formule <- sprintf("%s ~ adhere", args[[1]]) %>% as.formula()
     i <- 1
   } else if (args[[3]] == "survival"){

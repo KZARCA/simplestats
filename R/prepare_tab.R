@@ -10,8 +10,10 @@ factor_strings <- function(tab){
     lapply(tab, function(x) {
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
-        if (nlevels(b) < 10) x <- reorder(b, b,function(y)-length(y))
-        levels(x) %<>% str_trunc(20)
+        if (nlevels(b) < 10) {
+          x <- reorder(b, b,function(y)-length(y))
+          levels(x) %<>% str_trunc(20)
+        }
       } else if (length(table(x)) < 5 & is_entier(x)){
         x <- factor(x)
         levels(x) %<>% str_trunc(20)

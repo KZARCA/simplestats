@@ -283,7 +283,7 @@ remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
     if (length(vars) > 1){
       formule <- paste(vardep, "~", paste(vars, collapse = "+"))
       if (type == "logistic")
-        model <- arm::bayesglm(as.formula(formule), data = tab, family = "binomial")
+        model <- glm(as.formula(formule), data = tab, family = "binomial")
       else if (type == "linear")
         model <- lm(as.formula(formule), data = tab)
       else if (type == "survival"){

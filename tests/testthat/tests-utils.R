@@ -41,14 +41,9 @@ test_that("is_entier is working", {
     is_entier(
       round(runif(100, 1, 8),0)
   ))
-  expect_false(
-    is_entier(
-      round(runif(100, 1, 2),0)
-    ))
   expect_true(
     is_entier(
-      round(runif(100, 1, 2),0),
-      TRUE
+      round(runif(100, 1, 2),0)
     ))
 })
 

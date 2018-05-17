@@ -25,7 +25,7 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
       formule <- paste(vardep, "~", varsi)
       if (type == "logistic"){
         formule2 <- paste(vardep, "~", vars[i])
-        mod <- arm::bayesglm(formula = as.formula(formule), data = tab, family = "binomial")
+        mod <- glm(formula = as.formula(formule), data = tab, family = "binomial")
         if (mod$converged == FALSE)  mod <- NULL
       } else if (type == "linear"){
         mod <- lm(formula = as.formula(formule), data = tab)
@@ -102,7 +102,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
 
   left_form <- NULL
   if (type == "logistic"){
-    mod <- arm::bayesglm(formule, data = tab, family = "binomial")
+    mod <- glm(formule, data = tab, family = "binomial")
   } else if (type == "linear") {
     mod <- lm(formule, data = tab)
   } else if (type == "survival"){
