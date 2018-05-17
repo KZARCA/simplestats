@@ -1,6 +1,6 @@
 create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
   model <- NULL
-  if (type == "survival") varindep <- varindep[!varindep %in% ".time"]
+  if (type == "survival") varindep <- remove_elements(varindep, ".time")
   varsnum <- Filter(is.numeric, tab[varindep]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {

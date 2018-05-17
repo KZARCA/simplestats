@@ -273,11 +273,15 @@ tidy.anova <- function(x, ...){
   ret
 }
 
-remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
-  ajust <- infl[base::which(names(infl) %in% type_var)]
+remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = FALSE) {
+  vars <- c(varindep, var_ajust)  %>%
+    remove_elements(elimine)
+  var_ajust <- remove_elements(var_ajust, elimine)
+  selected_vars <- (if(only_var_ajust) var_ajust else vars)
+  ajust <- infl[which(names(infl) %in% selected_vars)]
   while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
     gros <- names(ajust[which.max(ajust)])
-    type_var <- type_var[type_var != gros]
+    selected_vars <- selected_vars[selected_vars != gros]
     vars <- vars[vars != gros]
     elimine <- append(elimine, gros)
     if (length(vars) > 1){
@@ -293,9 +297,8 @@ remove_big_vif <- function(tab, type_var, vardep, vars, type, infl, elimine) {
         model <- survival::coxph(formula = as.formula(formule), data = tab2)
       }
       infl <- suppressWarnings(car::vif(model))
-      if(!is.null(dim(infl)))
-        infl <- infl[, 1, drop = TRUE]
-      ajust <- infl[base::which(names(infl) %in% type_var)]
+      if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      ajust <- infl[which(names(infl) %in% selected_vars)]
     }
   }
   elimine
@@ -398,3 +401,8 @@ is_wholenumber <-
       abs(x - round(x)) < tol
   }
 
+#' @export
+remove_elements <- function(vector, ...){
+  dots <- list(...) %>% unlist
+  vector[!vector %in% dots]
+}

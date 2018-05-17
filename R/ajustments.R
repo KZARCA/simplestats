@@ -75,6 +75,7 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
 #'
 #' @examples
 recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
+  if (is.null(var_ajust)) var_ajust <- character(0)
   vars <- c(varindep, var_ajust)
   elimine <- NULL
   if (type == "survival") {
@@ -129,14 +130,14 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
       infl <- suppressWarnings(car::vif(mod))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       old_elimine <- elimine
-      elimine <- remove_big_vif(tab, var_ajust, vardep, vars, type, infl, elimine) # in priority, remove var_ajust
+      elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
       if(length(elimine) - length(old_elimine) > 0){
         vars <- vars[-na.omit(match(elimine, vars))]
         mod <- update_mod(tab, mod, vardep, vars, type, left_form)
         infl <- suppressWarnings(car::vif(mod))
         if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       }
-      elimine <- remove_big_vif(tab, varindep, vardep, vars, type, infl, elimine) # if necessary, remove varindep
+      elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
     }
     return(elimine)
   }
