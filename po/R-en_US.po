@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2018-02-23 16:01\n"
+"POT-Creation-Date: 2018-05-24 14:37\n"
 "PO-Revision-Date: 2018-02-25 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -24,18 +24,38 @@ msgstr "Global p-value computation..."
 msgid "Confidence Intervals Computation"
 msgstr "Confidence Intervals Computation"
 
+msgid "the default string cannot be of length greater then one"
+msgstr ""
+
+msgid "length of default must same as x"
+msgstr ""
+
+msgid "cannot assign a list to be a object label"
+msgstr ""
+
+msgid "value must be character vector of length 1"
+msgstr ""
+
+msgid "x must be a data.frame"
+msgstr ""
+
+msgid "value must have the same length as x"
+msgstr ""
+
+msgid "list must be a named list of valueTags"
+msgstr ""
+
+msgid "length of vector of imputed values != no. NAs in x"
+msgstr ""
+
 msgid "Proportion"
 msgstr "Proportion"
 
 msgid "Number"
 msgstr "Number"
 
-msgid ""
-"Unable to load this file because of unreadable characters in the column "
-"names. Delete these characters, or convert your file to Excel format"
+msgid "Unable to load this file because of unreadable characters."
 msgstr ""
-"Unable to load this file because of unreadable characters in the column "
-"names. Delete these characters, or convert your file to Excel format"
 
 msgid "mean (sd)"
 msgstr "mean (sd)"
@@ -66,3 +86,10 @@ msgstr ""
 
 msgid ","
 msgstr ""
+
+#~ msgid ""
+#~ "Unable to load this file because of unreadable characters in the column "
+#~ "names. Delete these characters, or convert your file to Excel format"
+#~ msgstr ""
+#~ "Unable to load this file because of unreadable characters in the column "
+#~ "names. Delete these characters, or convert your file to Excel format"

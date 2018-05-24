@@ -39,23 +39,20 @@ import_csv <- function(file, enc = "") {
 read_tab_import <- function(file, sep = "\t", dec = "."){
   ext <- tolower(tools::file_ext(file))
   tab <- NULL
+  err <- NULL
 
   if(ext %in% c("csv", "txt")){
-    tab <- import_delim(file, sep = sep, dec = dec)
-    #tries <- try(make.names(names(tab)), silent = TRUE)
+    tab <- tryCatch(import_delim(file, sep = sep, dec = dec),
+                    error = function(e) e)
+    if (is(tab, "error") & grepl("type.convert", tab)) {
+      err <- paste(
+        gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
+      )
+    }
 
-    # if("try-error" %in% class(tries)) {
-    #   encodings <- c("utf8","latin1", "MAC")
-    #   for(enc in encodings){
-    #     if ("try-error" %in% class(tries)){
-    #       tab <- import_csv(file, firstImport, encoding = enc, sep = sep, dec = dec)
-    #       tries <- try(make.names(names(tab)), silent = TRUE)
-    #     }
-    #   }
-    #   if ("try-error" %in% class(tries)){
-    #     stop(shiny::safeError(gettext("Unable to load this file because of unreadable characters in the column names. Delete these characters, or convert your file to Excel format", domain = "R-simplestats")))
-    #   }
-    # }
+    if(!is.null(err)){
+      return(err)
+    }
     ## correspondance : colnames, same as in the original csv file
     ## names(tab) : colnames, with make.names
     ## label(tab) : correspondance with standardize_tab
