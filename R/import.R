@@ -44,10 +44,12 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
   if(ext %in% c("csv", "txt")){
     tab <- tryCatch(import_delim(file, sep = sep, dec = dec),
                     error = function(e) e)
-    if (is(tab, "error") & grepl("type.convert", tab)) {
-      err <- paste(
-        gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
-      )
+    if (is(tab, "error")) {
+      if (grepl("type.convert", tab)){
+        err <- gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
+      } else {
+        err <- gettext("Unable to load this file.", domain = "R-simplestats")
+      }
     }
 
     if(!is.null(err)){
@@ -62,10 +64,21 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     names(tab) <- make.names(correspondance)
 
   } else if (ext %in% c("xls", "xlsx")){
-    tab <- readxl::read_excel(file, sheet = 1, guess_max = 10000)
+    tab <- tryCatch(readxl::read_excel(file, sheet = 1, guess_max = 10000),
+                   error = function(e) e)
+    if (is(tab, "error")) {
+      if (grepl("Failed to open", tab)){
+        err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
+      } else {
+        err <- gettext("Unable to load this file.", domain = "R-simplestats")
+      }
+    }
+    if(!is.null(err)){
+      return(err)
+    }
     correspondance <- names(tab)
   }
-  if (!is.null(tab)) tab <- standardize_tab(tab)
+  tab <- standardize_tab(tab)
   return(list(tab, correspondance))
 }
 

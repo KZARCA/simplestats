@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2018-05-24 14:37\n"
+"POT-Creation-Date: 2018-05-26 14:16\n"
 "PO-Revision-Date: 2018-02-25 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -55,6 +55,12 @@ msgid "Number"
 msgstr "Number"
 
 msgid "Unable to load this file because of unreadable characters."
+msgstr ""
+
+msgid "Unable to load this file."
+msgstr ""
+
+msgid "Unable to load this file. Try to convert it into xlsx."
 msgstr ""
 
 msgid "mean (sd)"
