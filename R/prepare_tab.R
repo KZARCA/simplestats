@@ -208,7 +208,9 @@ make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateI
 #' @export
 #'
 #' @examples
-create_tabi <- function(tab, univ){
-  select_if(tab, function(x) is.factor(x) | is.numeric(x) & length(table(x)) > 1) %>%
-    select_if(function(x) get_propDM(x) <= 0.2 | univ)
+  create_tabi <- function(tab, univ){
+    Filter(function(x) length(table(x)) > 1, tab) %>%
+      Filter(function(x) get_propDM(x) <= 0.2 | univ, .)
+  #select_if(tab, function(x) is.factor(x) | is.numeric(x) & length(table(x)) > 1) %>%
+  #  select_if(function(x) get_propDM(x) <= 0.2 | univ)
 }
