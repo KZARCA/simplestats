@@ -117,30 +117,30 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
       elimine <- var_ajust
       vars <- vars[-na.omit(match(elimine, vars))]
       mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(var_ajust, collapse = " - "))))
+      if (!is_model_possible(mod)) return("ERROR_MODEL")
     } else return("ERROR_MODEL")
-  } else {
-    if(any(is.na(coef(mod)))){ #remove alias
-      alias <- names(which(is.na(coef(mod))))
-      vari <- map_lgl(vars, ~ any(grepl(., alias)))
-      elimine <- append(elimine, vars[vari])
-      vars <-  vars[!vari]
+  }
+  if(any(is.na(coef(mod)))){ #remove alias
+    alias <- names(which(is.na(coef(mod))))
+    vari <- map_lgl(vars, ~ any(grepl(., alias)))
+    elimine <- append(elimine, vars[vari])
+    vars <-  vars[!vari]
+    mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+  }
+  if (length(vars) > 1){ #remove big vif
+    infl <- suppressWarnings(car::vif(mod))
+    if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+    old_elimine <- elimine
+    elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
+    if(length(elimine) - length(old_elimine) > 0){
+      vars <- vars[-na.omit(match(elimine, vars))]
       mod <- update_mod(tab, mod, vardep, vars, type, left_form)
-    }
-    if (length(vars) > 1){ #remove big vif
       infl <- suppressWarnings(car::vif(mod))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-      old_elimine <- elimine
-      elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
-      if(length(elimine) - length(old_elimine) > 0){
-        vars <- vars[-na.omit(match(elimine, vars))]
-        mod <- update_mod(tab, mod, vardep, vars, type, left_form)
-        infl <- suppressWarnings(car::vif(mod))
-        if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-      }
-      elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
     }
-    return(elimine)
+    elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
   }
+return(elimine)
 }
 
 #' Format adjustment variables
