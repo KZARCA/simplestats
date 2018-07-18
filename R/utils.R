@@ -365,13 +365,20 @@ update_mod <- function(tab, model, vardep, vars, type, left_form = NULL){
                        data = tab)
 }
 
-identical_model_frame <- function(tab, formula){
+identical_model_frame <- function(tab, formula, type){
   mf <- model.frame(formula, data = tab)
-  l <- length(mf)
+  if (type == "survival"){
+    exLabel <- names(which(label(tab) == attr(mf[[1]], "inputAttributes")$event$label))
+    mf <- cbind(mf[[1]][, 2], mf)
+    mf[[2]] <- mf[[2]][, 1]
+    names(mf)[1] <- ".time"
+    names(mf)[2] <- exLabel
+  }
+  l <- ncol(mf)
   ide <- map(seq_len(l), function(i){
     if (i < l){
       map(seq.int(i + 1, l), function(j){
-        if(all(as.numeric(mf[[i]]) == as.numeric(mf[[j]]))){
+        if (sum(as.numeric(mf[[i]]) == as.numeric(mf[[j]])) > 0.90 * nrow(mf)){
           names(mf)[c(i, j)]
         }
       }) %>% compact()

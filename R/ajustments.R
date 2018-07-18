@@ -93,9 +93,12 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     vars <- vars[-na.omit(match(elimine, vars))]
   }
   tab <- tab[analysables]
-  formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
-
-  ide <- identical_model_frame(tab, formule)
+  if (type == "survival"){
+    formule <- as.formula(sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")))
+  } else {
+    formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
+  }
+  ide <- identical_model_frame(tab, formule, type)
   if (length(ide)){
     elimine <- map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique()
     vars <- vars[-na.omit(match(elimine, vars))]
