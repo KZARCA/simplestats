@@ -138,7 +138,7 @@ extract_pval_glob.default <- function(x, ...){
     if (n == 1) {
       if (en_test | show_df1) m
       else NA
-    } else c(m, rep(NA, n - 1))
+    } else c(m, rep(NA, max(0, n - 1)))
   }) %>%
     purrr::flatten_dbl()
 }
