@@ -123,13 +123,23 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
       if (!is_model_possible(mod)) return("ERROR_MODEL")
     } else return("ERROR_MODEL")
   }
-  if(any(is.na(coef(mod)))){ #remove alias
-    alias <- names(which(is.na(coef(mod))))
-    vari <- map_lgl(vars, ~ any(grepl(., alias)))
+  tab_mod <- broom::tidy(mod)
+  alias <- dplyr::filter(tab_mod, is.na(estimate) | is.nan(statistic) | is.infinite(statistic)) %>%
+    magrittr::extract2("term")
+  vari <- map_lgl(vars, ~ any(grepl(., alias)))
+  if(length(alias)){
     elimine <- append(elimine, vars[vari])
     vars <-  vars[!vari]
     mod <- update_mod(tab, mod, vardep, vars, type, left_form)
   }
+
+  # if(any(is.na(coef(mod)))){ #remove alias
+  #   alias <- names(which(is.na(coef(mod))))
+  #   vari <- map_lgl(vars, ~ any(grepl(., alias)))
+  #   elimine <- append(elimine, vars[vari])
+  #   vars <-  vars[!vari]
+  #   mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+  # }
   if (length(vars) > 1){ #remove big vif
     infl <- suppressWarnings(car::vif(mod))
     if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
