@@ -124,8 +124,9 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     } else return("ERROR_MODEL")
   }
   tab_mod <- broom::tidy(mod)
-  alias <- dplyr::filter(tab_mod, is.na(estimate) | is.nan(statistic) | is.infinite(statistic)) %>%
+  alias <- dplyr::filter(tab_mod, is.nan(statistic) | is.infinite(statistic)) %>%
     magrittr::extract2("term")
+  alias <- c(alias, names(which(is.na(coef(mod)))))
   vari <- map_lgl(vars, ~ any(grepl(., alias)))
   if(length(alias)){
     elimine <- append(elimine, vars[vari])
