@@ -56,7 +56,7 @@ is_homoscedatic.lm <- function(x, ...){
   model <- x
   if(length(model$model) > 2 || is.numeric(model$model[[2]])){
     res <- rstudent(model)
-    nb_breaks <- max(2, min(floor(nrow(model$model)/20), 5))
+    nb_breaks <- max(2, min(floor(nrow(model$model)/50), 5))
     x <- res
     y <- cut(model$fitted.values,
              breaks = unique(quantile(model$fitted.values, probs = seq(0,1,1/nb_breaks)), include.lowest = TRUE))

@@ -148,9 +148,11 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
     if(length(elimine) - length(old_elimine) > 0){
       vars <- vars[-na.omit(match(elimine, vars))]
-      mod <- update_mod(tab, mod, vardep, vars, type, left_form)
-      infl <- suppressWarnings(car::vif(mod))
-      if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      if (length(vars) > 1){
+        mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+        infl <- suppressWarnings(car::vif(mod))
+        if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      }
     }
     elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
   }
