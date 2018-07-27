@@ -8,6 +8,7 @@ remove_na_lines <- function(tab){
 factor_strings <- function(tab){
   as.data.frame(
     lapply(tab, function(x) {
+      if(inherits(x, "POSIXct")) x %<>% as.character()
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
         if (nlevels(b) < 10) {
