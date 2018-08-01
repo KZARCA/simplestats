@@ -29,14 +29,14 @@ remove_alias <- function(vars, mod) {
   return(vari)
 }
 
-get_big_vif <- function(tab, vardep, varindep, var_ajust, type, elimine, mod, left_form){
-  vars <- c(vardep, varindep)
+get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
+  vars <- c(varindep, var_ajust)
+  elimine <- character(0)
   if (length(vars) > 1){
     infl <- suppressWarnings(car::vif(mod))
     if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-    old_elimine <- elimine
-    elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
-    if(length(elimine) - length(old_elimine) > 0){
+    elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = TRUE) # in priority, remove var_ajust
+    if(length(elimine)){
       vars <- vars[-na.omit(match(elimine, vars))]
       if (length(vars) > 1){
         mod <- update_mod(tab, mod, vardep, vars, type, left_form)
@@ -44,14 +44,15 @@ get_big_vif <- function(tab, vardep, varindep, var_ajust, type, elimine, mod, le
         if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       }
     }
-    big_vif <- which(infl > 5)
-    if (length(big_vif)){
-      if (varindep[1] %in% names(big_vif)) infl[varindep[1]] <- 0
-      remaining_varindep <- intersect(vars, varindep)
-      if (all(remaining_varindep %in% names(big_vif))) infl[remaining_varindep] <- 0
-      elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
-    }
+    # big_vif <- which(infl > 5)
+    # if (length(big_vif)){
+    #   if (varindep[1] %in% names(big_vif)) infl[varindep[1]] <- 0
+    #   remaining_varindep <- intersect(vars, varindep)
+    #   if (all(remaining_varindep %in% names(big_vif))) infl[remaining_varindep] <- 0
+      elimine <- append(elimine, remove_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, infl)) # if necessary, remove all other vars
+    #}
   }
+  return(elimine)
 }
 
 get_choix_var <- function(tab){
@@ -306,13 +307,16 @@ tidy.anova <- function(x, ...){
   ret
 }
 
-remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = FALSE) {
-  vars <- c(varindep, var_ajust)  %>%
-    remove_elements(elimine)
-  var_ajust <- remove_elements(var_ajust, elimine)
+remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = FALSE) {
+  vars <- c(varindep, var_ajust)
   selected_vars <- (if(only_var_ajust) var_ajust else vars)
   ajust <- infl[which(names(infl) %in% selected_vars)]
+  elimine <- character(0)
+
   while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
+    big_vif <- which(ajust > 5)
+    if (varindep[1] %in% names(big_vif)) ajust[varindep[1]] <- 0
+
     gros <- names(ajust[which.max(ajust)])
     selected_vars <- selected_vars[selected_vars != gros]
     vars <- vars[vars != gros]

@@ -126,15 +126,14 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
 
   alias <- remove_alias(vars, mod)
   if (length(alias)){
-    vars <- vars[!alias]
     elimine <- append(elimine, vars[alias])
+    vars <- vars[!alias]
     mod <- update_mod(tab, mod, vardep, vars, type, left_form)
   }
 
-
-  big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, elimine, mod, left_form)
+  big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, mod, left_form)
   if (length(big_vif)){
-    elimine <- append(elimine, vars[alias])
+    elimine <- append(elimine, big_vif)
   }
 
 

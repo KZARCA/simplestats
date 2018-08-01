@@ -106,9 +106,9 @@ test_that("recherche_multicol removes aliased coefficients", {
 
 test_that("recherche_multicol removes high vif covariates", {
   recherche_multicol(mtcars, "mpg", c("disp", "hp", "wt", "qsec"), NULL, type = "linear") %>%
-  expect_equal("disp")
+  expect_equal("wt")  # would have been disp if it was not the varindep[1]
   recherche_multicol(mtcars, "mpg", c("disp", "hp", "wt", "qsec", "cyl"), NULL, type = "linear") %>%
-  expect_equal(c("disp", "cyl"))
+  expect_equal(c("cyl", "wt"))
   recherche_multicol(mtcars, "mpg", c("hp", "wt", "qsec"), "disp", type = "linear") %>%
   expect_equal("disp")
   recherche_multicol(car::Duncan, "prestige", c("income", "education"), NULL, type = "linear") %>%
@@ -121,7 +121,7 @@ test_that("recherche_multicol removes high vif covariates", {
   mtcars$x2 <- 2 * mtcars$x1
 
   recherche_multicol(mtcars, "mpg", c("disp", "hp", "wt", "qsec", "cyl", "x1", "x2"), NULL, type = "linear") %>%
-    expect_equal(c("x2", "disp", "cyl"))
+    expect_equal(c("x2", "cyl", "wt"))
 })
 
 test_that("recherche_multicol removes high vif varAjust in priority over varindep", {
