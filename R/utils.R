@@ -20,6 +20,39 @@ is_model_possible <- function(model){
   isTRUE(class(model)[[1]] == "lm" && df.residual(model) != 0 && deviance(model) >= sqrt(.Machine$double.eps) | class(model)[[1]] != "lm")
 }
 
+remove_alias <- function(vars, mod) {
+  tab_mod <- broom::tidy(mod)
+  alias <- dplyr::filter(tab_mod, is.nan(statistic) | is.infinite(statistic)) %>%
+    magrittr::extract2("term")
+  alias <- c(alias, names(which(is.na(coef(mod)))))
+  vari <- map_lgl(vars, ~ any(grepl(., alias)))
+  return(vari)
+}
+
+get_big_vif <- function(tab, vardep, varindep, var_ajust, type, elimine, mod, left_form){
+  vars <- c(vardep, varindep)
+  if (length(vars) > 1){
+    infl <- suppressWarnings(car::vif(mod))
+    if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+    old_elimine <- elimine
+    elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
+    if(length(elimine) - length(old_elimine) > 0){
+      vars <- vars[-na.omit(match(elimine, vars))]
+      if (length(vars) > 1){
+        mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+        infl <- suppressWarnings(car::vif(mod))
+        if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      }
+    }
+    big_vif <- which(infl > 5)
+    if (length(big_vif)){
+      if (varindep[1] %in% names(big_vif)) infl[varindep[1]] <- 0
+      remaining_varindep <- intersect(vars, varindep)
+      if (all(remaining_varindep %in% names(big_vif))) infl[remaining_varindep] <- 0
+      elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
+    }
+  }
+}
 
 get_choix_var <- function(tab){
   lab <- label(tab)
