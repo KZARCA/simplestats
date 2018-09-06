@@ -125,7 +125,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   }
 
   alias <- remove_alias(vars, mod)
-  if (length(alias)){
+  if (any(alias)){
     elimine <- append(elimine, vars[alias])
     vars <- vars[!alias]
     mod <- update_mod(tab, mod, vardep, vars, type, left_form)

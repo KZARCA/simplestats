@@ -333,6 +333,12 @@ remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, only_va
         formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
         model <- survival::coxph(formula = as.formula(formule), data = tab2)
       }
+      alias <- remove_alias(vars, model)
+      if (any(alias)){
+        elimine <- append(elimine, vars[alias])
+        vars <- vars[!alias]
+        model <- update_mod(tab, model, vardep, vars, type, sprintf("Surv(.time, %s)", vardep))
+      }
       infl <- suppressWarnings(car::vif(model))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       ajust <- infl[which(names(infl) %in% selected_vars)]
