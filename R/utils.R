@@ -59,7 +59,7 @@ get_choix_var <- function(tab){
   lab <- label(tab)
   names(tab) %>%
     setNames(lab) %>%
-    sort
+    sort()
 }
 
 drop_levels <- function(tab){
@@ -283,6 +283,10 @@ are_enough_levels <- function(tab, x){
     is_greater_than(1)
 }
 
+are_enough_cor <- function(tab, x, y){
+  if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) nrow(tab) > 3L else TRUE
+}
+
 #' @export
 tidy.anova <- function(x, ...){
   renamers <- c(Df = "df", `Sum Sq` = "sumsq", `Mean Sq` = "meansq",
@@ -394,7 +398,7 @@ solve_contrast <- function(tab, vardep, x) {
   if(!is.null(x)){
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
-    are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
+    are_enough_cor(tmp, "a", "b") && are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
   } else FALSE
 }
 
