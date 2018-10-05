@@ -161,8 +161,8 @@ ggkm <- function(sfit,
                    ci = FALSE,
                    subs = NULL,
                    linecols="default",
-                   dashed= FALSE,
-                   ...) {
+                   BW = FALSE
+                   ) {
   breaks = scales::pretty_breaks(5)(sfit$time)
     #################################
     # sorting the use of subsetting #
@@ -247,17 +247,18 @@ ggkm <- function(sfit,
     # specifying axis parameteres etc #
     ###################################
 
-    if(dashed == TRUE){
+
+    if (BW){
       linetype=c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "1F", "F1", "4C88C488", "12345678")
+      p <- ggplot(df, aes(x=time, y=surv, linetype=strata)) +
+        ggtitle(main)
     } else {
-      linetype=c("solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid")
+      p <- ggplot(df, aes(x=time, y=surv, colour = strata)) +
+        ggtitle(main)
     }
 
-    p <- ggplot( df, aes(x=time, y=surv, colour=strata, linetype=strata)) +
-      ggtitle(main)
-
     p <- p + theme_bw() +
-      theme(legend.position = "top") +
+      theme(legend.position = "top", legend.title = element_blank()) +
       scale_x_continuous(xlabs, breaks = breaks, limits = xlims) +
       scale_y_continuous(ylabs, limits = ylims, labels = scales::percent)
 
@@ -286,16 +287,20 @@ ggkm <- function(sfit,
       p <- p + theme(legend.position="none")
 
     #Add lines to plot
-    p <- p + geom_step(size = 0.75) +
-      scale_linetype_manual(name = ystrataname, values=linetype)
-    if (linecols != "default") {
-      p <- p + scale_colour_brewer(name = ystrataname, palette=linecols)
-    } else {
-      p <- p + scale_colour_hue(name = ystrataname)
+    p <- p + geom_step(size = 0.75)
+
+    if  (BW){
+      p <- p + scale_colour_grey()
     }
+
+    # if (linecols != "default" & !BW) {
+    #   p <- p + scale_colour_brewer(name = ystrataname, palette=linecols)
+    # } else {
+    #   p <- p + scale_colour_hue(name = ystrataname)
+    # }
     #Add censoring marks to the line:
     if(marks == TRUE)
-      p <- p + geom_point(data = subset(df, n.censor >= 1), aes(x = time, y = surv, colour = strata), shape = shape) +
+      p <- p + geom_point(data = subset(df, n.censor >= 1), aes(x = time, y = surv), shape = shape) +
       guides(colour = guide_legend(override.aes = list(shape = NA)))
 
     ## Create a blank plot for place-holding
@@ -319,8 +324,6 @@ ggkm <- function(sfit,
       # MOVE P-VALUE LEGEND HERE BELOW [set x and y]
       p <- p + annotate("text",x = (as.integer(max(sfit$time)/5)), y = 0.1,label = pvaltxt)
     }
-
-   # ggplot_build(p)$layout$panel_ranges[[1]]$y.major_source
 
     ###################################################
     # Create table graphic to include at-risk numbers #
@@ -364,7 +367,7 @@ ggkm <- function(sfit,
     #######################
 
     if(table == TRUE){
-      cowplot::plot_grid(p, data.table, ncol=1, align="v", rel_heights=c(2,0.5))
+      cowplot::plot_grid(p, data.table, ncol=1, align="v", rel_heights=c(2,0.4))
     } else {
       p
     }
