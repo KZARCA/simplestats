@@ -143,22 +143,16 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
   return(graph)
 }
 
-
+# this function for most part is inspired by ggkm: https://github.com/michaelway/ggkm
 #' @export
-ggkm <- function(sfit,
+ggsurv <- function(sfit,
                    table = FALSE,
                    xlabs = gettext("Time"),
                    ylabs = gettext("Survival"),
                    xlims = c(0, max(sfit$time)),
-                   ylims = c(0,1),
                    ystratalabs = names(sfit$strata),
-                   ystrataname = "",
                    main = "",
-                   pval = FALSE,
-                   marks = TRUE,
                    shape = "|",
-                   legend = TRUE,
-                   ci = FALSE,
                    subs = NULL,
                    linecols="default",
                    BW = FALSE
@@ -197,30 +191,27 @@ ggkm <- function(sfit,
       subs3 <- which(regexpr(ssvar,summary(sfit,times = breaks,extend = TRUE)$strata, perl=T)!=-1)
     }
 
-    if(!is.null(subs)) pval <- FALSE
 
     ##################################
     # data manipulation pre-plotting #
     ##################################
 
 
+  nstrata <- length(levels(summary(sfit)$strata))
 
-    if(length(levels(summary(sfit)$strata)) == 0) {
+
+    if(nstrata == 0) {
       #[subs1]
-      if(is.null(ystratalabs)) ystratalabs <- as.character(sub("group=*","","All"))
+      if(is.null(ystratalabs)) ystratalabs <- as.character(sub("group=*","",""))
+      Factor <- factor(rep("",length(subs2)))
     } else {
       #[subs1]
       if(is.null(ystratalabs)) ystratalabs <- as.character(sub("group=*","",names(sfit$strata)))
+      Factor <- factor(summary(sfit, censored = TRUE)$strata[subs2])
     }
 
-    if(is.null(ystrataname)) ystrataname <- "Strata"
     m <- max(nchar(ystratalabs))
 
-    if(length(levels(summary(sfit)$strata)) == 0) {
-      Factor <- factor(rep("All",length(subs2)))
-    } else {
-      Factor <- factor(summary(sfit, censored = T)$strata[subs2])
-    }
 
     #Data to be used in the survival plot
     df <- data.frame(
@@ -248,7 +239,7 @@ ggkm <- function(sfit,
     ###################################
 
 
-    if (BW){
+    if (BW | nstrata == 0){
       linetype=c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash", "1F", "F1", "4C88C488", "12345678")
       p <- ggplot(df, aes(x=time, y=surv, linetype=strata)) +
         ggtitle(main)
@@ -258,72 +249,45 @@ ggkm <- function(sfit,
     }
 
     p <- p + theme_bw() +
-      theme(legend.position = "top", legend.title = element_blank()) +
+      theme(legend.title = element_blank()) +
       scale_x_continuous(xlabs, breaks = breaks, limits = xlims) +
-      scale_y_continuous(ylabs, limits = ylims, labels = scales::percent)
+      scale_y_continuous(ylabs, limits = c(0,1), labels = scales::percent)
+
+    if (nstrata == 0){
+      p <- p + theme(legend.position="none")
+    } else {
+      if (table == TRUE) p <- p + theme(legend.position="bottom")
+    }
 
     if (table == TRUE){
       #Set up theme elements
       p <- p +
         theme(axis.title.x = element_text(vjust = 0.7),
               axis.line = element_line(size =0.5, colour = "black"),
-              #plot.margin = unit(c(0, 1, .5,ifelse(m < 10, 1.5, 2.5)),"lines"),
               axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
               axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black")
               )
     }
 
-    #Add 95% CI to plot
 
-    if(ci == TRUE & length(levels(summary(sfit)$strata)) == 0){
+    if(nstrata == 0){
       p <- p + geom_step(aes(y = upper), color = "black", lty = 2, size = 0.5) +
         geom_step(aes(y = lower), color = "black", lty = 2, size = 0.5)
-    } else if (ci == TRUE){
-      p <- p +  geom_ribbon(data=df, aes(ymin = lower, ymax = upper), fill = "grey", alpha=0.25, colour=NA)
     }
 
     #Removes the legend:
-    if(legend == FALSE)
-      p <- p + theme(legend.position="none")
 
     #Add lines to plot
     p <- p + geom_step(size = 0.75)
 
-    if  (BW){
+    if (BW | nstrata == 0){
       p <- p + scale_colour_grey()
     }
 
-    # if (linecols != "default" & !BW) {
-    #   p <- p + scale_colour_brewer(name = ystrataname, palette=linecols)
-    # } else {
-    #   p <- p + scale_colour_hue(name = ystrataname)
-    # }
     #Add censoring marks to the line:
-    if(marks == TRUE)
       p <- p + geom_point(data = subset(df, n.censor >= 1), aes(x = time, y = surv), shape = shape) +
       guides(colour = guide_legend(override.aes = list(shape = NA)))
 
-    ## Create a blank plot for place-holding
-    blank.pic <- ggplot(df, aes(time, surv)) +
-      geom_blank() + theme_bw() +
-      theme(axis.text.x = element_blank(),axis.text.y = element_blank(),
-            axis.title.x = element_blank(),axis.title.y = element_blank(),
-            axis.ticks = element_blank(),
-            panel.grid.major = element_blank(),panel.border = element_blank())
-
-    #####################
-    # p-value placement #
-    #####################a
-
-    if(length(levels(summary(sfit)$strata)) == 0) pval <- FALSE
-
-    if(pval == TRUE) {
-      sdiff <- survdiff(eval(sfit$call$formula), data = eval(sfit$call$data))
-      pvalue <- pchisq(sdiff$chisq,length(sdiff$n) - 1,lower.tail = FALSE)
-      pvaltxt <- ifelse(pvalue < 0.0001,"p < 0.0001",paste("p =", signif(pvalue, 3)))
-      # MOVE P-VALUE LEGEND HERE BELOW [set x and y]
-      p <- p + annotate("text",x = (as.integer(max(sfit$time)/5)), y = 0.1,label = pvaltxt)
-    }
 
     ###################################################
     # Create table graphic to include at-risk numbers #
@@ -352,7 +316,7 @@ ggkm <- function(sfit,
         scale_x_continuous(gettext("Numbers at risk"), limits = xlims, breaks=breaks) +
         theme(axis.title.x = element_text(size = 10, vjust = 1),
               panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-              panel.border = element_blank(),axis.text.x = element_blank(),
+              axis.text.x = element_blank(),
               axis.ticks = element_blank(),axis.text.y = element_text(face = "bold",hjust = 1))
 
       data.table <- data.table +
