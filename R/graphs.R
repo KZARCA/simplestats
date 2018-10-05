@@ -163,8 +163,7 @@ ggkm <- function(sfit,
                    linecols="default",
                    dashed= FALSE,
                    ...) {
-
-  breaks = scales::pretty_breaks(4)(sfit$time)
+  breaks = scales::pretty_breaks(5)(sfit$time)
     #################################
     # sorting the use of subsetting #
     #################################
@@ -235,6 +234,7 @@ ggkm <- function(sfit,
       lower = sfit$lower[subs2]
     )
 
+
     #Final changes to data for survival plot
     levels(df$strata) <- ystratalabs
     zeros <- data.frame(time = 0, surv = 1,
@@ -242,8 +242,6 @@ ggkm <- function(sfit,
                         upper = 1, lower = 1)
     df <- dplyr::bind_rows(zeros, df)
     d <- length(levels(df$strata))
-
-    print(levels(df$strata))
 
     ###################################
     # specifying axis parameteres etc #
@@ -254,7 +252,6 @@ ggkm <- function(sfit,
     } else {
       linetype=c("solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid", "solid")
     }
-
 
     p <- ggplot( df, aes(x=time, y=surv, colour=strata, linetype=strata)) +
       ggtitle(main)
@@ -269,15 +266,11 @@ ggkm <- function(sfit,
       p <- p +
         theme(axis.title.x = element_text(vjust = 0.7),
               axis.line = element_line(size =0.5, colour = "black"),
-              plot.margin = unit(c(0, 1, .5,ifelse(m < 10, 1.5, 2.5)),"lines"),
+              #plot.margin = unit(c(0, 1, .5,ifelse(m < 10, 1.5, 2.5)),"lines"),
               axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
               axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black")
               )
     }
-
-
-
-
 
     #Add 95% CI to plot
 
@@ -327,6 +320,8 @@ ggkm <- function(sfit,
       p <- p + annotate("text",x = (as.integer(max(sfit$time)/5)), y = 0.1,label = pvaltxt)
     }
 
+   # ggplot_build(p)$layout$panel_ranges[[1]]$y.major_source
+
     ###################################################
     # Create table graphic to include at-risk numbers #
     ###################################################
@@ -346,11 +341,12 @@ ggkm <- function(sfit,
 
       risk.data$strata <- factor(risk.data$strata, levels=rev(levels(risk.data$strata)))
 
+
       data.table <- ggplot(risk.data,aes(x = time, y = strata, label = format(n.risk, nsmall = 0))) +
         geom_text(size = 3.5) + theme_bw() +
         scale_y_discrete(breaks = as.character(levels(risk.data$strata)),
                          labels = rev(ystratalabs)) +
-        scale_x_continuous(gettext("Numbers at risk"), limits = xlims) +
+        scale_x_continuous(gettext("Numbers at risk"), limits = xlims, breaks=breaks) +
         theme(axis.title.x = element_text(size = 10, vjust = 1),
               panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
               panel.border = element_blank(),axis.text.x = element_blank(),
@@ -360,9 +356,6 @@ ggkm <- function(sfit,
         theme(legend.position = "none") + xlab(NULL) + ylab(NULL)
 
 
-      # ADJUST POSITION OF TABLE FOR AT RISK
-      data.table <- data.table +
-        theme(plot.margin = unit(c(-1.5, 1, 0.1, ifelse(m < 10, 2.5, 3.5) - 0.15 * m), "lines"))
     }
 
 
@@ -371,8 +364,7 @@ ggkm <- function(sfit,
     #######################
 
     if(table == TRUE){
-      grid.arrange(p, blank.pic, data.table, clip = FALSE, nrow = 3,
-                   ncol = 1, heights = unit(c(2, .1, .25),c("null", "null", "null")))
+      cowplot::plot_grid(p, data.table, ncol=1, align="v", rel_heights=c(2,0.5))
     } else {
       p
     }
