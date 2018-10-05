@@ -13,7 +13,7 @@ print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"
   if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ 1", vardep)
     r <- survfit(as.formula(formule), data = tab)
-    ggkm(r, ylab=label(tab[[vardep]]), cens.shape = "|", back.white = TRUE)  + scale_y_continuous(labels = scales::percent)
+    ggsurv(r, ylab=label(tab[[vardep]]), cens.shape = "|", back.white = TRUE)  + scale_y_continuous(labels = scales::percent)
   } else if (is.numeric(tab[[varindep]])){
     ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
@@ -150,8 +150,10 @@ ggsurv <- function(sfit,
                    xlabs = gettext("Time"),
                    ylabs = gettext("Survival"),
                    xlims = c(0, max(sfit$time)),
+                   ylims = NULL,
                    ystratalabs = names(sfit$strata),
                    main = "",
+                   CI = FALSE,
                    shape = "|",
                    subs = NULL,
                    linecols="default",
@@ -251,7 +253,7 @@ ggsurv <- function(sfit,
     p <- p + theme_bw() +
       theme(legend.title = element_blank()) +
       scale_x_continuous(xlabs, breaks = breaks, limits = xlims) +
-      scale_y_continuous(ylabs, limits = c(0,1), labels = scales::percent)
+      scale_y_continuous(ylabs, limits = ylims, labels = scales::percent)
 
     if (nstrata == 0){
       p <- p + theme(legend.position="none")
