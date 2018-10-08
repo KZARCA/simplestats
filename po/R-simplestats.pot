@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: simplestats 0.3.6\n"
-"POT-Creation-Date: 2018-05-26 14:16\n"
+"Project-Id-Version: simplestats 0.5.0\n"
+"POT-Creation-Date: 2018-10-08 16:44\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,6 +50,15 @@ msgid "Proportion"
 msgstr ""
 
 msgid "Number"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Survival"
+msgstr ""
+
+msgid "Numbers at risk"
 msgstr ""
 
 msgid "Unable to load this file because of unreadable characters."

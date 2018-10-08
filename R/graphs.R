@@ -156,8 +156,8 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL, pa
 #' @export
 ggsurv <- function(sfit,
                    table = FALSE,
-                   xlabs = gettext("Time"),
-                   ylabs = gettext("Survival"),
+                   xlabs = gettext("Time", domain = "R-simplestats"),
+                   ylabs = gettext("Survival", domain = "R-simplestats"),
                    xlims = c(0, max(sfit$time)),
                    ylims = NULL,
                    ystratalabs = names(sfit$strata),
@@ -339,7 +339,7 @@ ggsurv <- function(sfit,
         geom_text(size = 3.5) + theme_bw() +
         scale_y_discrete(breaks = as.character(levels(risk.data$strata)),
                          labels = rev(ystratalabs)) +
-        scale_x_continuous(gettext("Numbers at risk"), limits = xlims, breaks=breaks) +
+        scale_x_continuous(gettext("Numbers at risk", domain = "R-simplestats"), limits = xlims, breaks=breaks) +
         theme(axis.title.x = element_text(size = 10, vjust = 1),
               panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
               axis.text.x = element_blank(),
