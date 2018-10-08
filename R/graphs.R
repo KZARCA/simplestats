@@ -86,9 +86,13 @@ plot_reglin <- function(tab, x, y, method = "lm"){
 #' @export
 #'
 #' @examples
-boxplot_bivar <- function(tab, x, y) {
+boxplot_bivar <- function(tab, x, y, palette = "Set1") {
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
-  ggplot(tab) + aes_string(y, x, y, fill = y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
+  graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
+  if (palette == "Set1"){
+    graph <- graph + scale_fill_brewer(palette = palette)
+  }
+  graph
 }
 
 #' @export
@@ -108,7 +112,7 @@ boxplot_bivar_bw <- function(tab, x, y) {
 #' @export
 #'
 #' @examples
-barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
+barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL, palette = "Set1"){
   if (is.null(graphPercent) || !graphPercent){
     tab2 <- dplyr::select(tab, !!sym(x), !!sym(y)) %>%
       group_by(!!sym(y)) %>%
@@ -140,6 +144,11 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
     graph <- graph + facet_wrap(reformulate(paste("~ ", y)), ncol=4)
 
   graph <- graph + theme_bw()  + scale_x_discrete(breaks = NULL)
+
+  if (palette == "Set1"){
+    graph <- graph + scale_fill_brewer(palette = palette)
+  }
+
   return(graph)
 }
 
@@ -156,7 +165,7 @@ ggsurv <- function(sfit,
                    CI = FALSE,
                    shape = "|",
                    subs = NULL,
-                   linecols="default",
+                   palette="Set1",
                    BW = FALSE
                    ) {
   breaks = scales::pretty_breaks(5)(sfit$time)
@@ -264,9 +273,12 @@ ggsurv <- function(sfit,
 
     if(CI == TRUE & nstrata > 0) {
       if (!BW) {
-        p <- p + geom_ribbon(data=df, alpha=0.25, colour = NA, show.legend = F) + aes(ymin = lower, ymax = upper, fill = strata)
+        p <- p + geom_ribbon(data=df, alpha=0.25, colour = NA, show.legend = FALSE) + aes(ymin = lower, ymax = upper, fill = strata)
+        if(palette == "Set1"){
+          p <- p + scale_fill_brewer(palette = palette)
+        }
       } else {
-        p <- p + geom_ribbon(data=df, alpha=0.5, colour = NA, fill = "grey", show.legend = F) + aes(ymin = lower, ymax = upper)
+        p <- p + geom_ribbon(data=df, alpha=0.5, colour = NA, fill = "grey", show.legend = FALSE) + aes(ymin = lower, ymax = upper)
       }
     }
 
@@ -293,6 +305,9 @@ ggsurv <- function(sfit,
 
     if (BW | nstrata == 0){
       p <- p + scale_colour_grey()
+    }
+    if (palette == "Set1"){
+      p <- p + scale_colour_brewer(palette = palette)
     }
 
     #Add censoring marks to the line:
