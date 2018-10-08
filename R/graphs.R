@@ -261,6 +261,15 @@ ggsurv <- function(sfit,
       if (table == TRUE) p <- p + theme(legend.position="bottom")
     }
 
+
+    if(CI == TRUE & nstrata > 0) {
+      if (!BW) {
+        p <- p + geom_ribbon(data=df, alpha=0.25, colour = NA, show.legend = F) + aes(ymin = lower, ymax = upper, fill = strata)
+      } else {
+        p <- p + geom_ribbon(data=df, alpha=0.5, colour = NA, fill = "grey", show.legend = F) + aes(ymin = lower, ymax = upper)
+      }
+    }
+
     if (table == TRUE){
       #Set up theme elements
       p <- p +
