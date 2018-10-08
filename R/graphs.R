@@ -13,7 +13,7 @@ print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"
   if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ 1", vardep)
     r <- survfit(as.formula(formule), data = tab)
-    ggsurv(r, ylab=label(tab[[vardep]]), cens.shape = "|", back.white = TRUE)  + scale_y_continuous(labels = scales::percent)
+    ggsurv(r, ylab=label(tab[[vardep]]), ylims = c(0,1))
   } else if (is.numeric(tab[[varindep]])){
     ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
@@ -56,7 +56,7 @@ print_plot_bivar <- function(tab, vardep, varindep, type = "linear"){
       formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varindep)
       r <- survfit(as.formula(formule), data = tab)
       names(r$strata) <- gsub(varindep, label(tvarn), names(r$strata))
-      ggkm(r, ylab=label(tab[[vardep]]), back.white = TRUE, cens.shape = "|") + scale_y_continuous(labels = scales::percent)
+      ggsurv(r, ylab=label(tab[[vardep]]), table = TRUE, ylims = c(0,1))
     }
   }
 }
