@@ -90,7 +90,7 @@ boxplot_bivar <- function(tab, x, y, palette = "Set1") {
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
   graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
   if (palette == "Set1"){
-    graph <- graph + scale_fill_brewer(palette = palette)
+    graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
   }
   graph
 }
@@ -146,7 +146,7 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL, pa
   graph <- graph + theme_bw()  + scale_x_discrete(breaks = NULL)
 
   if (palette == "Set1"){
-    graph <- graph + scale_fill_brewer(palette = palette)
+    graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
   }
 
   return(graph)
@@ -275,7 +275,7 @@ ggsurv <- function(sfit,
       if (!BW) {
         p <- p + geom_ribbon(data=df, alpha=0.25, colour = NA, show.legend = FALSE) + aes(ymin = lower, ymax = upper, fill = strata)
         if(palette == "Set1"){
-          p <- p + scale_fill_brewer(palette = palette)
+          p <- p + scale_fill_brewer(palette = palette, na.value = "grey")
         }
       } else {
         p <- p + geom_ribbon(data=df, alpha=0.5, colour = NA, fill = "grey", show.legend = FALSE) + aes(ymin = lower, ymax = upper)
@@ -307,7 +307,7 @@ ggsurv <- function(sfit,
       p <- p + scale_colour_grey()
     }
     if (palette == "Set1"){
-      p <- p + scale_colour_brewer(palette = palette)
+      p <- p + scale_colour_brewer(palette = palette, na.value = "grey")
     }
 
     #Add censoring marks to the line:
