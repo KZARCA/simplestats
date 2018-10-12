@@ -112,7 +112,7 @@ boxplot_bivar_bw <- function(tab, x, y) {
 #' @export
 #'
 #' @examples
-barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL, palette = "Set1"){
+barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
   if (is.null(graphPercent) || !graphPercent){
     tab2 <- dplyr::select(tab, !!sym(x), !!sym(y)) %>%
       group_by(!!sym(y)) %>%
@@ -144,10 +144,6 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL, pa
     graph <- graph + facet_wrap(reformulate(paste("~ ", y)), ncol=4)
 
   graph <- graph + theme_bw()  + scale_x_discrete(breaks = NULL)
-
-  if (palette == "Set1"){
-    graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
-  }
 
   return(graph)
 }
@@ -305,8 +301,7 @@ ggsurv <- function(sfit,
 
     if (BW | nstrata == 0){
       p <- p + scale_colour_grey()
-    }
-    if (palette == "Set1"){
+    } else if (palette == "Set1"){
       p <- p + scale_colour_brewer(palette = palette, na.value = "grey")
     }
 
