@@ -27,7 +27,7 @@ Imports:
   ggplot2(>= 2.2),
   cowplot(>= 0.9.2),
   forcats(>= 0.2),
-  scales(>= 0.4),
+  scales(>= 1.0),
   stringi(>= 1.1.5),
   arm(>= 1.9),
   splines(>= 3.4),

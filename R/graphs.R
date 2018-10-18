@@ -18,9 +18,9 @@ print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"
     ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
     if (nlevels(tab[[varindep]]) < 5){
-      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent) + guides(fill=FALSE) + labs(y = "Proportion")
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + guides(fill=FALSE) + labs(y = "Proportion")
     } else {
-      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent) + labs(y = "Proportion", fill=label(tab[[varindep]])) + scale_x_discrete(breaks = NULL)
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(y = "Proportion", fill=label(tab[[varindep]])) + scale_x_discrete(breaks = NULL)
     }
   }
 }
@@ -86,7 +86,7 @@ plot_reglin <- function(tab, x, y, method = "lm"){
 #' @export
 #'
 #' @examples
-boxplot_bivar <- function(tab, x, y, palette = "Set1") {
+boxplot_bivar <- function(tab, x, y, palette = "hue") {
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
   graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
   if (palette == "Set1"){
@@ -126,7 +126,7 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
       ggplot(remove_missing(tab2, na.rm = TRUE, vars = y))
 
     graph <- ggtab2 + aes_string(x = x, fill = x, y = "perc") + geom_bar(stat = "identity")  +
-      facet_grid(reformulate(paste(". ~ ", y))) + scale_y_continuous(labels = scales::percent) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Proportion", domain = "R-simplestats"))
+      facet_grid(reformulate(paste(". ~ ", y))) + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Proportion", domain = "R-simplestats"))
   } else {
     ggtab <- if (!is.null(showGraphNA) && !showGraphNA) {
       ggplot(remove_missing(tab, na.rm = TRUE, vars = c(x, y)))
@@ -161,7 +161,7 @@ ggsurv <- function(sfit,
                    CI = FALSE,
                    shape = "|",
                    subs = NULL,
-                   palette="Set1",
+                   palette="hue",
                    BW = FALSE
                    ) {
   breaks = scales::pretty_breaks(5)(sfit$time)
@@ -258,7 +258,7 @@ ggsurv <- function(sfit,
     p <- p + theme_bw() +
       theme(legend.title = element_blank()) +
       scale_x_continuous(xlabs, breaks = breaks, limits = xlims) +
-      scale_y_continuous(ylabs, limits = ylims, labels = scales::percent)
+      scale_y_continuous(ylabs, limits = ylims, labels = scales::percent_format(accuracy = 1))
 
     if (nstrata == 0){
       p <- p + theme(legend.position="none")
