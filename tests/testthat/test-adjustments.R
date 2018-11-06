@@ -111,9 +111,9 @@ test_that("recherche_multicol removes high vif covariates", {
   expect_equal(c("cyl", "wt"))
   recherche_multicol(mtcars, "mpg", c("hp", "wt", "qsec"), "disp", type = "linear") %>%
   expect_equal("disp")
-  recherche_multicol(car::Duncan, "prestige", c("income", "education"), NULL, type = "linear") %>%
+  recherche_multicol(carData::Duncan, "prestige", c("income", "education"), NULL, type = "linear") %>%
     expect_equal(character(0))
-  recherche_multicol(car::Duncan, "prestige", c("income", "education", "type"), NULL, type = "linear") %>%
+  recherche_multicol(carData::Duncan, "prestige", c("income", "education", "type"), NULL, type = "linear") %>%
     expect_equal("education")
 
   set.seed(1)
