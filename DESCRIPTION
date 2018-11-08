@@ -1,7 +1,7 @@
 Package: simplestats
 Type: Package
 Title: Simplifies descriptive/bivariate tables and plot generations
-Version: 0.5.0
+Version: 0.6.0
 Author: person("Kevin", "Zarca", email = "kevin@pvalue.io", role = c("aut", "cre"))
 Maintainer: Kevin Zarca <kevin@pvalue.io>
 Description: Pvalue.io Companion
@@ -12,7 +12,6 @@ Imports:
   dplyr(>= 0.6),
   purrr(>= 0.2.3),
   magrittr(>= 1.5),
-  arm(>= 1.9-3),
   survival(>= 2.40),
   broom(>= 0.4),
   stringr(>= 1.2.0),
@@ -29,9 +28,8 @@ Imports:
   forcats(>= 0.2),
   scales(>= 1.0),
   stringi(>= 1.1.5),
-  arm(>= 1.9),
   splines(>= 3.4),
   mgcv(>= 1.8),
   readr(>= 1.1.1)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: testthat

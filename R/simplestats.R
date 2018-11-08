@@ -95,7 +95,6 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom rlang "%||%"
 #' @importFrom forcats fct_drop
 #' @importFrom readxl read_excel
-#' @importFrom arm bayesglm
 #' @importFrom mgcv gam
 #' @importFrom mgcv cox.ph
 #' @importFrom splines ns

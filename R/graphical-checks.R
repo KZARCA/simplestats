@@ -39,7 +39,7 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
     suppressWarnings({
       if (type == "logistic"){
         graph <- gam(as.formula(formule), data=tab, family = "binomial")
-        mLin <- bayesglm(as.formula(formuleLin), data=tab, family = "binomial", drop.unused.levels = FALSE)
+        mLin <- glm(as.formula(formuleLin), data=tab, family = "binomial")
         lin <- termplot(mLin, plot = FALSE)
       }
       else if (type == "linear") {
