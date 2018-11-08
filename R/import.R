@@ -45,7 +45,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     tab <- tryCatch(import_delim(file, sep = sep, dec = dec),
                     error = function(e) e)
     if (is(tab, "error")) {
-      if (grepl("type.convert", tab)){
+      if (grepl("type.convert", tab$message)){
         err <- gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
       } else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
@@ -67,7 +67,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     tab <- tryCatch(readxl::read_excel(file, sheet = 1, guess_max = 10000),
                    error = function(e) e)
     if (is(tab, "error")) {
-      if (grepl("Failed to open", tab)){
+      if (grepl("Failed to open", tab$message)){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
       } else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
