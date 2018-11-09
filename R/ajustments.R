@@ -161,7 +161,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   #     elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
   #   }
   # }
-  return(elimine)
+  return(setdiff(elimine, varindep[1]))
 }
 
 #' Format adjustment variables

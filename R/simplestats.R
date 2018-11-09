@@ -63,6 +63,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom purrr map_df
 #' @importFrom purrr walk
 #' @importFrom purrr modify_if
+#' @importFrom purrr reduce
 #' @importFrom boot boot
 #' @importFrom boot boot.ci
 #' @importFrom survival coxph
