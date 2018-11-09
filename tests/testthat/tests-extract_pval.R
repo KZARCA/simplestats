@@ -4,7 +4,7 @@ test_that("extract_pval_glob.lm works", {
   mod <- lm(age ~ rx + nodes + extent + sex, data = tab)
   pglob <- broom::tidy(car::Anova(mod))$p.value
   expect_equal(extract_pval_glob(mod), c(pglob[1], NA, NA, pglob[3], NA, NA, NA))
-  mod2 <- arm::bayesglm(sex ~ rx + nodes + extent + age, data = tab, family = binomial)
+  mod2 <- glm(sex ~ rx + nodes + extent + age, data = tab, family = binomial)
   pglob <- broom::tidy(car::Anova(mod2))$p.value
   expect_equal(extract_pval_glob(mod2), c(pglob[1], NA, NA, pglob[3], NA, NA, NA))
 })
