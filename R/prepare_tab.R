@@ -1,7 +1,12 @@
 
-remove_na_lines <- function(tab){
+remove_na_rows <- function(tab){
   max <- which(rowSums(is.na(tab)) == ncol(tab))[1]
   if(!is.na(max)) tab <- tab[1:(max-1),]
+  return(tab)
+}
+remove_na_cols <- function(tab){
+  max <- which(colSums(is.na(tab)) == nrow(tab))[1]
+  if(!is.na(max)) tab <- tab[,1:(max-1)]
   return(tab)
 }
 
@@ -146,11 +151,12 @@ remove_guillemets <- function(tab){
 #'
 #' @examples
 standardize_tab <- function(tab){
+  tab %<>% remove_na_cols()
   tab <- tab[!is.na(names(tab)) & names(tab) != ""]
   labs <- standardize_names(names(tab), trunc = TRUE)
 
   tab %<>%
-    remove_na_lines() %>%
+    remove_na_rows() %>%
     replace_virgules() %>%
     transform_date() %>%
     lower_tab() %>%

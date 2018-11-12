@@ -76,7 +76,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     if(!is.null(err)){
       return(err)
     }
-    correspondance <- names(tab)
+    correspondance <- names(tab %>% remove_na_cols())
   }
   tab <- standardize_tab(tab)
   return(list(tab, correspondance))

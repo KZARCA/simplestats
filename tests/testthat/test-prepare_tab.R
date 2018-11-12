@@ -51,11 +51,18 @@ test_that("standardize_names works", {
   expect_equal(standardize_names(noms), noms2)
 })
 
-test_that("remove_na_lines works", {
+test_that("remove_na_rows works", {
   tab <- colon
   tab %<>% rbind(rep(NA, ncol(tab)))
-  expect_equal(remove_na_lines(tab), colon)
+  expect_equal(remove_na_rows(tab), colon)
 })
+
+test_that("remove_na_cols works", {
+  tab <- colon
+  tab %<>% cbind(rep(NA, nrow(tab)))
+  expect_equal(remove_na_cols(tab), colon)
+})
+
 
 test_that("replace_virgules works", {
   tab <- data.frame(
