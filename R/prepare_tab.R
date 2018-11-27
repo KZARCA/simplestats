@@ -1,12 +1,16 @@
 
 remove_na_rows <- function(tab){
-  max <- which(rowSums(is.na(tab)) == ncol(tab))[1]
-  if(!is.na(max)) tab <- tab[1:(max-1),]
+  na_rows <- which(rowSums(is.na(tab)) == ncol(tab))
+  if (length(na_rows)){
+    return(tab[-na_rows, ])
+  }
   return(tab)
 }
 remove_na_cols <- function(tab){
-  max <- which(colSums(is.na(tab)) == nrow(tab))[1]
-  if(!is.na(max)) tab <- tab[,1:(max-1)]
+  na_cols <- which(colSums(is.na(tab)) == nrow(tab))
+  if (length(na_cols)){
+    return(tab[-na_cols])
+  }
   return(tab)
 }
 
