@@ -26,7 +26,18 @@ remove_alias <- function(vars, mod) {
     magrittr::extract2("term")
   alias <- c(alias, names(which(is.na(coef(mod)))))
   vari <- map_lgl(vars, ~ any(grepl(., alias)))
+
+  corrected <- map_lgl(vars[vari], function(x){
+    ligne <- which(names(mod$xlevels) == x)
+    if(length(ligne)){
+      nb <- paste0(names(mod$xlevels[ligne]), mod$xlevels[[ligne]]) %in% alias %>%
+        sum()
+      if(nb == length(mod$xlevels[[ligne]]) - 1) TRUE else FALSE
+    } else TRUE
+  })
+  vari[which(vari)] <- corrected
   return(vari)
+
 }
 
 get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
@@ -62,11 +73,24 @@ get_choix_var <- function(tab){
     sort()
 }
 
-drop_levels <- function(tab){
+drop_levels <- function(tab, remove = FALSE){
   exLabels <- label(tab)
   tab %<>% droplevels()
   label(tab, self = FALSE) <- exLabels
-  tab
+  if (remove){
+    enleve <- map(seq_len(ncol(tab)), function(i){
+      x <- tab[[i]]
+      if (length(unique(x)) < 2) i
+    }) %>% compact() %>% flatten_dbl()
+    if(length(enleve)) tab <- tab[-enleve]
+  }
+
+  return(tab)
+}
+
+prepare_model <- function(tab, remove = FALSE){
+  na.exclude(tab) %>%
+    drop_levels(remove)
 }
 
 #' Get the nearest (ceiling) thousand

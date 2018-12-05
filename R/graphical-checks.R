@@ -92,7 +92,7 @@ plot_all_splines <- function(tab, vardep, varindep, var_ajust, type){
 prepare_zph <- function(tab, vardep, varindep, var_ajust) {
   allVars <- c(varindep, var_ajust)
   formule <- as.formula(paste0("Surv(.time, ", vardep, ")", " ~ ", paste(allVars, collapse = " + ")))
-  coxph(formule, data = tab)
+  coxph(formule, data = tab %>% prepare_model())
 }
 
 plot_nth_zph <- function(model, n){

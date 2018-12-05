@@ -17,7 +17,13 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
   map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
-    if (vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time" &
+    tab <- if(type == "survival") {
+      dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars[i]))
+    } else {
+      dplyr::select(tab, !!rlang::sym(vardep), !!rlang::sym(vars[i]))
+    }
+    tab %<>% prepare_model(remove = TRUE)
+    if (vars[i] %in% names(tab) & vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time" &
         solve_contrast(tab, vardep, tab[[vars[i]]])){
       varsi <- ifelse(is.numeric(tab[[vars[i]]]),
                       paste0(ifelse(type == "survival", "ns(","ns("), vars[i], ")"),
@@ -30,17 +36,15 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
       } else if (type == "linear"){
         mod <- lm(formula = as.formula(formule), data = tab)
       } else if (type == "survival"){
-        tab2 <- dplyr::select(tab, .time, !!rlang::sym(vardep), !!rlang::sym(vars[i])) %>%
-          na.exclude
-        formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
-        mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab2),
-                        warning=function(w) w)
-        if (is(mod, "warning") && (grepl("beta may be infinite", mod$message) |
-                                  grepl("converge", mod$message))) {
-          mod <- NULL
-        }
+          formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
+
+          mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab),
+                          warning=function(w) w)
+          if (is(mod, "warning") && (grepl("beta may be infinite", mod$message) |
+                                    grepl("converge", mod$message))) {
+            mod <- NULL
+          }
       }
-      else mod <- NULL
       if(!is.null(mod)){
         p <- tryCatch(extract_pval_glob(mod, show_df1 = TRUE)[1],
                       error = function(e)e)
@@ -83,6 +87,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   } else {
     tab <- na.exclude(tab[c(vardep, vars)])
   }
+  tab <- prepare_model(tab)
   analysables <- map_lgl(tab, function(x){
     if (is.factor(x)){
       if (length(table(droplevels(x))) > 1) TRUE else FALSE

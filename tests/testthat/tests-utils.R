@@ -56,5 +56,29 @@ test_that("solve_contrast is working", {
   expect_false(solve_contrast(tab, "b", c))
 })
 
+test_that("prepare_model is working", {
+  tab <- standardize_tab(colon) %>%
+    make_tab_survival("status", var_time = "time") %>%
+    filter(extent == 3 | extent == 4)
+
+  mod <- coxph(Surv(.time, status) ~ age + extent, data = tab)
+  expect_equal(names(coef(mod)), c("age", "extent2", "extent3", "extent4"))
+  modlm <- lm(nodes ~ age + extent, data = tab)
+  expect_equal(names(coef(modlm)), c("(Intercept)", "age", "extent4"))
+  modglm <- glm(node4 ~ age + extent, family = binomial, data = tab)
+  expect_equal(names(coef(modglm)), c("(Intercept)", "age", "extent4"))
+  mod <- coxph(Surv(.time, status) ~ age + extent, data = prepare_model(tab))
+  expect_equal(names(coef(mod)), c("age", "extent4"))
+  tab2 <- filter(tab, extent == 3)
+  expect_true(!is.null(tab2$extent))
+  tab2 <- prepare_model(tab2, remove = TRUE)
+  expect_null(tab2$extent)
+
+  tab$age2 <- 55
+  expect_true(!is.null(tab$age2))
+  tab3 <- prepare_model(tab, remove = TRUE)
+  expect_null(tab3$age2)
+
+})
 
 

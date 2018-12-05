@@ -4,7 +4,8 @@ pdf(NULL) #prevents the creation of a Rplots.pdf file
 
 test_that("prepare_zph is working", {
   tab <- standardize_tab(colon) %>%
-    make_tab_survival("status", var_time = "time")
+    make_tab_survival("status", var_time = "time") %>%
+    dplyr::select("status", "rx", "age", ".time", "sex", "obstruct")
   expect_equal(prepare_zph(tab, "status", "rx", "age") %>% broom::tidy(),
                coxph(Surv(.time, status) ~ rx + age, data = tab) %>% broom::tidy())
   expect_equal(prepare_zph(tab, "status", "rx", c("age", "sex")) %>% broom::tidy(),

@@ -9,6 +9,7 @@ test_that("get_propDM works", {
   expect_equal(get_propDM(df2), 0.4)
 })
 
+
 test_that("imputer does not impute when less than 5% of missing data", {
   tab <- data.frame(
     a = c(rep(NA, 3), seq_len(97)) %>% sample(),
@@ -53,4 +54,18 @@ test_that("imputer uses mice for variables with more than 5% of missing data", {
   expect_length(tab2$imp$b[[1]], 15)
   expect_length(tab2$imp$.time[[1]], 0)
   expect_length(attr(tab2$data$.time, "imputed"), 1)
+})
+
+test_that("imputer does not remove labels", {
+  tab <- data.frame(
+    a = c(rep(NA, 3), seq_len(97)) %>% sample(),
+    b = c(rep(NA, 15), rep_len(1:2, 85)) %>% sample(),
+    .time = c(NA, runif(99, 1, 1000))
+  )
+  labs <- c("A", "B", "Time")
+  label(tab, self = FALSE) <- labs
+  tab2 <- imputer(tab, "a", type = 'linear')
+  mice::complete(tab2) %>%
+    label() %>%
+    expect_equivalent(labs)
 })
