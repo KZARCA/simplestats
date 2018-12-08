@@ -20,22 +20,25 @@ is_model_possible <- function(model){
   isTRUE(class(model)[[1]] == "lm" && df.residual(model) != 0 && deviance(model) >= sqrt(.Machine$double.eps) | class(model)[[1]] != "lm")
 }
 
-remove_alias <- function(vars, mod) {
+remove_alias <- function(vars, mod, correction = FALSE) {
   tab_mod <- broom::tidy(mod)
   alias <- dplyr::filter(tab_mod, is.nan(statistic) | is.infinite(statistic)) %>%
     magrittr::extract2("term")
   alias <- c(alias, names(which(is.na(coef(mod)))))
   vari <- map_lgl(vars, ~ any(grepl(., alias)))
 
-  corrected <- map_lgl(vars[vari], function(x){
-    ligne <- which(names(mod$xlevels) == x)
-    if(length(ligne)){
-      nb <- paste0(names(mod$xlevels[ligne]), mod$xlevels[[ligne]]) %in% alias %>%
-        sum()
-      if(nb == length(mod$xlevels[[ligne]]) - 1) TRUE else FALSE
-    } else TRUE
-  })
-  vari[which(vari)] <- corrected
+  if(correction){
+    corrected <- map_lgl(vars[vari], function(x){
+      ligne <- which(names(mod$xlevels) == x)
+      if(length(ligne)){
+        nb <- paste0(names(mod$xlevels[ligne]), mod$xlevels[[ligne]]) %in% alias %>%
+          sum()
+        if(nb == length(mod$xlevels[[ligne]]) - 1) TRUE else FALSE
+      } else TRUE
+    })
+    vari[which(vari)] <- corrected
+  }
+
   return(vari)
 
 }
