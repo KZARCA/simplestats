@@ -58,7 +58,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     ## correspondance : colnames, same as in the original csv file
     ## names(tab) : colnames, with make.names
     ## label(tab) : correspondance with standardize_tab
-    correspondance <- names(tab) %>%
+    correspondance <- names(tab %>% remove_na_cols()) %>%
       standardize_names_basic()
 
     names(tab) <- make.names(correspondance)
