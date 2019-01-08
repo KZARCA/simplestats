@@ -1,3 +1,10 @@
+make_correspondance <- function(tab, trunc = 40){
+  df <- tibble(noms = names(tab))
+  mutate(df,
+         present = noms %in% names(remove_na_cols(tab)),
+         correspondance = standardize_names_basic(noms),
+         labs = standardize_names(noms, trunc = trunc))
+}
 
 remove_na_rows <- function(tab){
   na_rows <- which(rowSums(is.na(tab)) == ncol(tab))
@@ -123,6 +130,7 @@ standardize_names_basic <- function(names){
     str_replace("^[\"\'](.*)[\"\']$", "\\1") %>%
     str_replace_all("[\\.]+"," ") %>%
     str_replace_all("[ ]+", " ") %>%
+    str_replace_all("[\\[\\]]+", " ") %>%
     trimws()
 }
 
@@ -159,6 +167,8 @@ standardize_tab <- function(tab){
   tab <- tab[!is.na(names(tab)) & names(tab) != ""]
   labs <- standardize_names(names(tab), trunc = TRUE)
 
+  names(tab) <- standardize_names_basic(names(tab))
+
   tab %<>%
     remove_na_rows() %>%
     replace_virgules() %>%
@@ -167,10 +177,11 @@ standardize_tab <- function(tab){
     factor_strings() %>%
     remove_guillemets()
 
-  names(tab) %<>%
-    str_replace("^X\\.(.*)\\.$", "\\1") %>%
-    #stringi::stri_trans_general("latin-ascii") %>%
-    make.names(unique = TRUE)
+  #names(tab) <- standardize_names_basic(tab)
+  # names(tab) %<>%
+  #   str_replace("^X\\.(.*)\\.$", "\\1") %>%
+  #   #stringi::stri_trans_general("latin-ascii") %>%
+  #   make.names(unique = TRUE)
 
   label(tab, self = FALSE) <- labs
   return(tab)

@@ -55,16 +55,13 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     if(!is.null(err)){
       return(err)
     }
-    ## correspondance : colnames, same as in the original csv file
     ## names(tab) : colnames, with make.names
     ## label(tab) : correspondance with standardize_tab
-    correspondance <- names(tab %>% remove_na_cols()) %>%
-      standardize_names_basic()
+    ## correspondance : noms = names(tab), correspondance = standardize_names_basic(noms)
+    correspondance <- make_correspondance(tab)
 
-    names(tab) <- make.names(correspondance)
-
-  } else if (ext %in% c("xls", "xlsx")){
-    tab <- tryCatch(readxl::read_excel(file, sheet = 1, guess_max = 10000),
+  } else if (ext %in% c("xls", "xlsx", "xlsm")){
+    tab <- tryCatch(readxl::read_excel(file, sheet = 1, guess_max = 10000, .name_repair = "minimal"),
                    error = function(e) e)
     if (is(tab, "error")) {
       if (grepl("Failed to open", tab$message)){
@@ -76,7 +73,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     if(!is.null(err)){
       return(err)
     }
-    correspondance <- names(tab %>% remove_na_cols())
+    correspondance <- make_correspondance(tab)
   }
   tab <- standardize_tab(tab)
   return(list(tab, correspondance))
