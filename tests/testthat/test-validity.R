@@ -9,11 +9,15 @@ test_that("is_number_enough works", {
   t1 <- colon %>%
     standardize_tab() %>%
     slice(1:60)
-  is_number_enough(t1, "sex", c("age")) %>%
+  is_number_enough(t1, "sex", c("age"), "logistic") %>%
     expect_true()
-  is_number_enough(t1, "sex", c("age", "nodes")) %>%
+  is_number_enough(t1, "sex", c("age", "nodes"), "logistic") %>%
     expect_true()
-  is_number_enough(t1, "sex", c("age", "rx")) %>%
+  is_number_enough(t1, "sex", c("age", "rx"), "logistic") %>%
+    expect_false()
+  is_number_enough(t1, "status", c("age", "obstruct", "sex"), "survival", 1) %>%
+    expect_true()
+  is_number_enough(t1, "status", c("age", "rx", "sex"), "survival", 1) %>%
     expect_false()
 })
 

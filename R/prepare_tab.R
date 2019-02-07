@@ -1,9 +1,9 @@
-make_correspondance <- function(tab, trunc = 40){
+make_correspondance <- function(tab, trunc = TRUE, length = 40){
   df <- tibble(noms = names(tab))
   mutate(df,
          present = noms %in% names(remove_na_cols(tab)),
          correspondance = standardize_names_basic(noms),
-         labs = standardize_names(noms, trunc = trunc))
+         labs = standardize_names(noms, trunc = trunc, length = length))
 }
 
 remove_na_rows <- function(tab){

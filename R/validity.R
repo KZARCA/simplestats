@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-is_number_enough <- function(tab, vardep, vars){
+is_number_enough <- function(tab, vardep, vars, type = "linear", event_value = "1"){
   tab <- na.exclude(tab[, c(vars, vardep), drop = FALSE])
   nVars <- map_dbl(vars, function(x){
     tvars <- tab[[x]]
@@ -27,7 +27,11 @@ is_number_enough <- function(tab, vardep, vars){
 
   else if (is.factor(tab[[vardep]])){
     seuil <- 10
-    N <- min(table(tab[[vardep]]))
+    N <- if(type == "logistic"){
+      min(table(tab[[vardep]]))
+    } else {
+      sum(tab[[vardep]] == event_value)
+    }
     if (N/(nVars) <= seuil) {
       return(FALSE)
     } else
