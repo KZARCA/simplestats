@@ -162,9 +162,14 @@ ggsurv <- function(sfit,
                    shape = "|",
                    subs = NULL,
                    palette="hue",
-                   BW = FALSE
+                   BW = FALSE,
+                   interval = NULL
                    ) {
-  breaks = scales::pretty_breaks(5)(sfit$time)
+  if (is.null(interval)) {
+    breaks <- scales::pretty_breaks(5)(sfit$time)
+  } else {
+    breaks <- seq(0, max(sfit$time), by = interval)
+  }
     #################################
     # sorting the use of subsetting #
     #################################
