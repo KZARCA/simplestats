@@ -83,21 +83,16 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   vars <- c(varindep, var_ajust)
   elimine <- NULL
   if (type == "survival") {
-    tab <- na.exclude(tab[c(vardep, vars, ".time")])
+    tab <- tab[c(vardep, vars, ".time")]
   } else {
-    tab <- na.exclude(tab[c(vardep, vars)])
+    tab <- tab[c(vardep, vars)]
   }
-  tab <- prepare_model(tab)
-  analysables <- map_lgl(tab, function(x){
-    if (is.factor(x)){
-      if (length(table(droplevels(x))) > 1) TRUE else FALSE
-    } else TRUE
-  })
-  elimine <- names(tab)[!analysables]
-  if (length(elimine) > 0) {
-    vars <- vars[-na.omit(match(elimine, vars))]
+  exLabel <- label(tab)
+  tab <- imputer(tab, vardep, type)
+  if (inherits(tab, "mids")) {
+    tab <- complete(tab)
+    label(tab, self = FALSE) <- exLabel
   }
-  tab <- tab[analysables]
   if (type == "survival"){
     formule <- as.formula(sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")))
   } else {
@@ -105,7 +100,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   }
   ide <- identical_model_frame(tab, formule, type)
   if (length(ide)){
-    elimine <- map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique()
+    elimine <- c(elimine,map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique())
     vars <- vars[-na.omit(match(elimine, vars))]
     if (type == "survival"){
       formule <- as.formula(sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")))
@@ -113,7 +108,6 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
       formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
     }
   }
-
   left_form <- NULL
   if (type == "logistic"){
     mod <- glm(formule, data = tab, family = "binomial")
@@ -144,28 +138,6 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     elimine <- append(elimine, big_vif)
   }
 
-
-  # if (length(vars) > 1){
-  #   infl <- suppressWarnings(car::vif(mod))
-  #   if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-  #   old_elimine <- elimine
-  #   elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine, only_var_ajust = TRUE) # in priority, remove var_ajust
-  #   if(length(elimine) - length(old_elimine) > 0){
-  #     vars <- vars[-na.omit(match(elimine, vars))]
-  #     if (length(vars) > 1){
-  #       mod <- update_mod(tab, mod, vardep, vars, type, left_form)
-  #       infl <- suppressWarnings(car::vif(mod))
-  #       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-  #     }
-  #   }
-  #   big_vif <- which(infl > 5)
-  #   if (length(big_vif)){
-  #     if (varindep[1] %in% names(big_vif)) infl[varindep[1]] <- 0
-  #     remaining_varindep <- intersect(vars, varindep)
-  #     if (all(remaining_varindep %in% names(big_vif))) infl[remaining_varindep] <- 0
-  #     elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, elimine) # if necessary, remove all other vars
-  #   }
-  # }
   return(setdiff(elimine, varindep[1]))
 }
 
