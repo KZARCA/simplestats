@@ -17,7 +17,7 @@ is_number_enough <- function(tab, vardep, vars, type = "linear", event_value = "
   }) %>%
     sum
 
-  if (is.numeric(tab[[vardep]])){
+  if (type == "linear"){
     seuil <- 10
     if (nrow(tab)/(nVars) <= seuil ){
       return(FALSE)
@@ -25,7 +25,7 @@ is_number_enough <- function(tab, vardep, vars, type = "linear", event_value = "
       return(TRUE)
   }
 
-  else if (is.factor(tab[[vardep]])){
+  else if (type == "logistic" | type == "survival") {
     seuil <- 10
     N <- if(type == "logistic"){
       min(table(tab[[vardep]]))
