@@ -2,6 +2,7 @@ context("bootstrap")
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 
 boot_tests <- function(tab, vardep, varindep, var_ajust){
+  set.seed(1)
   tab <- tab[c(vardep, varindep, var_ajust)]
   R <- 200
   mod <- sprintf("%s ~ %s", vardep, paste(c(varindep, var_ajust), collapse = "+")) %>%

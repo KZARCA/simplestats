@@ -46,24 +46,44 @@ remove_alias <- function(vars, mod, correction = FALSE) {
 get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
   vars <- c(varindep, var_ajust)
   elimine <- character(0)
-  if (length(vars) > 1){
-    infl <- suppressWarnings(car::vif(mod))
+
+  if(length(varindep) > 1) { ## first, test multicolinearity among varindep only
+    mod_indep <- update_mod(tab, mod, vardep, varindep, type, left_form)
+    infl <- suppressWarnings(car::vif(mod_indep))
     if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-    elimine <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = TRUE) # in priority, remove var_ajust
+    elimine <- remove_big_vif(tab, vardep, varindep, character(0), type, infl)
     if(length(elimine)){
-      vars <- vars[-na.omit(match(elimine, vars))]
+      varindep <- remove_elements(varindep, elimine)
+      vars <- c(varindep, var_ajust)
       if (length(vars) > 1){
         mod <- update_mod(tab, mod, vardep, vars, type, left_form)
         infl <- suppressWarnings(car::vif(mod))
         if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
       }
     }
+  }
+
+
+  if (length(vars) > 1){
+    infl <- suppressWarnings(car::vif(mod))
+    if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+    elimine_ajust <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = TRUE) # ##  test multicolinearity among var_ajust + varindep only without removing varindep
+    if(length(elimine_ajust)){
+      vars <- remove_elements(vars, elimine_ajust)
+      if (length(vars) > 1){
+        mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+        infl <- suppressWarnings(car::vif(mod))
+        if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
+      }
+      elimine <- c(elimine, elimine_ajust)
+    }
     # big_vif <- which(infl > 5)
     # if (length(big_vif)){
     #   if (varindep[1] %in% names(big_vif)) infl[varindep[1]] <- 0
     #   remaining_varindep <- intersect(vars, varindep)
     #   if (all(remaining_varindep %in% names(big_vif))) infl[remaining_varindep] <- 0
-      elimine <- append(elimine, remove_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, infl)) # if necessary, remove all other vars
+      elimine <- append(elimine,
+                        remove_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, infl, only_var_ajust = TRUE)) # if necessary, remove all other vars
     #}
   }
   return(elimine)

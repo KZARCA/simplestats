@@ -126,5 +126,5 @@ test_that("recherche_multicol removes high vif covariates", {
 
 test_that("recherche_multicol removes high vif varAjust in priority over varindep", {
   recherche_multicol(mtcars, "mpg", c("hp", "wt", "qsec", "disp"), "cyl", type = "linear") %>%
-    expect_equal(c("cyl", "disp"))
+    expect_equal(c("disp", "cyl"))
 })

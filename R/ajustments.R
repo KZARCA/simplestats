@@ -90,9 +90,20 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   exLabel <- label(tab)
   tab <- imputer(tab, vardep, type)
   if (inherits(tab, "mids")) {
-    tab <- complete(tab)
+    tab <- suppressWarnings(complete(tab))
     label(tab, self = FALSE) <- exLabel
   }
+  tab %<>% prepare_model()
+  analysables <- map_lgl(tab, function(x){
+    if (is.factor(x)){
+      if (length(table(droplevels(x))) > 1) TRUE else FALSE
+    } else TRUE
+  })
+  elimine <- names(tab)[!analysables]
+  if (length(elimine) > 0) {
+    vars <- vars[-na.omit(match(elimine, vars))]
+  }
+  tab <- tab[analysables]
   if (type == "survival"){
     formule <- as.formula(sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")))
   } else {
@@ -132,7 +143,14 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     vars <- vars[!alias]
     mod <- update_mod(tab, mod, vardep, vars, type, left_form)
   }
-
+  # mod_indep <- update_mod(tab, mod, vardep, varindep, type, left_form)
+  # big_vif_varindep <- get_big_vif(tab, vardep, intersect(varindep, vars), character(0), type, mod_indep, left_form)
+  # if (length(big_vif_varindep)){
+  #   elimine <- append(elimine, big_vif_varindep)
+  #   varindep <- remove_elements(varindep, elimine)
+  #   vars <- remove_elements(vars, elimine)
+  #   mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+  # }
   big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, mod, left_form)
   if (length(big_vif)){
     elimine <- append(elimine, big_vif)
