@@ -1,7 +1,7 @@
 import_delim <- function(file, sep, dec){
   tab <- NULL
   enc <- readr::guess_encoding(file, threshold = .9)$encoding[1]
-  if (is.na(enc)) enc <- ""
+  if (is.na(enc) | enc == "ASCII") enc <- ""
   if (tolower(tools::file_ext(file)) == "txt" | sep != "\t" | dec != "."){
     tab <- read.delim(file, strip.white = TRUE, fileEncoding = enc,  na.strings=c("NA", "", " ", "."),
                       stringsAsFactors = FALSE, check.names = FALSE, sep = sep, dec = dec)
