@@ -202,9 +202,11 @@ standardize_tab <- function(tab){
 #' @export
 #'
 #' @examples
-make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateInclusion = NULL, var_time = NULL){
+make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL,
+                              dateInclusion = NULL, var_time = NULL, limit = NULL){
   lev <- levels(tab[[vardep]])
   tab[[vardep]] <- relevel(tab[[vardep]], ref=ifelse(passage == 1, lev[1], lev[2]))
+  lev <- levels(tab[[vardep]])
   #attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
   if (!is.null(dateSortie)) {
     tab$.time <- as.numeric(dateSortie - dateInclusion)
@@ -216,6 +218,11 @@ make_tab_survival <- function(tab, vardep, passage = 1, dateSortie = NULL, dateI
   tab[[vardep]] %<>%
     as.numeric %>%
     subtract(1)
+  if(!is.null(limit) && !is.na(limit)){
+    time2 <- pmin(limit, tab$.time)
+    tab[[vardep]] <- ifelse(tab[[vardep]] == 1 & tab$.time > time2 | tab[[vardep]] == 0, 0, 1)
+    tab$.time <- time2
+  }
   label(tab[[vardep]]) <- exLabel
   tab
 }

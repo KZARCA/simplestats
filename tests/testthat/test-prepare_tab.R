@@ -20,6 +20,13 @@ test_that("make_tab_survival works with var_time, passage 1 & 2", {
   tests(tab_modif)
   tests(tab_modif2, 2)
 })
+test_that("make_tab_survival works with limit", {
+  tab <- standardize_tab(colon)
+  lim0 <- as.numeric(make_tab_survival(tab, "status", var_time = "time", limit = 0)$status)
+  lim10k <- make_tab_survival(tab, "status", var_time = "time", limit = 10000)$status
+  expect_equal(lim0, rep(0, nrow(tab)))
+  expect_equal(lim10k, make_tab_survival(tab, "status", var_time = "time")$status)
+})
 
 test_that("make_tab_survival works with dateSortie & Inclusion", {
   tab <- colon
