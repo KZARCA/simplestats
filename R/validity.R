@@ -62,8 +62,11 @@ is_homoscedatic.lm <- function(x, ...){
     res <- rstudent(model)
     nb_breaks <- max(2, min(floor(nrow(model$model)/20), 5))
     x <- res
+    breaks <- unique(quantile(model$fitted.values, probs = seq(0,1,1/nb_breaks)), include.lowest = TRUE)
+    breaks[1] <- -Inf
+    breaks[length(breaks)] <- Inf
     y <- cut(model$fitted.values,
-             breaks = unique(quantile(model$fitted.values, probs = seq(0,1,1/nb_breaks)), include.lowest = TRUE))
+             breaks = breaks)
     is_homoscedatic.default(y, x)
   } else {
     is_homoscedatic.default(model$model[[2]], model$model[[1]])
