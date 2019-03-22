@@ -487,10 +487,13 @@ identical_model_frame <- function(tab, formula, type){
 is_entier <- function(x){
   if(is.factor(x)) {
     lev <- suppressWarnings(as.numeric(as.character(levels(x))))
-    all(is_wholenumber(lev), na.rm = TRUE) & nlevels(x) < 10 & nlevels(x) >= 2
+    all(is_wholenumber(lev), na.rm = TRUE) & nlevels(x) < 10 & nlevels(x) >= 2 &
+      all(lev < 10, na.rm = TRUE)
   } else {
     lev <- unique(na.exclude(x))
-    all(is_wholenumber(lev), na.rm = TRUE) & length(lev) < 10 & length(lev) >= 2
+    all(is_wholenumber(lev), na.rm = TRUE) & length(lev) < 10 & length(lev) >= 2 &
+      all(lev < 10, na.rm = TRUE)
+
   }
 }
 
