@@ -17,7 +17,7 @@ create_ligne_bivar <- function(x, ...){
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.factor <- function(x, y, noms, margin = 2, ...){
+create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
   if (is.factor(y)){ #fac~fac
     no_na <- remove_na(x, y)
     if (nrow(no_na) > 0){
@@ -45,7 +45,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, ...){
       x <- no_na$x
       y <- no_na$y
       d <- no_na %>%
-        group_by(x) %>%
+        group_by(x, .drop = .drop) %>%
         summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(y, na.rm=TRUE), sd(y, na.rm=TRUE)),
                   mediane = sprintf_number_table("%s [%s - %s]", median(y, na.rm=TRUE), quantile(y, na.rm=TRUE)[2], quantile(y, na.rm=TRUE)[4]),
                   min = sprintf_number_table("%s", min(y, na.rm=TRUE)),
@@ -71,7 +71,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, ...){
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.numeric <- function(x, y, noms, ...){ #num~fac
+create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
   if(is.factor(y)){
     no_na <- remove_na(x, y)
     cont <- table(no_na$y)
@@ -79,7 +79,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, ...){ #num~fac
       x <- no_na$x
       y <- no_na$y
       d <- no_na %>%
-        group_by(y) %>%
+        group_by(y, .drop = .drop) %>%
         summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
         base::t() %>%
         as_tibble
@@ -87,7 +87,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, ...){ #num~fac
       d <- d[2, ]
       d$.n <- sum(cont)
       pval_test <- extract_pval(x,y) %>%
-        as_tibble
+        as_tibble()
       names(pval_test) <- c("p", "test")
 
       ligne <- bind_cols(d, pval_test) %>%
