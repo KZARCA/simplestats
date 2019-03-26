@@ -165,7 +165,7 @@ ggsurv <- function(sfit,
                    BW = FALSE,
                    interval = NULL
                    ) {
-  if (is.null(interval)) {
+  if (is.null(interval) || interval <= 0) {
     breaks <- scales::pretty_breaks(5)(sfit$time)
   } else {
     breaks <- seq(0, max(sfit$time), by = interval)
