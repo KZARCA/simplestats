@@ -37,11 +37,13 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
         mod <- lm(formula = as.formula(formule), data = tab)
       } else if (type == "survival"){
           formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
-
           mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab),
-                          warning=function(w) w)
+                          warning=function(w) w, error=function(e) e)
           if (is(mod, "warning") && (grepl("beta may be infinite", mod$message) |
                                     grepl("converge", mod$message))) {
+            mod <- NULL
+          }
+          if (is(mod, "error") && (grepl("NA/NaN/Inf", mod$message))){
             mod <- NULL
           }
       }
