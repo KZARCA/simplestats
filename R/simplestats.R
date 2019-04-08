@@ -48,6 +48,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom dplyr mutate_if
 #' @importFrom dplyr n
 #' @importFrom dplyr bind_cols
+#' @importFrom dplyr all_equal
 #' @importFrom purrr map
 #' @importFrom purrr map2
 #' @importFrom purrr map_dbl

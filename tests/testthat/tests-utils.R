@@ -53,6 +53,7 @@ test_that("solve_contrast is working", {
   c <- c(1:2, rep(NA, 18))
   tab <- data.frame(a = a, b = b, c = c)
   expect_true(solve_contrast(tab, "a", b))
+  expect_true(solve_contrast(tab, "a", a))
   expect_false(solve_contrast(tab, "b", c))
 })
 
