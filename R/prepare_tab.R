@@ -9,7 +9,7 @@ make_correspondance <- function(tab, trunc = TRUE, length = 40){
 remove_na_rows <- function(tab){
   na_rows <- which(rowSums(is.na(tab)) == ncol(tab))
   if (length(na_rows)){
-    return(tab[-na_rows, ])
+    return(tab[-na_rows])
   }
   return(tab)
 }
