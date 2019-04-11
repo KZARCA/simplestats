@@ -443,7 +443,7 @@ remove_multibyte_if_any <- function(x){
 
 solve_contrast <- function(tab, vardep, x) {
   if(!is.null(x)){
-    if (isTRUE(all_equal(x, tab[[vardep]]))) return(TRUE)
+    if (identical(class(x), class(tab[[vardep]])) && isTRUE(all.equal(x, tab[[vardep]], check.attributes = FALSE))) return(TRUE)
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
     are_enough_cor(tmp, "a", "b") && are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
