@@ -23,8 +23,8 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
       dplyr::select(tab, !!rlang::sym(vardep), !!rlang::sym(vars[i]))
     }
     tab %<>% prepare_model(remove = TRUE)
-    if (vars[i] %in% names(tab) & vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time" &
-        solve_contrast(tab, vardep, tab[[vars[i]]])){
+    if (ncol(tab) > 1 && (vars[i] %in% names(tab) & vars[i] != vardep & !vars[i] %in% varindep & vars[i] != ".time" &
+        solve_contrast(tab, vardep, tab[[vars[i]]]))){
       varsi <- ifelse(is.numeric(tab[[vars[i]]]),
                       paste0(ifelse(type == "survival", "ns(","ns("), vars[i], ")"),
                       vars[i])
