@@ -331,7 +331,13 @@ are_enough_levels <- function(tab, x){
 }
 
 are_enough_cor <- function(tab, x, y){
-  if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) nrow(tab) > 3L else TRUE
+  if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) {
+    nrow(tab) > 3L
+  } else if (is.factor(tab[[x]])) {
+    all(table(tab[[x]]) > 3L)
+  } else {
+    TRUE
+  }
 }
 
 #' @export
