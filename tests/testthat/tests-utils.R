@@ -36,17 +36,6 @@ test_that("extract_from_model is working",{
   expect_equal(extract_from_model(mod2, "estimate"), coef(mod2))
 })
 
-test_that("is_entier is working", {
-  expect_true(
-    is_entier(
-      round(runif(100, 1, 8),0)
-  ))
-  expect_true(
-    is_entier(
-      round(runif(100, 1, 2),0)
-    ))
-})
-
 test_that("solve_contrast is working", {
   a <- 1:20
   b <- 41:60
