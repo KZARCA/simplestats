@@ -56,6 +56,20 @@ test_that("imputer uses mice for variables with more than 5% of missing data", {
   expect_length(attr(tab2$data$.time, "imputed"), 1)
 })
 
+
+test_that("imputer uses impute for variables with more than 5% of missing data with large datasets", {
+  tab <- data.frame(
+    a = c(rep(NA, 3), seq_len(5997)) %>% sample(),
+    b = c(rep(NA, 600), rep_len(1:2, 5400)) %>% sample(),
+    c = c(rep(NA, 600), rep_len(letters[1:9], 5400)) %>% sample(),
+    d = c(rep(NA, 600), rep_len(LETTERS[1:9], 5400)) %>% sample()
+  )
+  expect_equivalent(imputer(tab, "a", c("c", "d"), type = "linear")$method, c("", "pmm", "", ""))
+  expect_equivalent(imputer(tab, "a", type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))
+  tab2 <- dplyr::sample_frac(tab, 0.2)
+  expect_equivalent(imputer(tab2, "a", c("c", "d"), type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))
+})
+
 # test_that("imputer does not remove labels", {
 #   tab <- data.frame(
 #     a = c(rep(NA, 3), seq_len(97)) %>% sample(),

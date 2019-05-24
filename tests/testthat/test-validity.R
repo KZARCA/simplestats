@@ -22,7 +22,7 @@ test_that("is_number_enough works", {
 })
 
 test_that("is_normal is working", {
-  replicate(100, expect_true(is_normal(rnorm(100))))
+  replicate(100, expect_true(is_normal(rnorm(200))))
   replicate(100, expect_false(is_normal(rlnorm(1000))))
   replicate(100, expect_false(is_normal(rchisq(100, .5))))
   replicate(100, expect_false(is_normal(rf(100, 1, 1))))

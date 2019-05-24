@@ -1,5 +1,7 @@
 create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
-  tab <- na.exclude(tab[c(vardep, varindep, var_ajust)])
+  vars <- c(vardep, varindep, var_ajust)
+  if (type == "survival") vars <- append(vars, ".time")
+  tab <- na.exclude(tab[vars])
   model <- NULL
   if (type == "survival") varindep <- remove_elements(varindep, ".time")
   varsnum <- Filter(is.numeric, tab[varindep]) %>% colnames()

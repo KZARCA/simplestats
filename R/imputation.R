@@ -24,7 +24,7 @@ get_propDM <- function(x){
 #' @export
 #'
 #' @examples
-imputer <- function(tab, vardep, type, n_imputation = 1){
+imputer <- function(tab, vardep, var_ajust = NULL, type, n_imputation = 1){
   tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x)) %>%
     dplyr::select(-!!rlang::sym(vardep))
   if (type == "survival") tabm <- dplyr::select(tabm, -.time)
@@ -32,7 +32,7 @@ imputer <- function(tab, vardep, type, n_imputation = 1){
     return(tab)
   } else {
     for (i in 1:length(tabm)){
-      if (get_propDM(tabm[[i]]) < 0.05) {
+      if (get_propDM(tabm[[i]]) < 0.05 | names(tabm)[i] %in% var_ajust & nrow(tab) > 5000) {
         tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
       }
     }
