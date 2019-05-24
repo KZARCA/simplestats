@@ -64,10 +64,10 @@ test_that("imputer uses impute for variables with more than 5% of missing data w
     c = c(rep(NA, 600), rep_len(letters[1:9], 5400)) %>% sample(),
     d = c(rep(NA, 600), rep_len(LETTERS[1:9], 5400)) %>% sample()
   )
-  expect_equivalent(imputer(tab, "a", c("c", "d"), type = "linear")$method, c("", "pmm", "", ""))
+  expect_equivalent(imputer(tab, "a", type = "linear", c("c", "d"))$method, c("", "pmm", "", ""))
   expect_equivalent(imputer(tab, "a", type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))
   tab2 <- dplyr::sample_frac(tab, 0.2)
-  expect_equivalent(imputer(tab2, "a", c("c", "d"), type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))
+  expect_equivalent(imputer(tab2, "a", type = "linear", c("c", "d"))$method, c("", "pmm", "polyreg", "polyreg"))
 })
 
 # test_that("imputer does not remove labels", {

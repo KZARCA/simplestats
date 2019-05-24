@@ -45,7 +45,10 @@ lower_tab <- function(tab){
   as.data.frame(
     lapply(tab, function(x) {
       if(is.character(x) | is.factor(x)) {
-        if (!all(grepl("^[A-Z]+$", x), na.rm = TRUE)) tolower(x) else x
+        if (!all(grepl("^[A-Z]+$", x), na.rm = TRUE)) {
+          iconv(x, sub = "") %>%
+          tolower()
+        } else x
       }
       else x
     }), stringsAsFactors = FALSE

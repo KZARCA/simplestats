@@ -90,7 +90,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     tab <- tab[c(vardep, vars)]
   }
   exLabel <- label(tab)
-  tab <- imputer(tab, vardep, var_ajust, type)
+  tab <- imputer(tab, vardep, type, var_ajust)
   if (inherits(tab, "mids")) {
     tab <- suppressWarnings(complete(tab))
     label(tab, self = FALSE) <- exLabel
