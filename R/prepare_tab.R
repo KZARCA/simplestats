@@ -205,15 +205,15 @@ standardize_tab <- function(tab){
 #' @export
 #'
 #' @examples
-make_tab_survival <- function(tab, vardep, passage = 1, dateInclusion = NULL,
+make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInclusion = NULL,
                               dateSortie = NULL, var_time = NULL, limit = NULL){
   lev <- levels(tab[[vardep]])
   tab[[vardep]] <- relevel(tab[[vardep]], ref=ifelse(passage == 1, lev[1], lev[2]))
   lev <- levels(tab[[vardep]])
   #attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
-  if (!is.null(dateSortie)) {
+  if (typeCensure == 1) {
     tab$.time <- as.numeric(tab[[dateSortie]] - tab[[dateInclusion]])
-  } else if (!is.null(var_time) && var_time != ""){
+  } else if (typeCensure == 2) {
     tab$.time <- tab[[var_time]]
     tab %<>% select(-one_of(var_time))
   }
