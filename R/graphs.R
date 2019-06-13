@@ -43,7 +43,7 @@ print_plot_bivar <- function(tab, vardep, varindep, type = "linear"){
     if (is.factor(tvarn)){
       boxplot_bivar(tab, vardep, varindep)
     } else {
-      plot_reglin(tab, vardep, varindep)
+      plot_reglin(tab, varindep, vardep)
     }
   } else if (type != "survival"){
     if (is.numeric(tvarn)){
