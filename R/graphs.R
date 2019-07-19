@@ -4,16 +4,17 @@
 #' @param vardep The dependent variable
 #' @param varindep The independant variable
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
-#'
+#' @param ... Further arguments passed to ggsurv
 #' @return a ggplot2 graph
 #' @export
 #'
 #' @examples
-print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"){
+print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear", ...){
+  dots <- list(...)
   if (type == "survival"){
     formule <- sprintf("Surv(.time, %s) ~ 1", vardep)
     r <- survfit(as.formula(formule), data = tab)
-    ggsurv(r, ylab=label(tab[[vardep]]), ylims = c(0,1))
+    ggsurv(r, ylab=label(tab[[vardep]]), ylims = c(0,1), ...)
   } else if (is.numeric(tab[[varindep]])){
     ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
