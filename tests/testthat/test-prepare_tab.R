@@ -115,13 +115,15 @@ test_that("factor_strings works", {
     a = 1:11,
     b = letters[1:11],
     c = c(rep("fac1", 3), rep("fac2", 4), rep("fac3", 4)),
-    d = as.factor(rep(1, 11))
+    d = as.factor(rep(1, 11)),
+    e = c(rep("fac1", 6), rep("fac2", 5)),
   )
   tab2 <- factor_strings(tab)
   expect_is(tab2$a, "integer")
   expect_is(tab2$b, "character")
-  expect_is(tab2$c, "factor")
+  expect_is(tab2$c, "character")
   expect_is(tab2$d, "character")
+  expect_is(tab2$e, "factor")
 
 })
 

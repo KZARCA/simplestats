@@ -24,18 +24,24 @@ remove_na_cols <- function(tab){
 factor_strings <- function(tab){
   as.data.frame(
     lapply(tab, function(x) {
-      if(inherits(x, "POSIXct")) x %<>% as.character()
+      if(inherits(x, "POSIXct")) {
+        return(as.character(x))
+      }
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
-        if (nlevels(b) < 10) {
-          x <- reorder(b, b,function(y)-length(y))
-          levels(x) %<>% str_trunc(20)
-        }
+        if (nlevels(b) >= 10L) return(as.character(x))
+        x <- reorder(b, b,function(y)-length(y))
+        levels(x) %<>% str_trunc(20)
       } else if (length(table(x)) < 5){
         x <- factor(x)
         levels(x) %<>% str_trunc(20)
       }
-      if (is.factor(x) & nlevels(x) < 2 | is.numeric(x) & length(table(x)) < 2) x <- as.character(x)
+      if (is.factor(x) & (nlevels(x) < 2) | nlevels(x) > 2L & any(table(as.factor(x)) <= 3L)) {
+        return(as.character(x))
+      }
+      if (is.numeric(x) & length(table(x)) < 2){
+        return(as.character(x))
+      }
       return(x)
     }), stringsAsFactors = FALSE
   )
