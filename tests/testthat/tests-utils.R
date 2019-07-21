@@ -68,7 +68,16 @@ test_that("prepare_model is working", {
   expect_true(!is.null(tab$age2))
   tab3 <- prepare_model(tab, remove = TRUE)
   expect_null(tab3$age2)
-
 })
 
+test_that("is_entier is working", {
+  expect_true(
+    is_entier(
+      round(runif(100, 1, 8),0)
+    ))
+  expect_true(
+    is_entier(
+      round(runif(100, 1, 2),0)
+    ))
+})
 

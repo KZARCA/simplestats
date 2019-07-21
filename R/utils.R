@@ -165,19 +165,14 @@ get_nvar_mod <- function(tab, var_ajust){
 #' @examples
 format_number <- function(numbers, digits = 3){
   map_chr(numbers, function(x){
-    if (is.na(x) | is.nan(x)){
-      "-"
-    } else if  (x > 1E6) "+Inf"
-    else if  (x < -1E6) "-Inf"
-    else if (abs(x) > 1E-6){
-      puiss <- floor(log10(abs(x)) + 1)
-      nsmall <- ifelse (puiss >= 3, 0, digits - puiss)
-      if (nsmall < 0) nsmall <- 0
-      base::format(x, digits = digits, nsmall = nsmall)
-    }
-    else {
-      base::format(0)
-    }
+    if (is.na(x) | is.nan(x)) return("-")
+    if  (x > 1E6) return("+Inf")
+    if  (x < -1E6) return("-Inf")
+    if (abs(x) < 1E-4) return(base::format(0))
+    puiss <- floor(log10(abs(x)) + 1)
+    nsmall <- ifelse (puiss >= 3, 0, digits - puiss)
+    if (nsmall < 0) nsmall <- 0
+    base::format(x, digits = digits, nsmall = nsmall)
   })
 }
 
@@ -496,3 +491,24 @@ remove_elements <- function(vector, ...){
   dots <- list(...) %>% unlist
   vector[!vector %in% dots]
 }
+
+#' @export
+is_entier <- function(x){
+  if(is.factor(x)) {
+    lev <- suppressWarnings(as.numeric(as.character(levels(x))))
+    all(is_wholenumber(lev), na.rm = TRUE) & nlevels(x) < 10 & nlevels(x) >= 2 &
+      all(lev < 10, na.rm = TRUE)
+  } else {
+    lev <- unique(na.exclude(x))
+    all(is_wholenumber(lev), na.rm = TRUE) & length(lev) < 10 & length(lev) >= 2 &
+      all(lev < 10, na.rm = TRUE)
+  }
+}
+
+is_wholenumber <-
+  function(x, tol = .Machine$double.eps^0.5)  {
+    if (any(is.na(x)))
+      FALSE
+    else
+      abs(x - round(x)) < tol
+  }
