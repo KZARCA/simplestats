@@ -99,7 +99,8 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
     }
   } else {
     no_na <- remove_na(x, y, drop_factor = TRUE)
-    res <- broom::tidy(cor.test(no_na$x, no_na$y))
+    res <- try(broom::tidy(cor.test(no_na$x, no_na$y)), silent = TRUE)
+    if (inherits(res, "try-error")) return(NULL)
     ligne <- tibble("Coefficient de corrélation (IC95)" = sprintf_number_table("%s (%s; %s)",
                                                                                res$estimate, res$conf.low, res$conf.high),
                     n = nrow(no_na),
