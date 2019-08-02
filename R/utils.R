@@ -325,11 +325,12 @@ are_enough_levels <- function(tab, x){
     is_greater_than(1)
 }
 
-are_enough_cor <- function(tab, x, y){
+are_enough_cor <- function(tab, x, y, univ){
+  min_rows <- ifelse(univ, 1L, 3L)
   if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) {
-    nrow(tab) > 3L
+    nrow(tab) > min_rows
   } else if (is.factor(tab[[x]])) {
-    all(table(tab[[x]]) > 3L)
+    all(table(tab[[x]]) > min_rows)
   } else {
     TRUE
   }
@@ -442,12 +443,12 @@ remove_multibyte_if_any <- function(x){
   }
 }
 
-solve_contrast <- function(tab, vardep, x) {
+solve_contrast <- function(tab, vardep, x, univ = FALSE) {
   if(!is.null(x)){
     if (identical(class(x), class(tab[[vardep]])) && isTRUE(all.equal(x, tab[[vardep]], check.attributes = FALSE))) return(TRUE)
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
-    are_enough_cor(tmp, "a", "b") && are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
+    are_enough_cor(tmp, "a", "b", univ) && are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
   } else FALSE
 }
 

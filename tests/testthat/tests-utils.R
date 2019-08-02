@@ -44,6 +44,7 @@ test_that("solve_contrast is working", {
   expect_true(solve_contrast(tab, "a", b))
   expect_true(solve_contrast(tab, "a", a))
   expect_false(solve_contrast(tab, "b", c))
+  expect_true(solve_contrast(tab, "b", c, univ = TRUE))
 })
 
 test_that("prepare_model is working", {
