@@ -39,13 +39,13 @@ factor_strings <- function(tab){
       if (is.factor(x) & nlevels(x) < 2 | is.numeric(x) & length(table(x)) < 2){
         return(as.character(x))
       }
-      if (nlevels(x) > 2L & any(table(as.factor(x)) <= 3L)){
-        if (is_entier(x)){
-          return(as.numeric(as.character(x)))
-        } else {
-          return(as.character(x))
-        }
-      }
+      # if (nlevels(x) > 2L & any(table(as.factor(x)) <= 3L)){
+      #   if (is_entier(x)){
+      #     return(as.numeric(as.character(x)))
+      #   } else {
+      #     return(as.character(x))
+      #   }
+      # }
       x
     }), stringsAsFactors = FALSE
   )
