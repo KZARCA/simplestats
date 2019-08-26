@@ -99,7 +99,11 @@ prepare_zph <- function(tab, vardep, varindep, var_ajust) {
 }
 
 plot_nth_zph <- function(model, n){
-  plot(cox.zph(model), var = n, resid = FALSE)
+  z <- tryCatch(plot(cox.zph(model), var = n, resid = FALSE),
+           error=function(e) e)
+  if (is(z, "error") && grepl("Spline fit is singular", z$message)) {
+    plot(cox.zph(model), var = n, resid = FALSE, df = 2)
+  }
   abline(h = model$coefficients[n], col = 2)
 }
 
