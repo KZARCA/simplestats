@@ -50,6 +50,8 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
       } else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
       }
+    } else if (is.null(tab)){
+      err <- gettext("Unable to load this file.", domain = "R-simplestats")
     }
 
     if(!is.null(err)){
