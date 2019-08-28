@@ -52,7 +52,8 @@ test_that("create_ligne_desc_export is working", {
 })
 
 test_that("create_ligne_surv_desc is working", {
-  table_surv <- survfit(Surv(.time, status) ~ 1, data = tab) %>%
+  surv <- survfit(Surv(.time, status) ~ 1, data = tab)
+  table_surv <- surv %>%
     summary() %>%
     extract2("table")
   line <- create_ligne_surv_desc(tab$.time, tab$status)
@@ -62,5 +63,8 @@ test_that("create_ligne_surv_desc is working", {
                sprintf_number_table("%s (%s; %s)",
                                     table_surv[["median"]], table_surv[["0.95LCL"]], table_surv[["0.95UCL"]]))
   expect_equal(line$n, table_surv[["n.start"]])
-  expect_equal(line[[gettext("n events", domain = "R-simplestats")]], table_surv[["events"]])
+  expect_equal(line[["n events"]], table_surv[["events"]])
+  l <- length(surv$surv)
+  expect_equal(line[["survival rate (CI95)"]],
+               sprintf_number_table("%s (%s; %s)",surv$surv[l], surv$lower[l], surv$upper[l]))
 })

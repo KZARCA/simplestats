@@ -116,5 +116,10 @@ test_that("create_ligne_surv_bivar is working", {
   expect_equal(line$n, table_surv[, "n.max"] %>% unname())
   expect_equal(line[[gettext("n events", domain = "R-simplestats")]], table_surv[, "events"] %>% unname())
   expect_equal(round(line$p, 10), c(3.39E-7, NA, NA))
+  expect_equal(line[["survival rate (CI95)"]], map_chr(seq_along(surv$strata), function(i) {
+    surv_i <- surv[i]
+    l <- length(surv_i$surv)
+    sprintf_number_table("%s (%s; %s)", surv_i$surv[l], surv_i$lower[l], surv_i$upper[l])
+  }))
   expect_equal(line$test, c("Logrank", NA, NA))
 })

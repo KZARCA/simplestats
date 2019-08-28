@@ -137,17 +137,26 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
                            resume[i, "0.95LCL"],
                            resume[i, "0.95UCL"])
     })
+
     n <-  resume[, "n.start", drop = TRUE]
     nEvent <- resume[, "events", drop = TRUE]
-
+    surv_rates <- map_chr(seq_along(surv$strata), function(i) {
+      surv_i <- surv[i]
+      l <- length(surv_i$surv)
+      sprintf_number_table("%s (%s; %s)", surv_i$surv[l], surv_i$lower[l], surv_i$upper[l])
+    })
     d <- tibble(
       median,
       max_time,
       n,
-      nEvent
+      nEvent,
+      surv_rates
     )
     names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
-                  gettext("max follow-up", domain = "R-simplestats"), "n", gettext("n events", domain = "R-simplestats"))
+                  gettext("max follow-up", domain = "R-simplestats"),
+                  "n",
+                  gettext("n events", domain = "R-simplestats"),
+                  gettext("survival rate (CI95)", domain = "R-simplestats"))
 
     x <- tab_cens$x
 

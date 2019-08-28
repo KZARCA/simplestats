@@ -61,6 +61,7 @@ create_ligne_surv_desc <- function(time, censure){
     tab_cens$censure %<>% as.character %>% as.numeric
     formule <- Surv(.time, censure) ~ 1
     surv <- survfit(formule, data = tab_cens)
+    l <- length(surv$surv)
     resume <- base::summary(surv)$table
     med <- resume["median"]
     CI <- resume[c("0.95LCL", "0.95UCL")]
@@ -71,11 +72,14 @@ create_ligne_surv_desc <- function(time, censure){
       sprintf_number_table("%s (%s; %s)", med, CI[1], CI[2]),
       max,
       n,
-      nEvent
+      nEvent,
+      sprintf_number_table("%s (%s; %s)", surv$surv[l], surv$lower[l], surv$upper[l]),
     )
 
     names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
-                  gettext("max follow-up", domain = "R-simplestats"), "n", gettext("n events", domain = "R-simplestats"))
+                  gettext("max follow-up", domain = "R-simplestats"), "n",
+                  gettext("n events", domain = "R-simplestats"),
+                  gettext("survival rate (CI95)", domain = "R-simplestats"))
 
     d %<>% add_column(id = "survival", variable = gettext("max follow-up", domain = "R-simplestats"), .before = 1)
   }

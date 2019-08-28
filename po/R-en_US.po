@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2018-10-08 16:44\n"
+"POT-Creation-Date: 2019-08-28 14:56\n"
 "PO-Revision-Date: 2018-02-25 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -93,13 +93,7 @@ msgstr "max follow-up"
 msgid "n events"
 msgstr "n events"
 
-msgid "The following column names in ANOVA output were not"
-msgstr ""
-
-msgid "recognized or transformed:"
-msgstr ""
-
-msgid ","
+msgid "survival rate (CI95)"
 msgstr ""
 
 #~ msgid ""
