@@ -336,30 +336,6 @@ are_enough_cor <- function(tab, x, y, univ){
   }
 }
 
-#' @export
-tidy.anova <- function(x, ...){
-  renamers <- c(Df = "df", `Sum Sq` = "sumsq", `Mean Sq` = "meansq",
-                `F value` = "statistic", `Pr(>F)` = "p.value", Res.Df = "res.df",
-                RSS = "rss", `Sum of Sq` = "sumsq", F = "statistic",
-                Chisq = "statistic", `P(>|Chi|)` = "p.value", Pr..Chisq. = "p.value",
-                p.value = "p.value", Chi.sq = "statistic", edf = "edf",
-                Ref.df = "ref.df", LR.Chisq = "statistic", `Pr(>|Chi|)` = "p.value",
-                loglik = "logLik")
-  names(renamers) <- make.names(names(renamers))
-  x <- fix_data_frame(x)
-  unknown_cols <- base::setdiff(colnames(x), c("term", names(renamers)))
-  if (length(unknown_cols) > 0) {
-    warning("The following column names in ANOVA output were not ",
-            "recognized or transformed: ", paste(unknown_cols,
-                                                 collapse = ", "))
-  }
-  ret <- plyr::rename(x, renamers, warn_missing = FALSE)
-  if (!is.null(ret$term)) {
-    ret <- ret %>% mutate(term = stringr::str_trim(term))
-  }
-  ret
-}
-
 remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = FALSE) {
   vars <- c(varindep, var_ajust)
   selected_vars <- (if(only_var_ajust) var_ajust else vars)

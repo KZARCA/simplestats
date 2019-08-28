@@ -13,7 +13,6 @@ Imports:
   purrr(>= 0.2.3),
   magrittr(>= 1.5),
   survival(>= 2.40),
-  broom(>= 0.4),
   stringr(>= 1.2.0),
   readxl(>= 1.0),
   mice(>= 2.41),
@@ -33,3 +32,4 @@ Imports:
   readr(>= 1.1.1)
 RoxygenNote: 6.1.1
 Suggests: testthat
+Remotes: KZARCA/broom
