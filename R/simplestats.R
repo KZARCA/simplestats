@@ -94,6 +94,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom rlang sym
 #' @importFrom rlang ":="
 #' @importFrom rlang "%||%"
+#' @importFrom rlang "!!"
 #' @importFrom forcats fct_drop
 #' @importFrom readxl read_excel
 #' @importFrom mgcv gam

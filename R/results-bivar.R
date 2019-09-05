@@ -99,13 +99,10 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
     }
   } else {
     no_na <- remove_na(x, y, drop_factor = TRUE)
-    res <- try(broom::tidy(cor.test(no_na$x, no_na$y)), silent = TRUE)
-    if (inherits(res, "try-error")) return(NULL)
-    ligne <- tibble("Coefficient de corrélation (IC95)" = sprintf_number_table("%s (%s; %s)",
-                                                                               res$estimate, res$conf.low, res$conf.high),
-                    n = nrow(no_na),
-                    p = res$p.value,
-                    test = "Pearson") %>%
+    ligne <- create_ligne_cor(no_na$x, no_na$y)
+    #res <- try(broom::tidy(cor.test(no_na$x, no_na$y)), silent = TRUE)
+    if (inherits(ligne, "try-error")) return(NULL)
+    ligne %>%
       add_varname(x, noms)
   }
 }
@@ -167,6 +164,32 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
 
     ligne <- bind_cols(d, pval_test)
     ligne %>% add_varname(x, noms)
+  }
+}
+
+
+create_ligne_cor <- function(x, y) {
+  l <- length(x)
+  title <- gettext("Correlation coefficient", domain = "R-simplestats")
+  CI95 <- gettext("(CI95)", domain = "R-simplestats")
+  if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+    res <- cor.test(x, y) %>%
+      broom::tidy()
+    titleCI <- paste(title, CI95)
+    ligne <- tibble(!!titleCI := sprintf_number_table("%s (%s; %s)",
+                    res$estimate, res$conf.low, res$conf.high),
+                    n = l,
+                    p = res$p.value,
+                    test = "Pearson")
+
+  } else {
+    res <- cor.test(x, y, method = "spearman", exact = FALSE) %>%
+      broom::tidy()
+    ligne <- tibble(!!title := sprintf_number_table("%s", res$estimate),
+                    n = l,
+                    p = res$p.value,
+                    test = "Spearman")
+
   }
 }
 
