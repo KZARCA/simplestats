@@ -172,6 +172,10 @@ format_number <- function(numbers, digits = 3){
     puiss <- floor(log10(abs(x)) + 1)
     nsmall <- ifelse (puiss >= 3, 0, digits - puiss)
     if (nsmall < 0) nsmall <- 0
+    if (digits < 0) {
+      x <- round(x, digits)
+      digits <- 0
+    }
     base::format(x, digits = digits, nsmall = nsmall)
   })
 }
@@ -326,7 +330,7 @@ are_enough_levels <- function(tab, x){
 }
 
 are_enough_cor <- function(tab, x, y, univ){
-  min_rows <- ifelse(univ, 1L, 3L)
+  min_rows <- ifelse(univ, 0L, 3L)
   if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) {
     nrow(tab) > min_rows
   } else if (is.factor(tab[[x]])) {

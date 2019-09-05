@@ -1,4 +1,6 @@
 context("results-bivar")
+library(survival)
+
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 
 test_that("create_ligne_bivar.factor_num is working", {
@@ -97,8 +99,8 @@ test_that("create_ligne_bivar.num_num is working", {
   line <- create_ligne_bivar(tab$nodes, tab$age, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$variable, "Nodes")
-  co <- cor.test(tab$nodes, tab$age) %>% broom::tidy()
-  expect_equal(line$`Coefficient de corrélation (IC95)`, sprintf_number_table("%s (%s; %s)", co$estimate, co$conf.low, co$conf.high))
+  co <- cor.test(tab$nodes, tab$age, method = "spearman", exact = FALSE) %>% broom::tidy()
+  expect_equal(line$`Correlation coefficient`, sprintf_number_table("%s", co$estimate))
   expect_equal(line$p, co$p.value)
 })
 

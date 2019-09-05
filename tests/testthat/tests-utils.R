@@ -6,6 +6,17 @@ test_that("get_choix_var works", {
   expect_equal(names(get_choix_var(tab)), sort(capitalize(names(tab))))
 })
 
+test_that("format_numbers works", {
+  expect_equal(format_number(43), "43.0")
+  expect_equal(format_number(43, -1), "40")
+  expect_equal(format_number(46.5650, 1), "47")
+  expect_equal(format_number(1087, -1), "1090")
+  expect_equal(format_number(0.01887, 1), "0.02")
+  expect_equal(format_number(0.01887, 2), "0.019")
+  expect_equal(format_number(0.01887, 3), "0.0189")
+  expect_equal(format_number(-0.01887, 2), "-0.019")
+})
+
 test_that("pourcent works", {
   expect_equal(pourcent(0.1), "10%")
   expect_equal(pourcent(0.1, symbol = FALSE), "10")

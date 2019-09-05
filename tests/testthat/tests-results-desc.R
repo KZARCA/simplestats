@@ -1,4 +1,6 @@
 context("results-desc")
+library(survival)
+
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 test_that("create_ligne_desc.numeric is working", {
   line <- create_ligne_desc(tab$age, noms = "age")
