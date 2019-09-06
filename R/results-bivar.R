@@ -170,7 +170,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
 
 create_ligne_cor <- function(x, y) {
   l <- length(x)
-  title <- gettext("Correlation coefficient", domain = "R-simplestats")
+  title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(CI95)", domain = "R-simplestats")
   if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
     res <- cor.test(x, y) %>%
