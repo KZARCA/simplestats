@@ -89,12 +89,12 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   } else {
     tab <- tab[c(vardep, vars)]
   }
-  exLabel <- label(tab)
-  tab <- imputer(tab, vardep, type, var_ajust)
-  if (inherits(tab, "mids")) {
-    tab <- suppressWarnings(complete(tab))
-    label(tab, self = FALSE) <- exLabel
-  }
+  # exLabel <- label(tab)
+  # tab <- imputer(tab, vardep, type, var_ajust)
+  # if (inherits(tab, "mids")) {
+  #   tab <- suppressWarnings(complete(tab))
+  #   label(tab, self = FALSE) <- exLabel
+  # }
   tab %<>% prepare_model()
   analysables <- map_lgl(tab, function(x){
     if (is.factor(x)){
