@@ -30,7 +30,6 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
                       vars[i])
       formule <- paste(vardep, "~", varsi)
       if (type == "logistic"){
-        formule2 <- paste(vardep, "~", vars[i])
         mod <- glm(formula = as.formula(formule), data = tab, family = "binomial")
         if (mod$converged == FALSE)  mod <- NULL
       } else if (type == "linear"){

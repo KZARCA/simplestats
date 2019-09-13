@@ -1,4 +1,5 @@
 context("bootstrap")
+library(survival)
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 
 boot_tests <- function(tab, vardep, varindep, var_ajust){

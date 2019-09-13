@@ -37,6 +37,8 @@ get_boot <- function(data, indices, progression, model_base, vec.out, nvar_mod) 
   } else NA
 }
 
+
+## Maybe we could do just 1 bootstrap?
 get_boot_p <- function(data, indices, progression, model_base, vec.out, nvar_mod){
   progression(detail = gettext("P-values computation...", domain = "R-simplestats"))
   data$.vardep <- data$.vardep[indices]
@@ -89,11 +91,11 @@ get_confint_p_boot <- function(resBoot, resBoot_p){
       ci <-
         map(seq_along(resBoot$t0), function(i){
           shiny::incProgress(1/l,detail = names(resBoot$t0)[i])
-          b <- boot::boot.ci(resBoot, type = ifelse(ok_bca, "bca", "basic"), index = i)
+          b <- boot::boot.ci(resBoot, type = ifelse(ok_bca, "bca", "perc"), index = i)
           shiny::incProgress(1/l)
           if (!is.null(b)) {
             if (ok_bca) b$bca[4:5]
-            else b$basic[4:5]
+            else b$perc[4:5]
           }
         }) %>%
         purrr::reduce(rbind)
@@ -101,15 +103,15 @@ get_confint_p_boot <- function(resBoot, resBoot_p){
   } else {
     ci <-
       map(seq_along(resBoot$t0), function(i){
-        b <- boot::boot.ci(resBoot, type = ifelse(ok_bca, "bca", "basic"), index = i)
+        b <- boot::boot.ci(resBoot, type = ifelse(ok_bca, "bca", "perc"), index = i)
         if (!is.null(b)) {
           if (ok_bca) b$bca[4:5]
-          else b$basic[4:5]
+          else b$perc[4:5]
         }
       }) %>%
       purrr::reduce(rbind)
   }
-  type_ci <- ifelse(ok_bca, "bca", "basic")
+  type_ci <- ifelse(ok_bca, "bca", "perc")
 
   p <- map_dbl(seq_along(resBoot_p$t0), function(i){
     t <- resBoot_p$t[, i, drop = TRUE]

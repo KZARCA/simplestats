@@ -100,7 +100,7 @@ test_that("create_ligne_bivar.num_num is working", {
   expect_equal(line$id, "nodes")
   expect_equal(line$variable, "Nodes")
   co <- cor.test(tab$nodes, tab$age, method = "spearman", exact = FALSE) %>% broom::tidy()
-  expect_equal(line$`Correlation coefficient`, sprintf_number_table("%s", co$estimate))
+  expect_equal(line$`correlation coefficient`, sprintf_number_table("%s", co$estimate))
   expect_equal(line$p, co$p.value)
 })
 
