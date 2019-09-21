@@ -60,13 +60,13 @@ is_homoscedatic.lm <- function(x, ...){
   model <- x
   if(length(model$model) > 2 || is.numeric(model$model[[2]])){
     res <- rstudent(model)
-    nb_breaks <- max(2, min(floor(nrow(model$model)/20), 5))
+    nb_breaks <- max(2, min(floor(length(unique(model$fitted.values))/20), 5))
     x <- res
     breaks <- unique(quantile(model$fitted.values, probs = seq(0,1,1/nb_breaks)), include.lowest = TRUE)
     breaks[1] <- -Inf
     breaks[length(breaks)] <- Inf
     y <- cut(model$fitted.values,
-             breaks = breaks)
+             breaks = breaks, right = FALSE)
     is_homoscedatic.default(y, x)
   } else {
     is_homoscedatic.default(model$model[[2]], model$model[[1]])

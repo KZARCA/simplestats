@@ -267,7 +267,6 @@ add_varname.boot <- function(tableRet, resBoot){
 #' @param nb a numeric vector
 #' @param symbol displays "\%"
 #'
-#' @return a character vector
 #' @export
 #'
 #' @examples
