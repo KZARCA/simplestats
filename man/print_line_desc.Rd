@@ -4,7 +4,7 @@
 \alias{print_line_desc}
 \title{Displays the descriptive analysis in markdown}
 \usage{
-print_line_desc(x, varname = NA, type = "linear", time = NULL)
+print_line_desc(x, varname = label(x), type = "linear", time = NULL)
 }
 \arguments{
 \item{x}{The variable to describe}

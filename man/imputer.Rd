@@ -4,14 +4,14 @@
 \alias{imputer}
 \title{Imputation strategy}
 \usage{
-imputer(tab, type, vardep, n_imputation = 1)
+imputer(tab, vardep, type, exclude_mice = NULL, n_imputation = 1)
 }
 \arguments{
 \item{tab}{A data frame}
 
-\item{type}{Can be one of "linear", "logistic", "survival"}
-
 \item{vardep}{The dependant variable}
+
+\item{type}{Can be one of "linear", "logistic", "survival"}
 
 \item{n_imputation}{Number of imputations}
 }

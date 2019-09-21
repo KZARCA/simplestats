@@ -4,7 +4,7 @@
 \alias{standardize_names}
 \title{Create better colnames}
 \usage{
-standardize_names(names, trunc = FALSE)
+standardize_names(names, trunc = FALSE, length = 40)
 }
 \arguments{
 \item{names}{character vector}

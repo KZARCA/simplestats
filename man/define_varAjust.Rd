@@ -4,7 +4,7 @@
 \alias{define_varAjust}
 \title{Detect adjustment variables}
 \usage{
-define_varAjust(tab, vardep, varindep, type)
+define_varAjust(tab, vardep, varindep, type, test = FALSE)
 }
 \arguments{
 \item{tab}{A data frame}

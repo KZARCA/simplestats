@@ -4,16 +4,19 @@
 \alias{print_plot_desc}
 \title{Plot descriptive graphs}
 \usage{
-print_plot_desc(tab, vardep, var_n, type = "linear")
+print_plot_desc(tab, vardep = NULL, varindep = NULL, type = "linear",
+  ...)
 }
 \arguments{
 \item{tab}{The data frame}
 
 \item{vardep}{The dependent variable}
 
-\item{var_n}{The independant variable}
+\item{varindep}{The independant variable}
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
+
+\item{...}{Further arguments passed to ggsurv}
 }
 \value{
 a ggplot2 graph

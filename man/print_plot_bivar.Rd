@@ -4,14 +4,14 @@
 \alias{print_plot_bivar}
 \title{Plot univariate graphs}
 \usage{
-print_plot_bivar(tab, vardep, var_n, type = "linear")
+print_plot_bivar(tab, vardep, varindep, type = "linear")
 }
 \arguments{
 \item{tab}{The data frame}
 
 \item{vardep}{The dependent variable}
 
-\item{var_n}{The independant variable}
+\item{varindep}{The independant variable}
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
 }

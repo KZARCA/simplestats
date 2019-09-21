@@ -9,10 +9,7 @@ pourcent(nb, symbol = TRUE)
 \arguments{
 \item{nb}{a numeric vector}
 
-\item{symbol}{displays "%"}
-}
-\value{
-a character vector
+\item{symbol}{displays "\%"}
 }
 \description{
 Get the number(s) formatted in percentage

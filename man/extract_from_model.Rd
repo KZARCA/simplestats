@@ -4,10 +4,10 @@
 \alias{extract_from_model}
 \title{Extract objects from a model}
 \usage{
-extract_from_model(mod, vector)
+extract_from_model(model, vector)
 }
 \arguments{
-\item{mod}{an object of type "lm" or "coxph"}
+\item{model}{an object of type "lm" or "coxph"}
 
 \item{vector}{A character vector of object to extract}
 }

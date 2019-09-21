@@ -4,8 +4,9 @@
 \alias{make_tab_survival}
 \title{Add column .time}
 \usage{
-make_tab_survival(tab, vardep, passage = 1, dateSortie = NULL,
-  dateInclusion = NULL, var_time = NULL)
+make_tab_survival(tab, vardep, passage = 1, typeCensure = 2,
+  dateInclusion = NULL, dateSortie = NULL, var_time = NULL,
+  limit = NULL)
 }
 \arguments{
 \item{tab}{The data frame}
@@ -14,9 +15,9 @@ make_tab_survival(tab, vardep, passage = 1, dateSortie = NULL,
 
 \item{passage}{If 1, The first level of the event variable is the absence of event; if 2, the second level is the absence of event}
 
-\item{dateSortie}{Name of the column indicating event or censor date}
-
 \item{dateInclusion}{Name of the column indicating the inclusion date}
+
+\item{dateSortie}{Name of the column indicating event or censor date}
 
 \item{var_time}{Name of the column indicating the follow-up time follow-up}
 }

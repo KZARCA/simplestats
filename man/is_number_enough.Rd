@@ -4,14 +4,14 @@
 \alias{is_number_enough}
 \title{Is the number of observations enough to perform the modeling?}
 \usage{
-is_number_enough(tab, vars, vardep)
+is_number_enough(tab, vardep, vars, type = "linear", event_value = "1")
 }
 \arguments{
 \item{tab}{A data frame}
 
-\item{vars}{A character vector of the independant variables and the adjustment variables}
-
 \item{vardep}{A character string of the dependant variable}
+
+\item{vars}{A character vector of the independant variables and the adjustment variables}
 }
 \value{
 A logical vector of length 1

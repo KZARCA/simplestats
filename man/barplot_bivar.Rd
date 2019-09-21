@@ -14,7 +14,7 @@ barplot_bivar(tab, x, y, graphPercent = NULL, showGraphNA = NULL)
 \item{y}{the dependant variable}
 }
 \value{
-a ggplot boxplot
+a ggplot barplot
 }
 \description{
 Easy Barplot

@@ -8,9 +8,10 @@
 \usage{
 create_ligne_bivar(x, ...)
 
-\method{create_ligne_bivar}{factor}(x, y, noms, margin = 2, ...)
+\method{create_ligne_bivar}{factor}(x, y, noms, margin = 2,
+  .drop = TRUE)
 
-\method{create_ligne_bivar}{numeric}(x, y, noms, ...)
+\method{create_ligne_bivar}{numeric}(x, y, noms, .drop = TRUE)
 }
 \arguments{
 \item{x}{The independant variable}

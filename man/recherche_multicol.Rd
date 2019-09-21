@@ -4,7 +4,7 @@
 \alias{recherche_multicol}
 \title{Search for multicolinearity}
 \usage{
-recherche_multicol(tab, vardep, varindep, varAjust, type)
+recherche_multicol(tab, vardep, varindep, var_ajust, type)
 }
 \arguments{
 \item{tab}{A data frame}
@@ -13,9 +13,9 @@ recherche_multicol(tab, vardep, varindep, varAjust, type)
 
 \item{varindep}{A character vector of the independant variables}
 
-\item{varAjust}{A character vector of the adjustment variables}
-
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
+
+\item{varAjust}{A character vector of the adjustment variables}
 }
 \value{
 A character vector of all terms with a VIF > 5
