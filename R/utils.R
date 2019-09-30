@@ -219,8 +219,8 @@ add_varname <- function(x, y, ...){
 }
 
 #' @export
-add_varname.default <- function(x, y, noms, ...){
-  add_column(x, id = noms, variable = label(y), .before = 1)
+add_varname.default <- function(tab, x, noms, ...){
+  add_column(tab, id = noms, variable = label(x), .before = 1)
 }
 
 #' @export
@@ -492,3 +492,20 @@ is_wholenumber <-
     else
       abs(x - round(x)) < tol
   }
+
+#' Find object in the parents of the calling environment
+#'
+#' @param name a length 1 character vector of the objet to find
+#' @param parents list of environments
+#'
+#' @return the first environment in the list where the  object is found
+#'
+find_env <- function(name, parents = c(sys.frames(), .GlobalEnv)){
+  for (env in parents){
+    if (name %in% ls(env)) {
+      return(env)
+    }
+  }
+  stop("Can't find ", name)
+}
+

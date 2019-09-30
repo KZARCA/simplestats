@@ -35,10 +35,10 @@ test_that("create_ligne_bivar.factor_num is working", {
     extract2("m") %>%
     expect_equal(line$n)
   lm(age ~ differ, data=tab) %>%
-    car::Anova(type = 3) %>%
+    car::Anova() %>%
     broom::tidy() %>%
     extract2("p.value") %>%
-    extract(2) %>%
+    extract(1) %>%
     c(rep(NA,2)) %>%
     expect_equal(line$p)
   expect_equal(line$test, c("Anova", NA, NA))
@@ -99,8 +99,8 @@ test_that("create_ligne_bivar.num_num is working", {
   line <- create_ligne_bivar(tab$nodes, tab$age, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$variable, "Nodes")
-  co <- cor.test(tab$nodes, tab$age, method = "spearman", exact = FALSE) %>% broom::tidy()
-  expect_equal(line$`correlation coefficient`, sprintf_number_table("%s", co$estimate))
+  co <- cor.test(tab$nodes, tab$age, method = "pearson") %>% broom::tidy()
+  expect_equal(line$`correlation coefficient (CI95)`, sprintf_number_table("%s (%s; %s)", co$estimate, co$conf.low, co$conf.high))
   expect_equal(line$p, co$p.value)
 })
 

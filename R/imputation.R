@@ -48,4 +48,3 @@ imputer <- function(tab, vardep, type, exclude_mice = NULL, n_imputation = 1){
     return(tabimp)
   }
 }
-

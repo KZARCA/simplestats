@@ -108,29 +108,23 @@ extract_pval_glob <- function(x, ...){
 
 #' @export
 #' @rdname extract_pval_glob
-extract_pval_glob.lm <- function(x, ...){
-  df <- clean_anova(x)
-  extract_pval_glob.default(df, ...)
+extract_pval_glob.default <- function(mod, ...){
+  tbl <- clean_anova(mod)
+  put_pval_glob(tbl, ...)
 }
-
-#' @export
-#' @rdname extract_pval_glob
-extract_pval_glob.coxph <- extract_pval_glob.lm
 
 #' @export
 #' @rdname extract_pval_glob
 extract_pval_glob.boot <- function(x, ...){
   R <- x$R
   tab_anova_base <- x$tab_anova_base
-  tab_to_extract <- map_dbl(seq_along(x$t0), function(i){
+  tbl <- map_dbl(seq_along(x$t0), function(i){
     base::mean(x$t[, i, drop = TRUE] >= x$t0[i], na.rm = TRUE)
   }) %>% tibble::tibble(df = tab_anova_base$df, p.value = .)
-  extract_pval_glob.default(tab_to_extract, ...)
+  put_pval_glob(tbl, ...)
 }
 
-#' @export
-#' @rdname extract_pval_glob
-extract_pval_glob.default <- function(x, ...){
+put_pval_glob <- function(x, ...){
   dots <- list(...)
   en_test <- dots$en_test %||% FALSE
   show_df1 <- dots$show_df1 %||% FALSE
@@ -143,8 +137,42 @@ extract_pval_glob.default <- function(x, ...){
     purrr::flatten_dbl()
 }
 
-clean_anova <- function(mod){
-  car::Anova(mod, type = 3) %>%
+clean_anova <- function(x, ...){
+  UseMethod("clean_anova")
+}
+
+
+clean_anova.mira <- function(mod){
+  find_pval <- function(x){
+    x$result[4]
+  }
+
+  env <- find_env(deparse(mod$call[[2]]))
+
+  N <- nrow(getfit(mod, 1)$model)
+  terms <- base::labels(terms(getfit(mod, 1)))
+  xlevels <- getfit(mod, 1)$xlevels
+  purrr::map_dfr(terms, function(x){
+    p.value <- if (length(xlevels[[x]]) <= 2) {
+      NA
+    } else {
+      mod2 <- mod
+      mod2$call$expr[[2]] <- update.formula(mod2$call$expr[[2]], paste0(". ~ . -", x)) %>%
+        format() %>%
+        parse(text = .) %>%
+        extract2(1)
+      if (as.character(mod$call$expr[[1]]) == quote(lm)) {
+          suppressWarnings(D1(mod, eval(mod2$call, envir = env)) %>% find_pval())
+      } else {
+        suppressWarnings(D3(mod, eval(mod2$call, envir = env)) %>% find_pval())
+      }
+    }
+    tibble(variable = x, df = ifelse(length(xlevels[[x]]), length(xlevels[[x]]) - 1, 1), p.value = p.value)
+  })
+}
+
+clean_anova.default <- function(mod){
+  car::Anova(mod) %>%
     broom::tidy() %>%
     dplyr::rename(variable = term) %>%
     dplyr::filter(variable != "(Intercept)" & variable != "Residuals" & variable != "NULL")

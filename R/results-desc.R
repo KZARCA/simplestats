@@ -37,11 +37,11 @@ create_ligne_desc.numeric <- function(x, noms, ...){ #si la variable est numéri
 #' @rdname create_ligne_desc
 create_ligne_desc.factor <- function(x, noms, ...){
   cont <- table(x)
-  prop <- prop.table(cont) %>%  pourcent
+  prop <- prop.table(cont) %>%  pourcent()
   map2(cont, prop, function(x, y) {
     sprintf_number_table("%s (%s)", x, y)
   }) %>%
-    as_tibble %>%
+    as_tibble() %>%
     add_varname(x, noms, one_line = TRUE)
 }
 

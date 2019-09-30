@@ -2,21 +2,15 @@
 % Please edit documentation in R/extract_pval.R
 \name{extract_pval_glob}
 \alias{extract_pval_glob}
-\alias{extract_pval_glob.lm}
-\alias{extract_pval_glob.coxph}
-\alias{extract_pval_glob.boot}
 \alias{extract_pval_glob.default}
+\alias{extract_pval_glob.boot}
 \title{Extract Anova p-value from objects}
 \usage{
 extract_pval_glob(x, ...)
 
-\method{extract_pval_glob}{lm}(x, ...)
-
-\method{extract_pval_glob}{coxph}(x, ...)
+\method{extract_pval_glob}{default}(mod, ...)
 
 \method{extract_pval_glob}{boot}(x, ...)
-
-\method{extract_pval_glob}{default}(x, ...)
 }
 \arguments{
 \item{x}{The object to get p-value from, can be an object of class lm, glm, coxph, or boot}

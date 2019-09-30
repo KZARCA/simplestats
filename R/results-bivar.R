@@ -28,8 +28,8 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
       d <- map2_chr(cont, prop, function(x, y) {
         sprintf_number_table("%s (%s)", x, y)
       }) %>%
-        matrix(ncol = nlevels(y)) %>% as_tibble
-      colnames(d) <- sprintf("%s %s", label(y), levels(y))#column_names
+        matrix(ncol = nlevels(y), dimnames = list(NULL, sprintf("%s %s", label(y), levels(y)))) %>% as_tibble()
+      #colnames(d) <- sprintf("%s %s", label(y), levels(y))#column_names
       d$.n <- base::rowSums(cont)
       d %<>% add_varname(x, noms)
       pval_test <- extract_pval(x,y) %>%
@@ -82,7 +82,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
         group_by(y, .drop = .drop) %>%
         summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
         base::t() %>%
-        as_tibble
+        as_tibble()
       colnames(d) <- paste(label(y), d[1,])#column_names
       d <- d[2, ]
       d$.n <- sum(cont)
