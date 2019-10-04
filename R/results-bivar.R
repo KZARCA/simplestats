@@ -81,9 +81,10 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
       d <- no_na %>%
         group_by(y, .drop = .drop) %>%
         summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
-        base::t() %>%
-        as_tibble()
+        base::t()
       colnames(d) <- paste(label(y), d[1,])#column_names
+      d <- as_tibble(d)
+
       d <- d[2, ]
       d$.n <- sum(cont)
       pval_test <- extract_pval(x,y) %>%

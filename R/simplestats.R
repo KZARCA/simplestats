@@ -80,6 +80,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom shiny modalButton
 #' @importFrom car vif
 #' @importFrom broom tidy
+#' @importFrom broom glance
 #' @importFrom broom fix_data_frame
 #' @import mice
 #' @importFrom stringi stri_enc_isutf8

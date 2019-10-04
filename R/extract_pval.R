@@ -13,18 +13,9 @@ extract_pval <- function(x, ...){
 
 #' @export
 #' @rdname extract_pval
-extract_pval.survdiff <- function(x, ...){
-  if (is.matrix(x$obs)) {
-    otmp <- apply(x$obs, 1, sum)
-    etmp <- apply(x$exp, 1, sum)
-  }
-  else {
-    otmp <- x$obs
-    etmp <- x$exp
-  }
-  df <- (sum(1 * (etmp > 0))) - 1
-  pval <- magrittr::subtract(1, pchisq(x$chisq, df)) %>%
-    purrr::as_vector("double")
+extract_pval.survdiff <- function(x){
+  pval <- broom::glance(x) %>%
+    extract2("p.value")
   return(list(pval = pval, test = "Logrank"))
 }
 
@@ -75,6 +66,9 @@ extract_pval.default <- function(x, y, ...){
       if (is.null(f)){
         set.seed(1)
         f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
+        if (!isTRUE(all.equal(dim(cont), c(2, 2)))){
+          f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
+        }
         test <- "Fisher"
       }
     } else test <- "Chi2"
@@ -143,6 +137,8 @@ clean_anova <- function(x, ...){
 
 
 clean_anova.mira <- function(mod){
+  if(length(getfit(mod)) == 1) return(clean_anova(getfit(mod, 1)))
+
   find_pval <- function(x){
     x$result[4]
   }
@@ -161,12 +157,14 @@ clean_anova.mira <- function(mod){
         format() %>%
         parse(text = .) %>%
         extract2(1)
-      if (as.character(mod$call$expr[[1]]) == quote(lm)) {
+      suppressWarnings({
+        if (length(getfit(mod)) >= 20) {
+          suppressWarnings(D2(mod, eval(mod2$call, envir = env), use = "likelihood") %>% find_pval())
+        } else {
           suppressWarnings(D1(mod, eval(mod2$call, envir = env)) %>% find_pval())
-      } else {
-        suppressWarnings(D3(mod, eval(mod2$call, envir = env)) %>% find_pval())
+        }
+      })
       }
-    }
     tibble(variable = x, df = ifelse(length(xlevels[[x]]), length(xlevels[[x]]) - 1, 1), p.value = p.value)
   })
 }
