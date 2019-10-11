@@ -30,7 +30,7 @@ factor_strings <- function(tab){
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
         if (nlevels(b) >= 10L) return(as.character(x))
-        x <- reorder(b, b,function(y)-length(y))
+        x <- reorder(b, b, function(y)-length(y))
         levels(x) %<>% str_trunc(20)
       } else if (length(table(x)) < 5){
         x <- factor(x)

@@ -4,7 +4,7 @@
 \alias{find_env}
 \title{Find object in the parents of the calling environment}
 \usage{
-find_env(name, parents = c(sys.frames(), .GlobalEnv))
+find_env(name, parents = rlang::current_env())
 }
 \arguments{
 \item{name}{a length 1 character vector of the objet to find}

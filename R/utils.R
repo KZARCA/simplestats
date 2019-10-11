@@ -500,11 +500,17 @@ is_wholenumber <-
 #'
 #' @return the first environment in the list where the  object is found
 #'
-find_env <- function(name, parents = c(sys.frames(), .GlobalEnv)){
-  for (env in parents){
-    if (name %in% ls(env)) {
-      return(env)
-    }
+find_env <- function(name, parents = rlang::current_env()){
+  n <- 1
+  while(!identical(parents, .GlobalEnv)){
+    env <- rlang::caller_env(n)
+      if (name %in% ls(env)) {
+        return(env)
+      }
+    n <- n + 1
+  }
+  if (name %in% ls(env)) {
+    return(env)
   }
   stop("Can't find ", name)
 }

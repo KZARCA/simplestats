@@ -1,27 +1,6 @@
-#' Performs univariate tests and extract p-value from objects
-#'
-#' @param x Object of class survdiff, or a numerical or factor vector
-#' @param ... If x is a vector, this argument must be a vector of the same length
-#'
-#' @return
 #' @export
-#'
-#' @examples
-extract_pval <- function(x, ...){
-  UseMethod("extract_pval")
-}
-
-#' @export
-#' @rdname extract_pval
-extract_pval.survdiff <- function(x){
-  pval <- broom::glance(x) %>%
-    extract2("p.value")
-  return(list(pval = pval, test = "Logrank"))
-}
-
-#' @export
-#' @rdname extract_pval
-extract_pval.default <- function(x, y, ...){
+find_test <- function(x, y){
+  f <- NULL
   if (is.factor(x) & is.numeric(y) | is.numeric(x) & is.factor(y)){
     if (is.factor(y)){
       tmp <- y
@@ -31,7 +10,6 @@ extract_pval.default <- function(x, y, ...){
     formule <- as.formula(y ~ x)
     mod <- try(lm(formule), silent = TRUE) # le try c'est parce que parfois, il existe une classe de x avec n = 0
     compte <- margin.table(table(x, y), 1)
-    f <- NULL
     try({
       if (nlevels(x) == 2) {
         if (all(compte > 30, na.rm = TRUE)) {
@@ -73,18 +51,46 @@ extract_pval.default <- function(x, y, ...){
       }
     } else test <- "Chi2"
   }
-  if(!is.null(f)){
-    pval <- f %>%
-      broom::tidy() %>%
-      magrittr::extract("p.value") %>%
-      dplyr::slice(1) %>%
-      purrr::as_vector("double") %>%
-      round(10)
-    return(list(pval = pval, test = test))
+  if (!is.null(f)){
+    return(list(result = f, name = test))
   } else {
-    return(list(pval = NA, test = "-"))
+    return(NULL)
   }
+}
 
+#' Performs univariate tests and extract p-value from objects
+#'
+#' @param x Object of class survdiff, or a numerical or factor vector
+#' @param ... If x is a vector, this argument must be a vector of the same length
+#'
+#' @return
+#' @export
+#'
+#' @examples
+extract_pval <- function(x, ...){
+  UseMethod("extract_pval")
+}
+
+#' @export
+#' @rdname extract_pval
+extract_pval.survdiff <- function(x){
+  pval <- broom::glance(x) %>%
+    extract2("p.value")
+  return(list(pval = pval, test = "Logrank"))
+}
+
+#' @export
+#' @rdname extract_pval
+extract_pval.default <- function(x, y){
+  test <- find_test(x, y)
+  if (is.null(test$result)) return(list(pval = NA, test = "-"))
+  pval <- test$result %>%
+    broom::tidy() %>%
+    magrittr::extract("p.value") %>%
+    dplyr::slice(1) %>%
+    purrr::as_vector("double") %>%
+    round(10)
+  return(list(pval = pval, test = test$name))
 }
 
 #' Extract Anova p-value from objects
@@ -164,7 +170,7 @@ clean_anova.mira <- function(mod){
           suppressWarnings(D1(mod, eval(mod2$call, envir = env)) %>% find_pval())
         }
       })
-      }
+    }
     tibble(variable = x, df = ifelse(length(xlevels[[x]]), length(xlevels[[x]]) - 1, 1), p.value = p.value)
   })
 }

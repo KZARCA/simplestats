@@ -8,9 +8,9 @@
 \usage{
 extract_pval(x, ...)
 
-\method{extract_pval}{survdiff}(x, ...)
+\method{extract_pval}{survdiff}(x)
 
-\method{extract_pval}{default}(x, y, ...)
+\method{extract_pval}{default}(x, y)
 }
 \arguments{
 \item{x}{Object of class survdiff, or a numerical or factor vector}

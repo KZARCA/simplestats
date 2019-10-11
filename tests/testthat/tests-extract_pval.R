@@ -21,7 +21,7 @@ test_that("extract_pval_glob.coxph works", {
 test_that("extract_pval_glob.mira works", {
   tab <- standardize_tab(colon)
   tabm <- tab[c("sex", "age", "nodes", "differ", "rx")] %>%
-    mice(printFlag = FALSE)
+    mice(printFlag = FALSE, seed = 10)
 
   suppressWarnings(mod <- mice:::with.mids(tabm, lm(age ~ sex + nodes + differ + rx)))
   pval1 <- extract_pval_glob(mod)

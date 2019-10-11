@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: simplestats 0.9.7\n"
-"POT-Creation-Date: 2019-09-06 16:12\n"
+"Project-Id-Version: simplestats 0.10.0\n"
+"POT-Creation-Date: 2019-10-04 16:21\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,4 +98,7 @@ msgid "correlation coefficient"
 msgstr ""
 
 msgid "(CI95)"
+msgstr ""
+
+msgid "Can't find"
 msgstr ""
