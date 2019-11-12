@@ -18,8 +18,8 @@ import_csv <- function(file, enc = "") {
                        strip.white = TRUE, stringsAsFactors = FALSE, check.names = FALSE)})
   #if (firstImport) {
     if(length(tab) == 1 | is.null(tab)){
-      try(tab <- read.csv(file, na.strings=c("NA", ""," ", "."), strip.white = TRUE, fileEncoding = enc,
-                          stringsAsFactors = FALSE, check.names = FALSE))
+      tab <- read.csv(file, na.strings=c("NA", ""," ", "."), strip.white = TRUE, fileEncoding = enc,
+                          stringsAsFactors = FALSE, check.names = FALSE)
     }
   #}
   tab
@@ -68,7 +68,9 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     if (is(tab, "error")) {
       if (grepl("Failed to open", tab$message)){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
-      } else {
+      } else if (grepl("more columns than column names", tab$message)){
+        err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
+      }  else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
       }
     }
