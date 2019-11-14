@@ -27,6 +27,7 @@ factor_strings <- function(tab){
       if(inherits(x, "POSIXct")) {
         return(as.character(x))
       }
+      if (is.numeric(x) && min(x, na.rm = TRUE) > 1E5) x <- as.character(x)
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
         if (nlevels(b) >= 10L) return(as.character(x))
