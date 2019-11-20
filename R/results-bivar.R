@@ -171,27 +171,22 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
 
 create_ligne_cor <- function(x, y) {
   l <- length(x)
-  title <- gettext("correlation coefficient", domain = "R-simplestats")
+  name_title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(CI95)", domain = "R-simplestats")
-  if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
-    res <- cor.test(x, y) %>%
-      broom::tidy()
-    titleCI <- paste(title, CI95)
-    ligne <- tibble(!!titleCI := sprintf_number_table("%s (%s; %s)",
-                    res$estimate, res$conf.low, res$conf.high),
-                    n = l,
-                    p = res$p.value,
-                    test = "Pearson")
-
+  test <- find_test(x, y)
+  res <- test$result %>%
+    broom::tidy()
+  if(test$name == "Pearson") {
+    name_title <- paste(name_title, CI95)
+    title <- sprintf_number_table("%s (%s; %s)",
+                                  res$estimate, res$conf.low, res$conf.high)
   } else {
-    res <- cor.test(x, y, method = "spearman", exact = FALSE) %>%
-      broom::tidy()
-    ligne <- tibble(!!title := sprintf_number_table("%s", res$estimate),
-                    n = l,
-                    p = res$p.value,
-                    test = "Spearman")
-
+    title <- sprintf_number_table("%s", res$estimate)
   }
+  ligne <- tibble(!!name_title := title,
+                  n = l,
+                  p = res$p.value,
+                  test = test$name)
 }
 
 #' Displays the univariate analysis in markdown

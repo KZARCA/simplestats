@@ -1,7 +1,15 @@
 #' @export
 find_test <- function(x, y){
   f <- NULL
-  if (is.factor(x) & is.numeric(y) | is.numeric(x) & is.factor(y)){
+  if (is.numeric(x) & is.numeric(y)){
+    if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+      f <- cor.test(x, y)
+      test = "Pearson"
+    } else {
+      f <- cor.test(x, y, method = "spearman", exact = FALSE)
+      test = "Spearman"
+    }
+  } else if (is.factor(x) & is.numeric(y) | is.numeric(x) & is.factor(y)){
     if (is.factor(y)){
       tmp <- y
       y <- x
