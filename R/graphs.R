@@ -87,20 +87,20 @@ plot_reglin <- function(tab, x, y, method = "lm"){
 #' @export
 #'
 #' @examples
-boxplot_bivar <- function(tab, x, y, palette = "hue") {
+boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
-  graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
+  graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
+  if (violin){
+    graph <- graph + geom_violin(trim = FALSE) + geom_boxplot(width=0.1, fill = "white", outlier.shape = NA)
+  } else {
+    graph <- graph + geom_boxplot()
+  }
   if (palette == "Set1"){
     graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
+  } else if (palette == "grey"){
+    graph <- graph + scale_fill_grey()
   }
-  graph
-}
-
-#' @export
-#' @rdname boxplot_bivar
-boxplot_bivar_bw <- function(tab, x, y) {
-  tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
-  ggplot(tab) + aes_string(y, x, y) + geom_boxplot() + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE) + scale_fill_grey()
+  graph + stat_summary(fun.y=mean, geom="point", shape=23, fill = "black")
 }
 
 #' Easy Barplot

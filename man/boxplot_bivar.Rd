@@ -2,12 +2,9 @@
 % Please edit documentation in R/graphs.R
 \name{boxplot_bivar}
 \alias{boxplot_bivar}
-\alias{boxplot_bivar_bw}
 \title{Easy Boxplot}
 \usage{
-boxplot_bivar(tab, x, y, palette = "hue")
-
-boxplot_bivar_bw(tab, x, y)
+boxplot_bivar(tab, x, y, palette = "hue", violin = FALSE)
 }
 \arguments{
 \item{tab}{a data frame}
