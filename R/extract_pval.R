@@ -1,7 +1,9 @@
-#' @export
-find_test <- function(x, y){
+find_test <- function(x, y, survival = FALSE, censure = NULL){
   f <- NULL
-  if (is.numeric(x) & is.numeric(y)){
+  if (survival){
+    f <- survdiff(Surv(y, censure) ~ x)
+    test = "Logrank"
+  } else if (is.numeric(x) & is.numeric(y)){
     if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
       f <- cor.test(x, y)
       test = "Pearson"
@@ -68,30 +70,21 @@ find_test <- function(x, y){
 
 #' Performs univariate tests and extract p-value from objects
 #'
-#' @param x Object of class survdiff, or a numerical or factor vector
-#' @param ... If x is a vector, this argument must be a vector of the same length
+#' @param x The dependant variable
+#' @param y Either the independant variable if survival = FALSE or follow-up time
+#' @param survival logical, is it a survival analysis
+#' @param censure  The censor variable
 #'
 #' @return
 #' @export
-#'
-#' @examples
-extract_pval <- function(x, ...){
-  UseMethod("extract_pval")
-}
-
-#' @export
-#' @rdname extract_pval
-extract_pval.survdiff <- function(x){
-  pval <- broom::glance(x) %>%
-    extract2("p.value")
-  return(list(pval = pval, test = "Logrank"))
-}
-
-#' @export
-#' @rdname extract_pval
-extract_pval.default <- function(x, y){
-  test <- find_test(x, y)
+extract_pval <- function(x, y, survival = FALSE, censure = NULL){
+  test <- find_test(x, y, survival, censure)
   if (is.null(test$result)) return(list(pval = NA, test = "-"))
+  if (test$name == "Logrank"){
+    pval <- broom::glance(test$result) %>%
+      extract2("p.value")
+    return(list(pval = pval, test = test$name))
+  }
   pval <- test$result %>%
     broom::tidy() %>%
     magrittr::extract("p.value") %>%

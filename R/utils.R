@@ -515,3 +515,10 @@ find_env <- function(name, parents = rlang::current_env()){
   stop("Can't find ", name)
 }
 
+create_tab_cens <- function(x, time, censure){
+  tab_cens <- remove_na(time, x, censure, drop_factor = TRUE)
+  names(tab_cens) <- c(".time", "x", "censure")
+  tab_cens$censure %<>% as.character() %>% as.numeric()
+  tab_cens
+}
+

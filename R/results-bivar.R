@@ -120,11 +120,8 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
 #'
 #' @examples
 create_ligne_surv_bivar <- function(x, time, noms, censure){
-  tab_cens <- remove_na(time, x, censure, drop_factor = TRUE)
+  tab_cens <- create_tab_cens(x, time, censure) #remove_na(time, x, censure, drop_factor = TRUE)
   if (nrow(tab_cens) > 0){
-    names(tab_cens) <- c(".time", "x", "censure")
-    tab_cens$censure %<>% as.character %>% as.numeric
-
     formule <- Surv(.time, censure) ~ x
     surv <- survfit(formule, data = tab_cens)
     resume <- base::summary(surv)$table
@@ -158,8 +155,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
 
     x <- tab_cens$x
 
-    pval_test <- survdiff(formule, data = tab_cens) %>%
-      extract_pval %>%
+    pval_test <- extract_pval(tab_cens$x, tab_cens$.time, survival = TRUE, tab_cens$censure) %>%
       map_df(~ c(., rep(NA, max(0, nlevels(x) - 1))))
     names(pval_test) <- c("p", "test")
 

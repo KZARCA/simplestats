@@ -1,0 +1,72 @@
+context("glance")
+
+tab <- standardize_tab(mtcars)
+test_that("get_glance Mann Whitney is working", {
+  t <- get_glance(tab$vs, tab$wt)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Wilcoxon rank sum test with continuity correction")
+})
+test_that("get_glance Fisher is working", {
+  t <- get_glance(tab$vs, tab$cyl)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("p", "Test"))
+  expect_equal(t$Test, "Fisher's Exact Test for Count Data")
+})
+test_that("get_glance Chi2 is working", {
+  t <- get_glance(tab$am, tab$vs)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t),  c("Degree of Freedom", "Test statistic","p", "Test"))
+  expect_equal(t$Test, "Pearson's Chi-squared test with Yates' continuity correction")
+})
+
+test_that("get_glance Pearson is working", {
+  t <- get_glance(tab$mpg, tab$wt)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Correlation Coefficient (CI95)", "Degree of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Pearson's product-moment correlation")
+})
+test_that("get_glance Kruskall-Wallis is working", {
+  t <- get_glance(tab$mpg, tab$gear)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Degree of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Kruskal-Wallis rank sum test")
+})
+
+test_that("get_glance Spearman is working", {
+  t <- get_glance(tab$mpg, tab$hp)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Correlation Coefficient","Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Spearman's rank correlation rho")
+})
+
+library(survival)
+
+tab <- standardize_tab(colon)
+test_that("get_glance Welch is working", {
+  t <- get_glance(tab$age, tab$sex)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Mean Difference (CI95)", "Degree of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Welch Two Sample t-test")
+})
+test_that("get_glance Anova is working", {
+  t <- get_glance(tab$age, tab$rx)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Variable", "Degree of Freedom", "Sum of Squares", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, c("Analysis of Variance", NA))
+})
+test_that("get_glance Logrank is working", {
+  t <- get_glance(colon$sex, colon$time, survival = TRUE, colon$status)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Degree of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Mantel-Haenszel - Logrank test")
+})
