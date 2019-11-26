@@ -44,7 +44,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
   }
   else if (is.factor(x) & is.factor(y)){
     cont <- table(x, y)
-    suppressWarnings(f <- chisq.test(cont))
+    suppressWarnings(f <- chisq.test(cont, correct = FALSE))
     if (any(purrr::as_vector(f$expected, "double") < 5)){
       f <- NULL
       try({
