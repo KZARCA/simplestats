@@ -164,7 +164,8 @@ ggsurv <- function(sfit,
                    subs = NULL,
                    palette="hue",
                    BW = FALSE,
-                   interval = NULL
+                   interval = NULL,
+                   censor = FALSE
                    ) {
   if (is.null(interval) || interval <= 0) {
     breaks <- scales::pretty_breaks(5)(sfit$time)
@@ -311,9 +312,10 @@ ggsurv <- function(sfit,
       p <- p + scale_colour_brewer(palette = palette, na.value = "grey")
     }
 
-    #Add censoring marks to the line:
+    if (censor){
       p <- p + geom_point(data = subset(df, n.censor >= 1), aes(x = time, y = surv), shape = shape) +
       guides(colour = guide_legend(override.aes = list(shape = NA)))
+    }
 
 
     ###################################################
