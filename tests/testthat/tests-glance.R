@@ -70,3 +70,28 @@ test_that("get_glance Logrank is working", {
   expect_equal(names(t), c("Degree of Freedom", "Test statistic", "p", "Test"))
   expect_equal(t$Test, "Mantel-Haenszel - Logrank test")
 })
+
+test_that("get_glance lm is working"){
+  t <- get_glance(lm(mpg ~ vs + wt, data = mtcars))
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Multiple R Squared (Adjusted)", "Statistic (DF)", "Deviance",
+                           "Log-Likelihood", "AIC", "BIC", "Residuals Standard Error", "p"))
+}
+
+test_that("get_glance glm is working"){
+  t <- get_glance(glm(vs ~ mpg + wt, data = mtcars, family = binomial))
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Null Deviance (DF)", "Residual deviance (DF)", "Log-Likelihood",
+                           "AIC", "BIC"))
+}
+
+test_that("get_glance coxph is working"){
+  t <- get_glance(coxph(Surv(time, status) ~ sex + rx + age, data = colon))
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Squared R (max)", "Concordance (SE)", "Log-Likelihood",
+                           "AIC", "BIC", "Likelihood ratio test (p)", "Score test (p)",
+                           "Wald test (p)"  ))
+}
