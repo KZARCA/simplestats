@@ -138,7 +138,9 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
     surv_rates <- map_chr(seq_along(surv$strata), function(i) {
       surv_i <- surv[i]
       l <- length(surv_i$surv)
-      sprintf_number_table("%s (%s; %s)", surv_i$surv[l], surv_i$lower[l], surv_i$upper[l])
+      sprintf("%s (%s; %s)", pourcent(surv_i$surv[l], arrondi = 3),
+              pourcent(surv_i$lower[l], arrondi = 3),
+              pourcent(surv_i$upper[l], arrondi = 3))
     })
     d <- tibble(
       median,

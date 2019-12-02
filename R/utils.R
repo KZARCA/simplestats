@@ -270,32 +270,15 @@ add_varname.boot <- function(tableRet, resBoot){
 #' @export
 #'
 #' @examples
-pourcent <- function(nb, symbol = TRUE){
+pourcent <- function(nb, symbol = TRUE, arrondi = NULL){
   map_chr(nb, function(x){
-    if (!is.nan(x)){
-      arrondi <- min(x, 1 - x, na.rm = TRUE) %>%
-        signif(2) %>%
-        get_nb_decimals
-      val <- round(x, arrondi)%>%
-        multiply_by(100) %>%
-        base::format()
-      if (symbol) paste0(val, "%")
-      else val
-    } else "-"
-  })
-}
+    if (is.nan(x) | is.na(x)) return("-")
+    if (is.null(arrondi)) arrondi <- 2
+    val <- multiply_by(x, 100) %>%
+      base::format(digits = arrondi, nsmall = arrondi - 2)
 
-get_nb_decimals <- function(x){
-  if (grepl("\\.", x)) {
-    as.character(x) %>%
-      strsplit("\\.") %>%
-      extract2(1) %>%
-      magrittr::extract(2) %>%
-      nchar
-  }
-  else {
-    0
-  }
+    if (symbol) paste0(val, "%") else val
+  })
 }
 
 #' Nice display of the analysis

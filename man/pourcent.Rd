@@ -4,7 +4,7 @@
 \alias{pourcent}
 \title{Get the number(s) formatted in percentage}
 \usage{
-pourcent(nb, symbol = TRUE)
+pourcent(nb, symbol = TRUE, arrondi = NULL)
 }
 \arguments{
 \item{nb}{a numeric vector}

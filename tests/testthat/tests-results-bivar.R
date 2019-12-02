@@ -121,7 +121,8 @@ test_that("create_ligne_surv_bivar is working", {
   expect_equal(line[["survival rate (CI95)"]], map_chr(seq_along(surv$strata), function(i) {
     surv_i <- surv[i]
     l <- length(surv_i$surv)
-    sprintf_number_table("%s (%s; %s)", surv_i$surv[l], surv_i$lower[l], surv_i$upper[l])
+    sprintf("%s (%s; %s)", pourcent(surv_i$surv[l], arrondi = 3), pourcent(surv_i$lower[l], arrondi = 3),
+            pourcent(surv_i$upper[l], arrondi = 3))
   }))
   expect_equal(line$test, c("Logrank", NA, NA))
 })

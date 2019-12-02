@@ -68,5 +68,5 @@ test_that("create_ligne_surv_desc is working", {
   expect_equal(line[["n events"]], table_surv[["events"]])
   l <- length(surv$surv)
   expect_equal(line[["survival rate (CI95)"]],
-               sprintf_number_table("%s (%s; %s)",surv$surv[l], surv$lower[l], surv$upper[l]))
+               "46.5% (43.5%; 49.7%)")
 })

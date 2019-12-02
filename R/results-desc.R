@@ -73,7 +73,9 @@ create_ligne_surv_desc <- function(time, censure){
       max,
       n,
       nEvent,
-      sprintf_number_table("%s (%s; %s)", surv$surv[l], surv$lower[l], surv$upper[l]),
+      sprintf("%s (%s; %s)", pourcent(surv$surv[l], arrondi = 3),
+              pourcent(surv$lower[l], arrondi = 3),
+              pourcent(surv$upper[l], arrondi = 3))
     )
 
     names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
