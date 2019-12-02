@@ -5,6 +5,7 @@
 \alias{get_glance.default}
 \alias{get_glance.lm}
 \alias{get_glance.coxph}
+\alias{get_glance.mira}
 \title{Get additional info on a test performed}
 \usage{
 get_glance(x, ...)
@@ -14,6 +15,8 @@ get_glance(x, ...)
 \method{get_glance}{lm}(x)
 
 \method{get_glance}{coxph}(x)
+
+\method{get_glance}{mira}(x)
 }
 \arguments{
 \item{x}{The dependant variable}

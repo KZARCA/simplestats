@@ -2,6 +2,7 @@ get_pertinent_params <- function(x){
   UseMethod("get_pertinent_params")
 }
 
+
 get_pertinent_params.coxph <- function(x){
   res <- broom::glance(x) %>%
     mutate(likelihood = sprintf_number_table("%s (%s)", statistic.log, p.value.log),
@@ -87,6 +88,15 @@ rename_glance <- function(x){
               sigma = gettext("Residuals Standard Error"), deviance = gettext("Deviance"),
               null =  gettext("Null Deviance (DF)"), residual = gettext("Residual deviance (DF)"))
 
+  params <- c(params,
+              estimate = gettext("Pooled complete data estimate"),
+              ubar = gettext("Within-imputation variance of estimate"),
+              b = gettext("Between-imputation variance of estimate"),
+              t = gettext("Total variance of estimate"),
+              dfcom = gettext("Degrees of freedom in complete data"),
+              riv = gettext("Relative increase in variance"),
+              lambda = gettext("Proportion attributable to the missingness"),
+              fmi = gettext("Fraction of missing information"))
   varnames <- names(x)
   params <- params[varnames]
 
@@ -124,3 +134,9 @@ get_glance.lm <- function(x){
 #' @export
 #' @rdname get_glance
 get_glance.coxph <- get_glance.lm
+
+#' @export
+#' @rdname get_glance
+get_glance.mira <- function(x){
+  pool(x)$pooled %>% rename_glance() %>% add_class("glance_mira")
+}
