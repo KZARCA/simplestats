@@ -128,7 +128,7 @@ get_glance.default <- function(x, y, survival = FALSE, censure = NULL){
 #' @export
 #' @rdname get_glance
 get_glance.lm <- function(x){
-  x %>% get_pertinent_params() %>% rename_glance()
+  x %>% get_pertinent_params() %>% rename_glance() %>% add_class("glance_mod")
 }
 
 #' @export
