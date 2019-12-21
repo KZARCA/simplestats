@@ -32,9 +32,15 @@ get_pertinent_params.default <- function(x){
   test_name <- x$name
   res <- x$result
   if(test_name == "Pearson"){
-    res <- broom::glance(res) %>%
-    mutate(estimate_p = sprintf_number_table("%s (%s; %s)", estimate, conf.low, conf.high))
-    return(select(res, estimate_p, parameter, statistic, p.value, method))
+    res %<>% broom::glance(res)
+    res <- if ("conf.low" %in% names(res)){
+      mutate(res, estimate_p = sprintf_number_table("%s (%s; %s)", estimate, conf.low, conf.high)) %>%
+        select(estimate_p, parameter, statistic, p.value, method)
+    } else {
+      mutate(res, estimate_p2 = sprintf_number_table("%s", estimate)) %>%
+        select(estimate_p2, parameter, statistic, p.value, method)
+    }
+    return(res)
   }
   if(test_name == "Spearman"){
     res <- broom::glance(res)

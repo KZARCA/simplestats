@@ -28,6 +28,20 @@ test_that("get_glance Pearson is working", {
   expect_warning(t, NA)
   expect_equal(names(t), c("Correlation Coefficient (CI95)", "Degrees of Freedom", "Test statistic", "p", "Test"))
   expect_equal(t$Test, "Pearson's product-moment correlation")
+  a <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 43, 40, 18, NA, 28.5, NA,
+         17, 10, 11, NA, 63, 23.5, NA, 36.3, 90, NA, NA, 9.5, 53, NA, NA, NA, 12,
+         NA, NA, 30, NA, NA, 0, NA, NA, NA, NA, 0, 11, 11, NA, NA, 25, 18.2, 10,
+         NA, NA, NA, NA, NA, NA, NA, 11, NA, NA, NA, 43, NA, 13, 20, NA, NA, 20, 90, 17, 0)
+  b <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+         NA, NA, NA, NA, NA, NA, NA, NA, 15, NA, NA, NA, 13, 13, NA, NA, NA, NA,
+         NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 9, NA, NA, NA, NA, NA,
+         NA, NA, NA, 11, NA, NA, NA, NA, NA, NA, 10, NA, NA, NA, 17, NA, NA, NA, NA, NA)
+  t <- get_glance(a, b)
+  expect_error(t, NA)
+  expect_warning(t, NA)
+  expect_equal(names(t), c("Correlation Coefficient", "Degrees of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Pearson's product-moment correlation")
+
 })
 test_that("get_glance Kruskall-Wallis is working", {
   t <- get_glance(tab$mpg, tab$gear)
@@ -110,3 +124,7 @@ test_that("get_glance mira is working", {
                )
 
 })
+
+
+
+
