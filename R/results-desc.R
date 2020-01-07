@@ -70,7 +70,7 @@ create_ligne_surv_desc <- function(time, censure){
     max <- max(surv$time, na.rm = TRUE)
     d <- tibble(
       sprintf_number_table("%s (%s; %s)", med, CI[1], CI[2]),
-      max,
+      format_number(max),
       n,
       nEvent,
       sprintf("%s (%s; %s)", pourcent(surv$surv[l], arrondi = 3),

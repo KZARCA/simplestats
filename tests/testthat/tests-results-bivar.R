@@ -114,7 +114,7 @@ test_that("create_ligne_surv_bivar is working", {
     extract2("table")
   expect_equal(line[[gettext("median (CI95)", domain = "R-simplestats")]],
                sprintf_number_table("%s (%s; %s)", table_surv[, "median"], table_surv[, "0.95LCL"], table_surv[, "0.95UCL"]))
-  expect_equal(line[[gettext("max follow-up", domain = "R-simplestats")]], surv$time[cumsum(surv$strata)])
+  expect_equal(line[[gettext("max follow-up", domain = "R-simplestats")]], format_number(surv$time[cumsum(surv$strata)]))
   expect_equal(line$n, table_surv[, "n.max"] %>% unname())
   expect_equal(line[[gettext("n events", domain = "R-simplestats")]], table_surv[, "events"] %>% unname())
   expect_equal(round(line$p, 10), c(3.39E-7, NA, NA))

@@ -125,7 +125,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
     formule <- Surv(.time, censure) ~ x
     surv <- survfit(formule, data = tab_cens)
     resume <- base::summary(surv)$table
-    max_time <- map_dbl(seq_along(surv$strata), ~ max(surv[.]$time))
+    max_time <- map_chr(seq_along(surv$strata), ~ format_number(max(surv[.]$time)))
     median <- map_chr(seq_along(surv$strata), function(i){
       sprintf_number_table("%s (%s; %s)",
                            resume[i, "median"],
