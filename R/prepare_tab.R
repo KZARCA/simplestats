@@ -13,6 +13,8 @@ remove_na_rows <- function(tab){
   }
   return(tab)
 }
+
+
 remove_na_cols <- function(tab){
   na_cols <- which(colSums(is.na(tab)) == nrow(tab))
   if (length(na_cols)){
@@ -159,6 +161,14 @@ remove_guillemets <- function(tab){
   })
 }
 
+replace_infinite <- function(tab){
+ lapply(tab, function(x){
+   x[is.infinite(x)] <- NA
+   x
+ }) %>%
+    as.data.frame(stringAsFactors = FALSE)
+}
+
 
 #' Prepare a data.frame for analysis
 #'
@@ -184,6 +194,7 @@ standardize_tab <- function(tab){
   names(tab) <- standardize_names_basic(names(tab))
 
   tab %<>%
+    replace_infinite() %>%
     remove_na_rows() %>%
     replace_virgules() %>%
     transform_date() %>%
