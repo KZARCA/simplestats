@@ -25,7 +25,13 @@ remove_alias <- function(vars, mod, correction = FALSE) {
   alias <- dplyr::filter(tab_mod, is.nan(statistic) | is.infinite(statistic)) %>%
     magrittr::extract2("term")
   alias <- c(alias, names(which(is.na(coef(mod)))))
-  vari <- map_lgl(vars, ~ any(grepl(., alias)))
+  tab <- mod$model[-1]
+  expanded_vars <- map(names(tab), function(x){
+    if (is.factor(tab[[x]])){
+      paste0(x, levels(tab[[x]]))
+    } else x
+  })
+  vari <- map_lgl(expanded_vars, ~ isTRUE(alias %in% .))
 
   if(correction){
     corrected <- map_lgl(vars[vari], function(x){
