@@ -59,8 +59,8 @@ lower_tab <- function(tab){
     lapply(tab, function(x) {
       if(is.character(x) | is.factor(x)) {
         if (!all(grepl("^[A-Z]+$", x), na.rm = TRUE)) {
-          iconv(x, sub = "") %>%
-          tolower()
+          iconv(x, sub = "") #%>%
+          #tolower()
         } else x
       }
       else x

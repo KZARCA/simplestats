@@ -128,7 +128,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
   } else if (type == "survival"){
     left_form <- sprintf("Surv(.time, %s)", vardep)
     formule <- sprintf("%s ~ %s", left_form, paste(vars, collapse = " + ")) %>% as.formula()
-    mod <- survival::coxph(formula = formule, data = tab)
+    mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
   }
   if(!is_model_possible(mod)){
     if (length(var_ajust) > 0) {
