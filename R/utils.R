@@ -31,8 +31,7 @@ remove_alias <- function(vars, mod, correction = FALSE) {
       paste0(x, levels(tab[[x]]))
     } else x
   })
-  vari <- map_lgl(expanded_vars, ~ isTRUE(alias %in% .))
-
+  vari <- map_lgl(expanded_vars, ~ isTRUE(any(alias %in% .)))
   if(correction){
     corrected <- map_lgl(vars[vari], function(x){
       ligne <- which(names(mod$xlevels) == x)
