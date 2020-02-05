@@ -100,16 +100,6 @@ test_that("transform_date works", {
   expect_is(tab2$e, "Date")
 })
 
-test_that("lower_tab works", {
-  tab <- tibble(
-    a = c("Salut", "jeMAppelle", "keVin", "ZARCA"),
-    b = c("ABC", "DEF", "GHI", "JKL")
-  )
-  expect_equal(lower_tab(tab)$a, c("salut", "jemappelle", "kevin", "zarca"))
-  expect_equal((tab)$b, tab$b)
-  expect_equal(levels(as.factor(lower_tab(colon)$rx)), c("lev", "lev+5fu", "obs"))
-})
-
 test_that("factor_strings works", {
   tab <- tibble(
     a = 1:11,

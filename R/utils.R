@@ -17,7 +17,9 @@ extract_from_model <- function(model, vector){
 }
 
 is_model_possible <- function(model){
-  isTRUE(class(model)[[1]] == "lm" && df.residual(model) != 0 && deviance(model) >= sqrt(.Machine$double.eps) | class(model)[[1]] != "lm")
+  isTRUE(class(model)[1] == "lm" && df.residual(model) != 0 && deviance(model) >= sqrt(.Machine$double.eps) |
+           inherits(model, "glm") && isTRUE(model$converged) |
+           inherits(model, "coxph") && !any(is.nan(sqrt(diag(model$var)))))
 }
 
 remove_alias <- function(vars, mod, correction = FALSE) {
@@ -354,10 +356,11 @@ remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, only_va
         model <- survival::coxph(formula = as.formula(formule), data = tab2)
       }
       alias <- remove_alias(vars, model)
-      if (any(alias)){
+      while (any(alias)){
         elimine <- append(elimine, vars[alias])
         vars <- vars[!alias]
         model <- update_mod(tab, model, vardep, vars, type, sprintf("Surv(.time, %s)", vardep))
+        alias <- remove_alias(vars, model)
       }
       infl <- suppressWarnings(car::vif(model))
       if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]

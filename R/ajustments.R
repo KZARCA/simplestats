@@ -139,10 +139,11 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     } else return("ERROR_MODEL")
   }
   alias <- remove_alias(vars, mod)
-  if (any(alias)){
+  while (any(alias)){
     elimine <- append(elimine, vars[alias])
     vars <- vars[!alias]
     mod <- update_mod(tab, mod, vardep, vars, type, left_form)
+    alias <- remove_alias(vars, mod)
   }
   # mod_indep <- update_mod(tab, mod, vardep, varindep, type, left_form)
   # big_vif_varindep <- get_big_vif(tab, vardep, intersect(varindep, vars), character(0), type, mod_indep, left_form)
