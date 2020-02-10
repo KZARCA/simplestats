@@ -353,7 +353,7 @@ remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, only_va
         tab2 <- tab[, c(".time", vardep, vars)] %>%
           na.exclude()
         formule <- sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = "+"))
-        model <- survival::coxph(formula = as.formula(formule), data = tab2)
+        model <- survival::coxph(formula = as.formula(formule), model = TRUE, data = tab2)
       }
       alias <- remove_alias(vars, model)
       while (any(alias)){

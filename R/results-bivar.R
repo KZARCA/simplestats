@@ -101,8 +101,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
   } else {
     no_na <- remove_na(x, y, drop_factor = TRUE)
     ligne <- create_ligne_cor(no_na$x, no_na$y)
-    #res <- try(broom::tidy(cor.test(no_na$x, no_na$y)), silent = TRUE)
-    if (inherits(ligne, "try-error")) return(NULL)
+    if (is.null(ligne)) return(NULL)
     ligne %>%
       add_varname(x, noms)
   }
@@ -166,12 +165,13 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
   }
 }
 
-
 create_ligne_cor <- function(x, y) {
   l <- length(x)
   name_title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(CI95)", domain = "R-simplestats")
   test <- find_test(x, y)
+  if (is.null(test)) return(NULL)
+
   res <- test$result %>%
     broom::tidy()
   if(test$name == "Pearson") {

@@ -2,15 +2,16 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
   f <- NULL
   if (survival){
     f <- survdiff(Surv(y, censure) ~ x)
-    test = "Logrank"
+    test <- "Logrank"
   } else if (is.numeric(x) & is.numeric(y)){
     if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
-      f <- cor.test(x, y)
-      test = "Pearson"
+      f <- try(cor.test(x, y), silent = TRUE)
+      test <- "Pearson"
     } else {
-      f <- cor.test(x, y, method = "spearman", exact = FALSE)
-      test = "Spearman"
+      f <- try(cor.test(x, y, method = "spearman", exact = FALSE), silent = TRUE)
+      test <- "Spearman"
     }
+    if (inherits(f, "try-error")) f <- NULL
   } else if (is.factor(x) & is.numeric(y) | is.numeric(x) & is.factor(y)){
     if (is.factor(y)){
       tmp <- y

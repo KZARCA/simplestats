@@ -23,9 +23,7 @@ is_number_enough <- function(tab, vardep, vars, type = "linear", event_value = "
       return(FALSE)
     } else
       return(TRUE)
-  }
-
-  else if (type == "logistic" | type == "survival") {
+  } else if (type == "logistic" | type == "survival") {
     seuil <- 10
     N <- if(type == "logistic"){
       min(table(tab[[vardep]]))
