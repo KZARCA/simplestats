@@ -48,10 +48,12 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
     suppressWarnings(f <- chisq.test(cont, correct = FALSE))
     if (any(purrr::as_vector(f$expected, "double") < 5)){
       f <- NULL
-      try({
-        f <- fisher.test(cont)
-        test <- "Fisher"
-      }, silent = TRUE)
+      if (prod(dim(cont)) < 50){
+        try({
+          f <- fisher.test(cont)
+          test <- "Fisher"
+        }, silent = TRUE)
+      }
       if (is.null(f)){
         set.seed(1)
         f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
