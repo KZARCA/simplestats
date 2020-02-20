@@ -79,7 +79,8 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
 #' @export
 #'
 #' @examples
-recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
+recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FALSE) {
+  if (length(var_ajust) == 0 && length(varindep) == 0) return(NULL)
   if (is.null(var_ajust)) var_ajust <- character(0)
   vars <- c(varindep, var_ajust)
   elimine <- NULL
@@ -131,7 +132,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type){
     mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
   }
   if(!is_model_possible(mod)){
-    if (length(var_ajust) > 0) {
+    if (length(var_ajust) > 0 & !pred){
       elimine <- var_ajust
       vars <- vars[-na.omit(match(elimine, vars))]
       mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(var_ajust, collapse = " - "))))
