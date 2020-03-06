@@ -187,7 +187,8 @@ replace_infinite <- function(tab){
 #'
 #' @examples
 standardize_tab <- function(tab){
-  tab %<>% remove_na_cols()
+  tab %<>% remove_na_rows() %>%
+    remove_na_cols()
   tab <- tab[!is.na(names(tab)) & names(tab) != ""]
   labs <- standardize_names(names(tab), trunc = TRUE)
 
@@ -201,12 +202,6 @@ standardize_tab <- function(tab){
     lower_tab() %>%
     factor_strings() %>%
     remove_guillemets()
-
-  #names(tab) <- standardize_names_basic(tab)
-  # names(tab) %<>%
-  #   str_replace("^X\\.(.*)\\.$", "\\1") %>%
-  #   #stringi::stri_trans_general("latin-ascii") %>%
-  #   make.names(unique = TRUE)
 
   label(tab, self = FALSE) <- labs
   return(tab)

@@ -80,6 +80,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     correspondance <- make_correspondance(tab)
   }
   tab <- standardize_tab(tab)
+  gc()
   return(list(tab, correspondance))
 }
 
