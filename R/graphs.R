@@ -100,7 +100,7 @@ boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
   } else if (palette == "grey"){
     graph <- graph + scale_fill_grey()
   }
-  graph + stat_summary(fun.y=mean, geom="point", shape=23, fill = "black")
+  graph + stat_summary(fun=mean, geom="point", shape=23, fill = "black")
 }
 
 #' Easy Barplot
