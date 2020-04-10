@@ -6,14 +6,32 @@
 \alias{get_resBoot_anova}
 \title{Perform bootstraps}
 \usage{
-get_resBoot(tab, R, model_base, nCPU, updateProgress = function(detail)
-  detail, var_ajust = NULL)
+get_resBoot(
+  tab,
+  R,
+  model_base,
+  nCPU,
+  updateProgress = function(detail) detail,
+  var_ajust = NULL
+)
 
-get_resBoot_p(tab, R, model_base, nCPU, updateProgress = function(detail)
-  detail, var_ajust = NULL)
+get_resBoot_p(
+  tab,
+  R,
+  model_base,
+  nCPU,
+  updateProgress = function(detail) detail,
+  var_ajust = NULL
+)
 
-get_resBoot_anova(tab, R, model_base, nCPU,
-  updateProgress = function(detail) detail, var_ajust = NULL)
+get_resBoot_anova(
+  tab,
+  R,
+  model_base,
+  nCPU,
+  updateProgress = function(detail) detail,
+  var_ajust = NULL
+)
 }
 \arguments{
 \item{tab}{A tab}

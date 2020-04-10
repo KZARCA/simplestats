@@ -68,7 +68,7 @@ test_that("create_ligne_bivar.factor_fac is working", {
   test_num("1")
   test_num("2")
   test_num("3")
-  expect_equal(line$.n,
+  expect_equal(unname(line$.n),
                filter(tab, !is.na(node2)) %>%
                  group_by(node2) %>%
                  summarise(m = sum(!is.na(differ))) %>%
@@ -91,7 +91,7 @@ test_that("create_ligne_bivar.num_fac is working", {
   test_m("2")
   test_m("3")
   expect_equal(line$.n, nrow(na.exclude(tab[c("nodes", "differ")])))
-  expect_equal(line$p, kruskal.test(nodes ~ differ, data = tab)$p.value)
+  expect_equal(unname(line$p), kruskal.test(nodes ~ differ, data = tab)$p.value)
   expect_equal(line$test, "Kruskal-Wallis")
 })
 
@@ -115,8 +115,8 @@ test_that("create_ligne_surv_bivar is working", {
   expect_equal(line[[gettext("median (CI95)", domain = "R-simplestats")]],
                sprintf_number_table("%s (%s; %s)", table_surv[, "median"], table_surv[, "0.95LCL"], table_surv[, "0.95UCL"]))
   expect_equal(line[[gettext("max follow-up", domain = "R-simplestats")]], format_number(surv$time[cumsum(surv$strata)]))
-  expect_equal(line$n, table_surv[, "n.max"] %>% unname())
-  expect_equal(line[[gettext("n events", domain = "R-simplestats")]], table_surv[, "events"] %>% unname())
+  expect_equal(line$n %>% unname(), table_surv[, "n.max"] %>% unname())
+  expect_equal(line[[gettext("n events", domain = "R-simplestats")]] %>% unname(), table_surv[, "events"] %>% unname())
   expect_equal(round(line$p, 10), c(3.39E-7, NA, NA))
   expect_equal(line[["survival rate (CI95)"]], map_chr(seq_along(surv$strata), function(i) {
     surv_i <- surv[i]

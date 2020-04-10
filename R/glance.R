@@ -2,6 +2,10 @@ get_pertinent_params <- function(x){
   UseMethod("get_pertinent_params")
 }
 
+get_pertinent_params.mira <- function(x){
+  select(x, term, estimate, ubar, b, t, dfcom, df, riv,
+         lambda, fmi)
+}
 
 get_pertinent_params.coxph <- function(x){
   res <- broom::glance(x) %>%
@@ -144,5 +148,8 @@ get_glance.coxph <- get_glance.lm
 #' @export
 #' @rdname get_glance
 get_glance.mira <- function(x){
-  pool(x)$pooled %>% rename_glance() %>% add_class("glance_mira")
+  pool(x)$pooled %>%
+    get_pertinent_params.mira() %>%
+    rename_glance() %>%
+    add_class("glance_mira")
 }

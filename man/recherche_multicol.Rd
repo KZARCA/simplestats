@@ -4,7 +4,7 @@
 \alias{recherche_multicol}
 \title{Search for multicolinearity}
 \usage{
-recherche_multicol(tab, vardep, varindep, var_ajust, type)
+recherche_multicol(tab, vardep, varindep, var_ajust, type, pred = FALSE)
 }
 \arguments{
 \item{tab}{A data frame}

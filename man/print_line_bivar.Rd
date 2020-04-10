@@ -4,8 +4,7 @@
 \alias{print_line_bivar}
 \title{Displays the univariate analysis in markdown}
 \usage{
-print_line_bivar(x, y, varname = label(x), censure = NULL,
-  type = "linear")
+print_line_bivar(x, y, varname = label(x), censure = NULL, type = "linear")
 }
 \arguments{
 \item{x}{The independant variable}

@@ -4,9 +4,16 @@
 \alias{make_tab_survival}
 \title{Add column .time}
 \usage{
-make_tab_survival(tab, vardep, passage = 1, typeCensure = 2,
-  dateInclusion = NULL, dateSortie = NULL, var_time = NULL,
-  limit = NULL)
+make_tab_survival(
+  tab,
+  vardep,
+  passage = 1,
+  typeCensure = 2,
+  dateInclusion = NULL,
+  dateSortie = NULL,
+  var_time = NULL,
+  limit = NULL
+)
 }
 \arguments{
 \item{tab}{The data frame}

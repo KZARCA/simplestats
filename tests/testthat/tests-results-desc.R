@@ -64,8 +64,8 @@ test_that("create_ligne_surv_desc is working", {
   expect_equal(line[[gettext("median (CI95)", domain = "R-simplestats")]],
                sprintf_number_table("%s (%s; %s)",
                                     table_surv[["median"]], table_surv[["0.95LCL"]], table_surv[["0.95UCL"]]))
-  expect_equal(line$n, table_surv[["n.start"]])
-  expect_equal(line[["n events"]], table_surv[["events"]])
+  expect_equal(unname(line$n), table_surv[["n.start"]])
+  expect_equal(line[["n events"]] %>% unname(), table_surv[["events"]])
   l <- length(surv$surv)
   expect_equal(line[["survival rate (CI95)"]],
                "46.5% (43.5%; 49.7%)")
