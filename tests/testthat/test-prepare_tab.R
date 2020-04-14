@@ -38,16 +38,22 @@ test_that("make_tab_survival works with dateSortie & Inclusion", {
 })
 
 test_that("create_tabi works", {
-  expect_equal(create_tabi(colon, TRUE), select(colon, -study))
+  expect_equal(create_tabi(colon, "desc"), select(colon, -study))
   tab <- colon
   tab$test <- rep_len(letters, nrow(colon))
-  expect_equal(create_tabi(tab, TRUE),  select(colon, -study))
+  expect_equal(create_tabi(tab, "desc"),  select(colon, -study))
   tab$test %<>% as.factor()
-  expect_equivalent(create_tabi(tab, TRUE),  select(colon, -study) %>% mutate(test = tab$test))
+  expect_equivalent(create_tabi(tab, "desc"),  select(colon, -study) %>% mutate(test = tab$test))
   tab %<>% select(-test)
   tab$dm <- c(rep(NA, 1000), seq_len(nrow(tab)-1000))
-  expect_equivalent(create_tabi(tab, TRUE),  select(colon, -study) %>% mutate(dm = tab$dm))
-  expect_equal(create_tabi(tab, FALSE),  select(colon, -study))
+  expect_equivalent(create_tabi(tab, "desc"),  select(colon, -study) %>% mutate(dm = tab$dm))
+  expect_equal(create_tabi(tab, "expl"),  select(colon, -study))
+})
+
+test_that("create tabi with pred keeps less than 20% of missing", {
+  tab <- standardize_tab(mice::fdd) %>%
+    create_tabi(type = "pred")
+  expect_lt(get_propDM(tab), 0.2)
 })
 
 test_that("standardize_names works", {

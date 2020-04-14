@@ -366,3 +366,30 @@ ggsurv <- function(sfit,
     }
 
 }
+
+#' @export
+plot_ROC <- function(x, showThreshold = TRUE){
+  cut <- c(0.2,.4, 0.5, .6, .8)
+  p <- ggplot(x) + aes(d = D, m = M)
+  if(showThreshold) {
+    p <- p + geom_roc(cutoffs.at = cut, cutoff.labels = pourcent(cut))
+  } else p <- p + geom_roc(n.cuts = 0)
+  p + style_roc(xlab = "1 - Specificity", ylab = "Sensitivity")
+}
+
+#' @export
+plot_calibration <- function(tab_pred_obs, quantiles){
+  x <- regroup_quantile_calibration(tab_pred_obs, quantiles)
+  x$estimate <- map_dbl(x$obs, "estimate")
+  confint <- map(x$obs, "conf.int")
+  x$low <- map_dbl(confint, 1)
+  x$high <- map_dbl(confint, 2)
+
+  ggplot(x) + aes(x = pred, y = estimate, ymin = low, ymax = high) + geom_errorbar(width = 0.01) + geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey") +
+    geom_point(shape = 21, fill = "white", size = 2) +
+    scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0,1)) +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0,1)) +
+    xlab(gettext("Predicted Probability According to the Model", domain = "R-simplestats")) +
+    ylab(gettext("Observed Proportion", domain = "R-simplestats")) +
+    theme_bw()
+}

@@ -251,15 +251,21 @@ make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInc
 #' Create intermediate table
 #'
 #' @param tab a data frame
-#' @param univ a logical vector: TRUE if univariate analysis, FALSE otherwise
+#' @param type a character vector. Possible values : "desc", "expl" and "pred"
 #'
 #' @return a curated data frame
 #' @export
 #'
 #' @examples
-  create_tabi <- function(tab, univ){
-    Filter(function(x) length(table(x)) > 1 & !inherits(x, "Date") & !is.character(x), tab) %>%
-      Filter(function(x) get_propDM(x) <= 0.2 | univ, .)
-  #select_if(tab, function(x) is.factor(x) | is.numeric(x) & length(table(x)) > 1) %>%
-  #  select_if(function(x) get_propDM(x) <= 0.2 | univ)
+create_tabi <- function(tab, type){
+  tf <- Filter(function(x) length(table(x)) > 1 & !inherits(x, "Date") & !is.character(x), tab)
+  if (type == "desc"){
+    return(tf)
+  }
+  if (type == "expl"){
+    Filter(function(x) get_propDM(x) <= 0.2, tf)
+  } else if (type == "pred"){
+    elimine <- get_large_missing(tf)
+    tf[setdiff(names(tf), elimine)]
+  }
 }

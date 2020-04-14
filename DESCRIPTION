@@ -1,7 +1,7 @@
 Package: simplestats
 Type: Package
 Title: Simplifies descriptive/bivariate tables and plot generations
-Version: 0.10.6
+Version: 0.11.0
 Author: person("Kevin", "Zarca", email = "kevin@pvalue.io", role = c("aut", "cre"))
 Maintainer: Kevin Zarca <kevin@pvalue.io>
 Description: Pvalue.io Companion
@@ -29,7 +29,9 @@ Imports:
   stringi(>= 1.1.5),
   splines(>= 3.4),
   mgcv(>= 1.8),
-  readr(>= 1.1.1)
+  readr(>= 1.1.1),
+  plotROC(>= 2.2.1),
+  glmnet(>= 3.0)
 Remotes: 
   KZARCA/broom
 RoxygenNote: 7.1.0

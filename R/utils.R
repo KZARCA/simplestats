@@ -513,3 +513,46 @@ create_tab_cens <- function(x, time, censure){
   tab_cens
 }
 
+
+coef_to_prob <- function(x) exp(x) / (1 + exp(x))
+
+
+regroup_quantile_calibration <- function(x, quantiles){
+  x$pred <- cut(x$M, breaks = quantiles$quantile,
+                labels = ((quantiles$quantiles+lag(quantiles$quantiles))/2)[-1]) %>%
+    as.character() %>%
+    as.numeric()
+  x %>%
+    group_by(pred) %>%
+    summarise(obs = list(binom.test(sum(D), length(D))))
+}
+
+#' @export
+add_elements <- function(vector, ...){
+  dots <- list(...) %>% unlist
+  append(vector, dots)
+}
+
+keep_warning <- function(expr) {
+  myWarnings <- NULL
+  wHandler <- function(w) {
+    if(!grepl("Vectorizing",w$message)) myWarnings <<- c(myWarnings, w$message)
+    invokeRestart("muffleWarning")
+  }
+  val <- withCallingHandlers(expr, warning = wHandler)
+  if (is.null(val)) return(NULL)
+  structure(val, warning = myWarnings)
+}
+
+filter_glm_fit <- function(mod, tab){
+  tab %<>% na.exclude()
+  eps <- .Machine$double.eps*1000
+  p <- predict(mod, type = "response")
+  t <- tab[p < 1-eps & p > eps,]
+  mod2 <- update(mod, data = t)
+  if (all(round(coef(mod), 2) == round(coef(mod2), 2), na.rm = TRUE)) {
+    return(mod2)
+  } else {
+    return(NULL)
+  }
+}

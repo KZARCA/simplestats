@@ -48,3 +48,34 @@ imputer <- function(tab, vardep, type, exclude_mice = NULL, n_imputation = 1){
     return(tabimp)
   }
 }
+
+
+#' Get colnames with large number of missing values
+#'
+#' Loops over all the combinations of columns for which missing values
+#' are more frequent and extracts them
+#'
+#'
+#' @param tab A data frame
+#'
+#' @return A character vector of colnames
+#' @export
+#'
+get_large_missing <- function(tab){
+  if  (any(is.na(tab))){
+    pat <- mice::md.pattern(tab, plot = FALSE)
+    line_missing <- pat[nrow(pat), ]
+    all_vars <- names(tab)
+    t <- tab[all_vars]
+    elimine <- NULL
+    while(get_propDM(t) > 0.2 & length(all_vars) > 2 &
+          line_missing[ncol(pat) - 1] > 0.05 * nrow(t)) {
+      elimine <- c(elimine, colnames(pat)[ncol(pat) - 1])
+      all_vars <- setdiff(names(t), elimine)
+      t <- t[all_vars]
+      pat <- mice::md.pattern(t, plot = FALSE)
+      line_missing <- pat[nrow(pat), ]
+    }
+    return(elimine)
+  }
+}

@@ -4,12 +4,12 @@
 \alias{create_tabi}
 \title{Create intermediate table}
 \usage{
-create_tabi(tab, univ)
+create_tabi(tab, type)
 }
 \arguments{
 \item{tab}{a data frame}
 
-\item{univ}{a logical vector: TRUE if univariate analysis, FALSE otherwise}
+\item{type}{a character vector. Possible values : "desc", "expl" and "pred"}
 }
 \value{
 a curated data frame

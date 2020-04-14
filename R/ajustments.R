@@ -11,7 +11,7 @@
 #' @examples
 define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
   a <- NULL
-  vars <- create_tabi(tab, univ = FALSE) %>%
+  vars <- create_tabi(tab, "desc") %>%
     get_choix_var()
   seuil <- min(0.2, 5/length(vars))
   map(seq_along(vars), function(i){

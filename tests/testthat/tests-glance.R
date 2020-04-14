@@ -116,7 +116,7 @@ test_that("get_glance mira is working", {
   t <- get_glance(fit)
   expect_error(t, NA)
   expect_warning(t, NA)
-  expect_equal(names(t), c("Pooled complete data estimate", "Within-imputation variance of estimate",
+  expect_equal(names(t), c("Variable", "Pooled complete data estimate", "Within-imputation variance of estimate",
                            "Between-imputation variance of estimate", "Total variance of estimate",
                            "Degrees of freedom in complete data", "Degrees of Freedom",
                            "Relative increase in variance", "Proportion attributable to the missingness",

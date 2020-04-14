@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: simplestats 0.10.0\n"
-"POT-Creation-Date: 2019-10-04 16:21\n"
+"Project-Id-Version: simplestats 0.10.6\n"
+"POT-Creation-Date: 2020-04-13 10:32\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,6 +46,102 @@ msgstr ""
 msgid "length of vector of imputed values != no. NAs in x"
 msgstr ""
 
+msgid "Analysis of Variance"
+msgstr ""
+
+msgid "Degrees of Freedom"
+msgstr ""
+
+msgid "Mean Difference (CI95)"
+msgstr ""
+
+msgid "Correlation Coefficient (CI95)"
+msgstr ""
+
+msgid "Correlation Coefficient"
+msgstr ""
+
+msgid "Sum of Squares"
+msgstr ""
+
+msgid "Test"
+msgstr ""
+
+msgid "Variable"
+msgstr ""
+
+msgid "Test statistic"
+msgstr ""
+
+msgid "Log-Likelihood"
+msgstr ""
+
+msgid "AIC"
+msgstr ""
+
+msgid "BIC"
+msgstr ""
+
+msgid "R Squared"
+msgstr ""
+
+msgid "Likelihood ratio test (p)"
+msgstr ""
+
+msgid "Wald test (p)"
+msgstr ""
+
+msgid "Score test (p)"
+msgstr ""
+
+msgid "Squared R (max)"
+msgstr ""
+
+msgid "Concordance (SE)"
+msgstr ""
+
+msgid "Multiple R Squared (Adjusted)"
+msgstr ""
+
+msgid "Statistic (DF)"
+msgstr ""
+
+msgid "Residuals Standard Error"
+msgstr ""
+
+msgid "Deviance"
+msgstr ""
+
+msgid "Null Deviance (DF)"
+msgstr ""
+
+msgid "Residual deviance (DF)"
+msgstr ""
+
+msgid "Pooled complete data estimate"
+msgstr ""
+
+msgid "Within-imputation variance of estimate"
+msgstr ""
+
+msgid "Between-imputation variance of estimate"
+msgstr ""
+
+msgid "Total variance of estimate"
+msgstr ""
+
+msgid "Degrees of freedom in complete data"
+msgstr ""
+
+msgid "Relative increase in variance"
+msgstr ""
+
+msgid "Proportion attributable to the missingness"
+msgstr ""
+
+msgid "Fraction of missing information"
+msgstr ""
+
 msgid "Proportion"
 msgstr ""
 
@@ -59,6 +155,12 @@ msgid "Survival"
 msgstr ""
 
 msgid "Numbers at risk"
+msgstr ""
+
+msgid "Predicted Probability According to the Model"
+msgstr ""
+
+msgid "Observed Proportion"
 msgstr ""
 
 msgid "Unable to load this file because of unreadable characters."

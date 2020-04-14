@@ -61,7 +61,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom purrr map2_df
 #' @importFrom purrr map_chr
 #' @importFrom purrr map_df
-#' @importFrom purrr walk
+#' @importFrom purrr walk iwalk
 #' @importFrom purrr modify_if
 #' @importFrom purrr reduce
 #' @importFrom boot boot
@@ -101,6 +101,8 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom mgcv gam
 #' @importFrom mgcv cox.ph
 #' @importFrom splines ns
+#' @importFrom plotROC geom_roc style_roc
+#' @importFrom glmnet cv.glmnet
 #' @import ggplot2
 #' @import magrittr
 NULL
