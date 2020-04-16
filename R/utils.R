@@ -556,3 +556,7 @@ filter_glm_fit <- function(mod, tab){
     return(NULL)
   }
 }
+
+standardize_num_vars <- function(tab){
+  mutate_if(tab, is.numeric, scale)
+}

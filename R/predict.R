@@ -23,7 +23,8 @@ split_cv <- function(tab, n = 10){
 #' @export
 get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic") {
   set.seed(1234567)
-  nona <- na.exclude(tab)
+  nona <- na.exclude(tab) %>%
+    standardize_num_vars()
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
@@ -92,19 +93,33 @@ predict.mira <- function(mod, ...){
 #'
 #' @return The mean AUC
 #' @export
-compute_cv_perf <- function(tab, vardep, varindep, type, n = 10){
+compute_cv_perf <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10){
+  get_cv_auc(tab, vardep, varindep, type, n)%>%
+    get_mean_perf()
+}
+
+get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10){
   tab <- split_cv(tab, n)
-  perfs <- map(seq_along(tab), function(i){
-    train <- suppressWarnings(bind_rows(tab[-i]))
+  map(seq_along(tab), function(i){
+    train <- suppressWarnings(dplyr::bind_rows(tab[-i]))
     test <- tab[[i]]
-    varajust <- setdiff(get_all_predictive_variables(train, vardep, varindep, type), varindep)
+    varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
     varajust <- remove_elements(varajust, el)
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
-    create_pred_obs(results$mod) %>%
-      plot_ROC(showThreshold = FALSE) %>%
-      calc_auc() %>%
-      extract2("AUC")
+    calculate_auc(results$mod)
   })
-  flatten_dbl(perfs) %>% mean()
 }
+
+calculate_auc <- function(mod){
+  create_pred_obs(mod) %>%
+    plot_ROC(showThreshold = FALSE) %>%
+    plotROC::calc_auc() %>%
+    extract2("AUC")
+}
+
+get_mean_perf <- function(x){
+  flatten_dbl(x) %>% mean()
+}
+
+
