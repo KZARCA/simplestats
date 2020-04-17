@@ -93,7 +93,7 @@ compute_mod_base_bootstrap <- function(tab, type, miss, exLabel, formule){
   }
   else tabBoot <- tab
   .fun <- get_fun(type)
-  do.call(.fun$fun, c(list(formula = formule2, data = as.name("tabBoot")), .fun$args_sup))
+  do.call(.fun$fun, c(list(formula = formule, data = as.name("tabBoot")), .fun$args_sup))
 }
 
 get_mod <- function(tab, .fun, formule){
