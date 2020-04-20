@@ -23,8 +23,7 @@ split_cv <- function(tab, n = 10){
 #' @export
 get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic") {
   set.seed(1234567)
-  nona <- na.exclude(tab) %>%
-    standardize_num_vars()
+  nona <- na.exclude(tab)
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
