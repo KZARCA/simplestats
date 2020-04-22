@@ -33,7 +33,7 @@ test_that("make_tab_survival works with dateSortie & Inclusion", {
   tab$inclusion <- as.Date(runif(nrow(tab), 1, 5000), "1990-01-01")
   tab$sortie <- as.Date(tab$inclusion + tab$time, "1990-01-01")
   tab %<>% standardize_tab()
-  tab_modif <- make_tab_survival(tab, "status", typeCensure = 1, dateInclusion = "inclusion", dateSortie = "sortie")
+  tab_modif <- make_tab_survival(tab, "status", typeCensure = 1, dateInclusion = tab$inclusion, dateSortie = tab$sortie)
   expect_equal(tab_modif$.time, as.numeric(tab$sortie - tab$inclusion))
 })
 

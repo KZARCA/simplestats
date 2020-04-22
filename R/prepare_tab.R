@@ -213,8 +213,10 @@ standardize_tab <- function(tab){
 #' @param tab The data frame
 #' @param vardep The dependent variable
 #' @param passage If 1, The first level of the event variable is the absence of event; if 2, the second level is the absence of event
-#' @param dateSortie Name of the column indicating event or censor date
-#' @param dateInclusion Name of the column indicating the inclusion date
+#' @param typeCensure If 1: Follow-up time computed from 2 dates: inclusion and censor; \
+#' If 2: the follow-up time is already inside a column
+#' @param dateInclusion Date vector of length equals to the number of rows of tab: inclusion date.
+#' @param dateSortie Date vector of length equals to the number of rows of tab: censor or event.
 #' @param var_time Name of the column indicating the follow-up time follow-up
 
 #' @details This function requires either var_time or dateSortie and dateInclusion
@@ -229,7 +231,7 @@ make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInc
   lev <- levels(tab[[vardep]])
   #attr(tab[[vardep]], "scores") <- -table(tab[[vardep]])
   if (typeCensure == 1) {
-    tab$.time <- as.numeric(tab[[dateSortie]] - tab[[dateInclusion]])
+    tab$.time <- as.numeric(dateSortie - dateInclusion)
   } else if (typeCensure == 2) {
     tab$.time <- tab[[var_time]]
     tab %<>% select(-one_of(var_time))

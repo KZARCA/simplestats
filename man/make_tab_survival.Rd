@@ -22,9 +22,12 @@ make_tab_survival(
 
 \item{passage}{If 1, The first level of the event variable is the absence of event; if 2, the second level is the absence of event}
 
-\item{dateInclusion}{Name of the column indicating the inclusion date}
+\item{typeCensure}{If 1: Follow-up time computed from 2 dates: inclusion and censor; \
+If 2: the follow-up time is already inside a column}
 
-\item{dateSortie}{Name of the column indicating event or censor date}
+\item{dateInclusion}{Date vector of length equals to the number of rows of tab: inclusion date.}
+
+\item{dateSortie}{Date vector of length equals to the number of rows of tab: censor or event.}
 
 \item{var_time}{Name of the column indicating the follow-up time follow-up}
 }
