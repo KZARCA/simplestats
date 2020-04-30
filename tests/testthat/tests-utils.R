@@ -23,6 +23,8 @@ test_that("pourcent works", {
   expect_equal(pourcent(c(0.1, 0.2)), c("10%", "20%"))
   expect_equal(pourcent(c(0.1, 0.2), symbol = FALSE), c("10", "20"))
   expect_equal(pourcent(0.01532), "1.5%")
+  expect_equal(pourcent(0.00001532), "0.0015%")
+  expect_equal(pourcent(0.000001532), "0%")
   expect_equal(pourcent(0.415), "42%")
 })
 

@@ -62,63 +62,136 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
 #'
 #' @return data.frame
 #' @export
-create_pred_obs <- function(mod){
-  label <- if (inherits(mod, "mira")) {
-    getfit(mod, 1)$model[[1]]
+create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE){
+  if (is.null(tab)){
+    label <- if (inherits(mod, "mira")) {
+      getfit(mod, 1)$model[[1]]
+    } else {
+      mod$model[[1]]
+    }
+    pred <- predict(mod)
   } else {
-    mod$model[[1]]
+    label <- tab[[vardep]]
+    pred <- predict(mod, tab)
   }
-  label %<>% as.character() %>%
-    as.numeric()
-  data.frame(M = predict(mod, type = "response"),
-         D = label)
+  # label %<>% as.character() %>%
+  #   as.numeric()
+
+  if (as_prob){
+    pred <- coef_to_prob(pred)
+  }
+  data.frame(M = pred, D = label)
 }
 
-
+#' @export
 predict.mira <- function(mod, ...){
-  map(getfit(mod), ~ predict(., type = "link")) %>%
+  map(getfit(mod), function(x) predict(x, ...)) %>%
     as.data.frame() %>%
-    rowMeans() %>%
-    coef_to_prob()
+    rowMeans()
 }
 
-#' Get performance measures of each subsample among a n-fold cross validation
+#' Get performance measures of a predictive model
 #'
 #' @param tab The data.frame
 #' @param vardep The dependant variable
 #' @param varindep The independant variable, forced into the model
 #' @param type A character vector, one of "linear", "logistic" or "survival
-#' @param n n-fold cross validation
-#'
-#' @return The mean AUC
+#' @param R The number of bootstrap replicates
+#' @param nCPU integer: number of processes to be used in parallel operation
+#' @param type_validation character "cv" or "boot": either performs bootstrap, or cross validation
+#' @return a list containing The mean AUC if cross validation; if bootstrap: the confidence interval and excess optimism
 #' @export
-compute_cv_perf <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10){
-  get_cv_auc(tab, vardep, varindep, type, n)%>%
-    get_mean_perf()
+get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
+                          type_validation = "cv", R = 100, nCPU = 1L, mod = NULL, updateProgress = function(detail) detail){
+  if (type_validation == "cv"){
+    m <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress) %>%
+      flatten_dbl()%>%
+      mean()
+    return(list(mean = m))
+  }
+  res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
+       type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
+  m <- mean(res$t[, 1])
+  opti <- mean(res$t[, 1] - res$t[, 2])
+  ci <- boot.ci(res, type = "perc", index = 1)$perc[4:5]
+  lambda <- mean(res$t[, 4])
+  shrunk <- get_shrunk_coef(mod, lambda)
+  return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk))
 }
 
-get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10){
+get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = progression){
   tab <- split_cv(tab, n)
   map(seq_along(tab), function(i){
+    progression()
     train <- suppressWarnings(dplyr::bind_rows(tab[-i]))
     test <- tab[[i]]
     varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
     varajust <- remove_elements(varajust, el)
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
-    calculate_auc(results$mod)
+    create_pred_obs(results$mod) %>%
+      calculate_auc()
   })
 }
 
-calculate_auc <- function(mod){
-  create_pred_obs(mod) %>%
-    plot_ROC(showThreshold = FALSE) %>%
-    plotROC::calc_auc() %>%
-    extract2("AUC")
+#' Calculate AUC
+#'
+#' @param mod The prediction model
+#' @param orig_table The original tab
+#' @param vardep The dependant varible
+#'
+#' @return
+#' @export
+calculate_auc <- function(pred_obs){
+  plot_ROC(pred_obs, showThreshold = FALSE) %>%
+  plotROC::calc_auc() %>%
+  extract2("AUC")
 }
 
-get_mean_perf <- function(x){
-  flatten_dbl(x) %>% mean()
+boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) {
+  progression()
+  train <- data %>%
+    dplyr::slice(indices) %>%
+    create_tabi("pred")
+
+  # walk(seq_len(ncol(data)), function(i){
+  #   if (is.factor(data[[i]])){
+  #     levels(train[[i]]) <- levels(data[[i]])
+  #   }
+  # })
+
+  varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
+  el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
+  varajust <- remove_elements(varajust, el)
+  results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
+
+  for(i in seq_along(results$mod$xlevels)){
+    results$mod$xlevels[[i]] <- union(results$mod$xlevels[[i]],
+                                      levels(data[[names(results$mod$xlevels)[i]]]))
+  }
+
+  pred_obs_boot <- create_pred_obs(results$mod, as_prob = FALSE)
+  perf_boot <- calculate_auc(pred_obs_boot)
+    pred_obs_test <- create_pred_obs(results$mod, data, vardep, as_prob = FALSE)
+    perf_test <- calculate_auc(pred_obs_test)
+    shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>% coef()
+    c(perf_boot, perf_test, shrinkage_factor)
+
 }
 
-
+get_shrunk_coef <- function(mod , lambda){
+  dataset <- cbind(model.matrix(mod), as.numeric(mod$model[[1]])-1)
+  coefs <- as.matrix(coef(mod), ncol = 1)
+  nc <- dim(dataset)[2]
+  sdm <- matrix(c(0, rep(1, nc - 2)), nrow = 1)
+  sdm <- t(sdm)
+  B.shrunk <- matrix(diag(as.vector(coefs)) %*% sdm %*% lambda +
+                       diag(as.vector(coefs)) %*% apply(1 - sdm, 1, min), ncol = 1)
+  dataset <- as.matrix(dataset)
+  X.i <-  matrix(dataset[, 1], ncol = 1)
+  Y <- dataset[, nc]
+  offs <- as.vector(as.matrix(dataset[, 2:(nc - 1)]) %*% B.shrunk[-1])
+  new.int <- glm.fit(X.i, Y, family = binomial(link = "logit"),
+                    offset = offs)$coefficients
+  c(new.int, B.shrunk[-1])
+}

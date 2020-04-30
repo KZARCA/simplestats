@@ -281,8 +281,10 @@ pourcent <- function(nb, symbol = TRUE, arrondi = NULL){
   map_chr(nb, function(x){
     if (is.nan(x) | is.na(x)) return("-")
     if (is.null(arrondi)) arrondi <- 2
-    val <- multiply_by(x, 100) %>%
-      base::format(digits = arrondi, nsmall = arrondi - 2)
+    val <- multiply_by(x, 100)
+    val <- if (val > 1E-3) {
+      base::format(val, digits = arrondi, nsmall = arrondi - 2)
+    } else 0
 
     if (symbol) paste0(val, "%") else val
   })
@@ -518,10 +520,15 @@ coef_to_prob <- function(x) exp(x) / (1 + exp(x))
 
 
 regroup_quantile_calibration <- function(x, quantiles){
-  x$pred <- cut(x$M, breaks = quantiles$quantile,
-                labels = ((quantiles$quantiles+lag(quantiles$quantiles))/2)[-1]) %>%
+  q <- quantiles
+  quantiles[length(quantiles)] <- 1
+  x$pred <- cut(x$M, breaks = quantiles,
+                labels = ((quantiles+lag(quantiles))/2)[-1]) %>%
     as.character() %>%
     as.numeric()
+  if(is.factor(x$D)){
+    x$D <- as.numeric(x$D) - 1
+  }
   x %>%
     group_by(pred) %>%
     summarise(obs = list(binom.test(sum(D), length(D))))
@@ -555,4 +562,19 @@ filter_glm_fit <- function(mod, tab){
   } else {
     return(NULL)
   }
+}
+
+#' @export
+get_min_class <- function(tab, vardep, type = "logistic"){
+  min(table(tab[[vardep]]))
+}
+
+#' @export
+find_best_precision <- function(tab, variable){
+  range(tab[[variable]], na.rm = TRUE) %>%
+    base::diff() %>%
+    log10() %>%
+    ceiling() %>%
+    subtract(2) %>%
+    10^.
 }

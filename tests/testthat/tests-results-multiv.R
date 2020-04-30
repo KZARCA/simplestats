@@ -1,14 +1,14 @@
 context("results-multiv")
 
 
-test_that("find_best_precision works", {
+test_that("format_precision works", {
   tab <- data.frame(
     a = seq_len(100),
     b = seq.int(1, 1000, by = 10),
     c = seq.int(.1, 10, by = .1),
     d = seq.int(.1, 10000, by = 100)
   )
-  fb <- find_best_precision(tab, c("a", "b", "c", "d"))
+  fb <- format_precision(tab, c("a", "b", "c", "d"))
   expect_equal(fb, c("a", "I(b/10)", "I(c/0.1)", "I(d/100)"))
 })
 

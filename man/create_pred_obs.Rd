@@ -4,7 +4,7 @@
 \alias{create_pred_obs}
 \title{Creates a contingency table with predicted probabilities and actual classification}
 \usage{
-create_pred_obs(mod)
+create_pred_obs(mod, tab = NULL, vardep = NULL, as_prob = TRUE)
 }
 \arguments{
 \item{mod}{a glm or mira object}

@@ -24,16 +24,11 @@ get_fun <- function(type){
 #'
 #' @return a character vector
 #' @export
-find_best_precision <- function(tab, varindep){
+format_precision <- function(tab, varindep){
   map_chr(varindep, function(x){
     if (is_entier(tab[[x]])) x
     else if(is.numeric(tab[[x]])){
-      precision <- range(tab[[x]], na.rm = TRUE) %>%
-        base::diff() %>%
-        log10() %>%
-        ceiling() %>%
-        subtract(2) %>%
-        10^.
+      precision <- find_best_precision(tab, x)
       if (precision != 1) paste0("I(", x, "/", precision, ")") else x
     } else x
   })
@@ -66,7 +61,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
   }
 
   varajust_m <- if (!pred) prepare_varAjust(tab, varajust, type) else varajust
-  varindep_m <- if(pred) varindep else find_best_precision(tab, varindep)
+  varindep_m <- if(pred) varindep else format_precision(tab, varindep)
   allVars <- c(varindep_m, varajust_m)
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
   formule <- sprintf("%s ~ %s", vardep_m, paste(allVars, collapse = " + "))
@@ -86,8 +81,9 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
 }
 
 #' @export
-compute_mod_base_bootstrap <- function(tab, type, miss, exLabel, formule){
+compute_mod_base_bootstrap <- function(tab, type, miss, formule){
   if (miss) {
+    exLabel <- label(tab)
     tabBoot <- mice::complete(tab)
     label(tabBoot, self = FALSE) <- exLabel
   }
