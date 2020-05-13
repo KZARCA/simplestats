@@ -8,20 +8,16 @@ import_delim <- function(file, sep, dec){
   } else if (tolower(tools::file_ext(file)) == "csv"){
     tab <- import_csv(file, enc = enc)
   }
-  tab <- remove_multibyte_if_any(tab)
-  return(tab)
+  remove_multibyte_if_any(tab)
 }
 
 import_csv <- function(file, enc = "") {
-  tab <- NULL
-  try({tab <- read.csv2(file, na.strings=c("NA", "", " ", "."), fileEncoding = enc,
-                       strip.white = TRUE, stringsAsFactors = FALSE, check.names = FALSE)})
-  #if (firstImport) {
-    if(length(tab) == 1 | is.null(tab)){
-      tab <- read.csv(file, na.strings=c("NA", ""," ", "."), strip.white = TRUE, fileEncoding = enc,
-                          stringsAsFactors = FALSE, check.names = FALSE)
-    }
-  #}
+  tab <- read.csv2(file, na.strings=c("NA", "", " ", "."), fileEncoding = enc,
+                       strip.white = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
+  if(length(tab) == 1){
+    tab <- read.csv(file, na.strings=c("NA", ""," ", "."), strip.white = TRUE, fileEncoding = enc,
+                        stringsAsFactors = FALSE, check.names = FALSE)
+  }
   tab
 }
 
@@ -45,7 +41,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     tab <- tryCatch(import_delim(file, sep = sep, dec = dec),
                     error = function(e) e)
     if (is(tab, "error")) {
-      if (grepl("type.convert", tab$message)){
+      if (grepl("type.convert", tab$call[1])){
         err <- gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
       } else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
