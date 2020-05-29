@@ -38,6 +38,7 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
           formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
           mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab),
                           warning=function(w) w, error=function(e) e)
+
           if (is(mod, "warning") && (grepl("beta may be infinite", mod$message) |
                                     grepl("converge", mod$message))) {
             mod <- NULL
@@ -46,7 +47,7 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
             mod <- NULL
           }
       }
-      if(!is.null(mod)){
+      if(!is.null(mod) && !is.na(coef(mod))){
         p <- tryCatch(extract_pval_glob(mod, show_df1 = TRUE)[1],
                       error = function(e)e)
         if (is(p, "error") && (grepl("residual sum of squares is 0", p$message))) {
