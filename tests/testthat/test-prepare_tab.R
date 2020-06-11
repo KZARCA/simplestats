@@ -67,7 +67,7 @@ test_that("standardize_names works", {
 test_that("remove_na_rows works", {
   tab <- colon %>% as_tibble()
   tab <- rbind(rep(NA, ncol(tab)), tab, rep(NA, ncol(tab)))
-  expect_equal(remove_na_rows(tab), colon)
+  expect_equal(remove_na_rows(tab), colon %>% as_tibble)
 })
 
 test_that("remove_na_cols works", {

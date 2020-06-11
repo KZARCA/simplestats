@@ -93,7 +93,8 @@ extract_pval <- function(x, y, survival = FALSE, censure = NULL){
     magrittr::extract("p.value") %>%
     dplyr::slice(1) %>%
     purrr::as_vector("double") %>%
-    round(10)
+    round(10) %>%
+    unname()
   return(list(pval = pval, test = test$name))
 }
 

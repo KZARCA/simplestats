@@ -81,7 +81,7 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
 #'
 #' @examples
 recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FALSE) {
-  if (length(var_ajust) == 0 && length(varindep) == 0) return(NULL)
+  if (length(var_ajust) == 0 && length(varindep) < 2) return(NULL)
   if (is.null(var_ajust)) var_ajust <- character(0)
   vars <- c(varindep, var_ajust)
   elimine <- NULL

@@ -578,3 +578,9 @@ find_best_precision <- function(tab, variable){
     subtract(2) %>%
     10^.
 }
+
+qc <- function(...){
+  exprs(...) %>%
+    map_chr(as_name) %>%
+    unname()
+}

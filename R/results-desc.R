@@ -96,11 +96,11 @@ create_ligne_desc_export <- function(x, ...){
 #' @export
 #' @rdname create_ligne_desc
 create_ligne_desc_export.factor <- function(x, noms, ...){
-  cont <- table(x)
-  prop <- prop.table(cont) %>%  pourcent
-  d <- map2_df(cont, prop, function(x, y) {
-    sprintf_number_table("%s (%s)", x, y)  %>% tibble
-  }, .id="")
+  cont <- table(x) %>% unname()
+  prop <- prop.table(cont) %>%  pourcent() %>% unname()
+  d <- map2_chr(cont, prop, function(x, y) {
+    sprintf_number_table("%s (%s)", x, y)
+  }) %>% tibble()
   d %<>% add_varname(x, noms, add_niveau = TRUE)
   colnames(d) <- c("id", "variable", "niveau", "n (%)")
   d$niveau <- as.character(d$niveau)
