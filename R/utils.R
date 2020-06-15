@@ -556,7 +556,8 @@ filter_glm_fit <- function(mod, tab){
   eps <- .Machine$double.eps*1000
   p <- predict(mod, type = "response")
   t <- tab[p < 1-eps & p > eps,]
-  mod2 <- update(mod, data = t)
+  mod2 <- try(update(mod, data = t))
+  if (inherits(mod2, "try-error")) return(NULL)
   if (all(round(coef(mod), 2) == round(coef(mod2), 2), na.rm = TRUE)) {
     return(mod2)
   } else {

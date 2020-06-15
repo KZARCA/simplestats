@@ -45,7 +45,8 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   varindep_mat <- expanded_fac[names(expanded_fac) %in% varindep]
   penalties[which(colnames(mat) %in% varindep_mat)] <- 0
   family = dplyr::case_when(type == "logistic" ~ "binomial",
-                            type == "survival" ~ "cox")
+                            type == "survival" ~ "cox",
+                            type == "linear" ~ "gaussian")
   cv <- cv.glmnet(x = mat,
                   y = y,
                   family = family,
@@ -72,10 +73,10 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE){
     pred <- predict(mod)
   } else {
     label <- tab[[vardep]]
-    pred <- predict(mod, tab)
+    pred <- predict(mod, newdata = tab)
   }
-  # label %<>% as.character() %>%
-  #   as.numeric()
+  label %<>% as.character() %>%
+    as.numeric()
 
   if (as_prob){
     pred <- coef_to_prob(pred)
@@ -112,6 +113,8 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
   m <- mean(res$t[, 1])
+
+  # Calculate the optimism (step 5) : bootstrap performance - test performance
   opti <- mean(res$t[, 1] - res$t[, 2])
   ci <- boot.ci(res, type = "perc", index = 1)$perc[4:5]
   lambda <- mean(res$t[, 4])
@@ -154,12 +157,6 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
     dplyr::slice(indices) %>%
     create_tabi("pred")
 
-  # walk(seq_len(ncol(data)), function(i){
-  #   if (is.factor(data[[i]])){
-  #     levels(train[[i]]) <- levels(data[[i]])
-  #   }
-  # })
-
   varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
   varajust <- remove_elements(varajust, el)
@@ -170,16 +167,17 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
                                       levels(data[[names(results$mod$xlevels)[i]]]))
   }
 
-  pred_obs_boot <- create_pred_obs(results$mod, as_prob = FALSE)
+  # Model performance on the sample (step 3 p95 Steyerberg Clinical Prediction Models)
+  pred_obs_boot <- create_pred_obs(results$mod, as_prob = FALSE) # Linear Predictor
   perf_boot <- calculate_auc(pred_obs_boot)
-    pred_obs_test <- create_pred_obs(results$mod, data, vardep, as_prob = FALSE)
-    perf_test <- calculate_auc(pred_obs_test)
-    shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>% coef()
-    c(perf_boot, perf_test, shrinkage_factor)
-
+  # Model performance on the data (step 4)
+  pred_obs_test <- create_pred_obs(results$mod, data, vardep, as_prob = FALSE)
+  perf_test <- calculate_auc(pred_obs_test)
+  shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>% coef()
+  c(perf_boot, perf_test, shrinkage_factor)
 }
 
-get_shrunk_coef <- function(mod , lambda){
+get_shrunk_coef <- function(mod, lambda){
   dataset <- cbind(model.matrix(mod), as.numeric(mod$model[[1]])-1)
   coefs <- as.matrix(coef(mod), ncol = 1)
   nc <- dim(dataset)[2]
