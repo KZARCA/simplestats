@@ -9,7 +9,8 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
     map_chr(function(x) {
       if (length(table(tab[, x, drop = FALSE])) < 20){
         k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
-        paste0(x, ", k = ", k)
+        ifelse(type == "survival", paste0(x, ", df = ", k), paste0(x, ", k = ", k))
+
       } else
         as.character(x)
     })
@@ -18,7 +19,7 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
   varsfac <- Filter(is.factor, tab[varindep]) %>% colnames()
   var_ajust_fac <- Filter(is.factor, tab[var_ajust]) %>% colnames()
   if(length(varsnum)){
-    right <- paste0("s(", varsnumGam, ")", collapse=" + ")
+    right <- paste0(ifelse(type == "survival", "pspline(", "s("), varsnumGam, ")", collapse=" + ")
     rightLin <- paste0(varsnum, collapse=" + ")
     if (length(varsfac)) {
       right <- paste(right, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
@@ -36,7 +37,7 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
       formule <- paste(vardep, "~", right)
       formuleLin <- paste(vardep, "~", rightLin)
     } else if (type == "survival") {
-      formule <- paste(".time ~", right)
+      formule <- paste0("Surv(.time, ", vardep, ") ~", right)
       formuleLin <- paste0("Surv(.time, ", vardep, ") ~", rightLin)
     }
     suppressWarnings({
@@ -51,7 +52,7 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
         lin <- termplot(mLin, plot = FALSE)
       }
       else if (type == "survival"){
-        graph <- gam(as.formula(formule), family = cox.ph(), data = tab, weights = tab[[vardep]])
+        graph <- coxph(as.formula(formule), data = tab)
         mLin <- coxph(as.formula(formuleLin), data = tab)
         lin <- termplot(mLin,  rug = TRUE, se = TRUE, plot = FALSE)
       }
@@ -61,7 +62,11 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
 }
 
 plot_nth_spline <- function(spline_gen, n){
+  if (inherits(spline_gen$graph, "coxph")){
+    coord <- termplot(spline_gen$graph, term = n, se=TRUE, col.term=1, col.se=1)
+  } else {
     coord <- plot(spline_gen$graph, select = n, scale = 0)[[n]]
+  }
     lin <- spline_gen$lin[[n]]
     abline(line(lin)$coef, col = 2)
     return(list(coord = coord, lin = lin))

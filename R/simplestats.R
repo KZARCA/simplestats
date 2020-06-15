@@ -70,6 +70,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom survival survdiff
 #' @importFrom survival survfit
 #' @importFrom survival Surv
+#' @importFrom survival pspline
 #' @importFrom survival cox.zph
 #' @importFrom graphics abline
 #' @importFrom graphics plot
