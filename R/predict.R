@@ -103,13 +103,15 @@ predict.mira <- function(mod, ...){
 #' @return a list containing The mean AUC if cross validation; if bootstrap: the confidence interval and excess optimism
 #' @export
 get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
-                          type_validation = "cv", R = 100, nCPU = 1L, mod = NULL, updateProgress = function(detail) detail){
+                          type_validation = "cv", R = 100, nCPU = 1L, mod = NULL,
+                          updateProgress = function(detail) detail, seed = 1234567){
   if (type_validation == "cv"){
     m <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress) %>%
       flatten_dbl()%>%
       mean()
     return(list(mean = m))
   }
+  set.seed(seed)
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
   m <- mean(res$t[, 1])
@@ -192,4 +194,23 @@ get_shrunk_coef <- function(mod, lambda){
   new.int <- glm.fit(X.i, Y, family = binomial(link = "logit"),
                     offset = offs)$coefficients
   c(new.int, B.shrunk[-1])
+}
+
+#' @export
+compute_sens_spe <- function(pred_obs, range = seq(0.1, 1, by=0.1)){
+  purrr::map_dfr(range, function(x){
+    m <- filter(pred_obs, D == 1)
+    nm <- filter(pred_obs, D == 0)
+    t <- filter(m, M >= x) %>%
+      nrow()
+    nt <- filter(nm, M <= x) %>%
+      nrow()
+    sen <- binom.test(t, nrow(m)) %>% broom::tidy()
+    spe <- binom.test(nt, nrow(nm)) %>% broom::tidy()
+    tibble(cutoff = x,
+           sensitivity = sprintf_number_table("%s [%s - %s]", pourcent(sen$estimate),
+                                              pourcent(sen$conf.low), pourcent(sen$conf.high)),
+           specificity = sprintf_number_table("%s [%s - %s]", pourcent(spe$estimate),
+                                              pourcent(spe$conf.low), pourcent(spe$conf.high)))
+  })
 }

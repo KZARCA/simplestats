@@ -1,5 +1,5 @@
 context("graphical-checks")
-
+library(survival)
 pdf(NULL) #prevents the creation of a Rplots.pdf file
 
 test_that("prepare_zph is working", {
@@ -42,10 +42,14 @@ test_that("create_spline returns a list with as many graph and lin as numeric in
   tab <- standardize_tab(colon)
   test_splines_graph <- function(tab, vardep, varindep, type){
     l <- length(select_if(tab[varindep], is.numeric))
-    create_spline(tab, vardep, varindep, type = type) %>%
-      extract2("graph") %>%
-      extract2("smooth") %>%
-      expect_length(l)
+    spl <- create_spline(tab, vardep, varindep, type = type) %>%
+      extract2("graph")
+    if (type == "survival") {
+      extract2(spl, "pterms")
+    } else {
+      extract2(spl, "smooth")
+    }%>%
+    expect_length(l)
   }
   test_splines_lin <- function(tab, vardep, varindep, type){
     l <- length(select_if(tab[varindep], is.numeric))

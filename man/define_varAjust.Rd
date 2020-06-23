@@ -15,9 +15,6 @@ define_varAjust(tab, vardep, varindep, type, test = FALSE)
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
 }
-\value{
-
-}
 \description{
 Detect adjustment variables
 }

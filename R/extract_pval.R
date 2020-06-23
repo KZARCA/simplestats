@@ -55,7 +55,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
         }, silent = TRUE)
       }
       if (is.null(f)){
-        set.seed(1)
+        set.seed(1234567)
         f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
         if (!isTRUE(all.equal(dim(cont), c(2, 2)))){
           f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
