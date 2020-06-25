@@ -75,8 +75,10 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE){
     label <- tab[[vardep]]
     pred <- predict(mod, newdata = tab)
   }
-  label %<>% as.character() %>%
-    as.numeric()
+  label %<>%
+    as.factor() %>%
+    as.numeric() %>%
+    subtract(1)
 
   if (as_prob){
     pred <- coef_to_prob(pred)
