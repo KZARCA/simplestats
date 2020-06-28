@@ -23,7 +23,10 @@ split_cv <- function(tab, n = 10){
 #' @export
 get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic") {
   set.seed(1234567)
-  nona <- na.exclude(tab)
+  nona <- Filter(function(x) {
+      simplestats:::solve_contrast(tab, vardep, x)
+    }, tab) %>% na.exclude()
+
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
@@ -160,6 +163,8 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   train <- data %>%
     dplyr::slice(indices) %>%
     create_tabi("pred")
+
+  write.csv(train, "test", append = F)
 
   varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
