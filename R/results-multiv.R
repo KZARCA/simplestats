@@ -84,7 +84,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
 compute_mod_base_bootstrap <- function(tab, type, miss, exLabel, formule){
   if (miss) {
     tabBoot <- mice::complete(tab)
-    label(tabBoot, self = FALSE) <- exLabel
+    #label(tabBoot, self = FALSE) <- exLabel
   }
   else tabBoot <- tab
   .fun <- get_fun(type)
