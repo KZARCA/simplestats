@@ -4,9 +4,18 @@
 \alias{get_pred_perf}
 \title{Get performance measures of a predictive model}
 \usage{
-get_pred_perf(tab, vardep, varindep = NULL, type = "logistic",
-  type_validation = "cv", R = 100, nCPU = 1L, mod = NULL,
-  updateProgress = function(detail) detail, seed = 1234567)
+get_pred_perf(
+  tab,
+  vardep,
+  varindep = NULL,
+  type = "logistic",
+  type_validation = "cv",
+  R = 100,
+  nCPU = 1L,
+  mod = NULL,
+  updateProgress = function(detail) detail,
+  seed = 1234567
+)
 }
 \arguments{
 \item{tab}{The data.frame}

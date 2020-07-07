@@ -18,6 +18,7 @@ create_ligne_bivar <- function(x, ...){
 #' @export
 #' @rdname create_ligne_bivar
 create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
+  if(missing(noms)) noms <- tolower(make.names(label(x)))
   if (is.factor(y)){ #fac~fac
     no_na <- remove_na(x, y)
     if (nrow(no_na) > 0){
@@ -72,6 +73,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
 #' @export
 #' @rdname create_ligne_bivar
 create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
+  if(missing(noms)) noms <- tolower(make.names(label(x)))
   if(is.factor(y)){
     no_na <- remove_na(x, y)
     cont <- table(no_na$y)
@@ -119,6 +121,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
 #'
 #' @examples
 create_ligne_surv_bivar <- function(x, time, noms, censure){
+  if(missing(noms)) noms <- tolower(make.names(label(x)))
   tab_cens <- create_tab_cens(x, time, censure) #remove_na(time, x, censure, drop_factor = TRUE)
   if (nrow(tab_cens) > 0){
     formule <- Surv(.time, censure) ~ x

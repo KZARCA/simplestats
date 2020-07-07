@@ -17,6 +17,9 @@ is_normal(x)
 
 \item{model}{The result of the lm function}
 }
+\value{
+
+}
 \description{
 Can it be considered as normal?
 }

@@ -3,7 +3,6 @@
 \docType{package}
 \name{simplestats}
 \alias{simplestats}
-\alias{simplestats-package}
 \title{simplestats: Stats made simple}
 \description{
 `simplestats` is a R toolset accompanying pvalue.io

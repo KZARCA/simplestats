@@ -11,6 +11,9 @@ show_table_markdown(table)
 
 \item{...}{}
 }
+\value{
+
+}
 \description{
 Nice display of the analysis
 }
