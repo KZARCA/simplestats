@@ -4,7 +4,7 @@
 \alias{create_ligne_surv_bivar}
 \title{Univariate analysis of survival}
 \usage{
-create_ligne_surv_bivar(x, time, noms, censure)
+create_ligne_surv_bivar(x, time, noms, censure, compute_p = TRUE)
 }
 \arguments{
 \item{x}{The independant variable}
@@ -12,6 +12,8 @@ create_ligne_surv_bivar(x, time, noms, censure)
 \item{time}{The vector of follow-up time}
 
 \item{censure}{The status indicator}
+
+\item{compute_p}{logical: should the function compute the pvalue}
 }
 \value{
 median(IC95), max follow-up, n, n events, p.
