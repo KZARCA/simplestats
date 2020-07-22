@@ -164,8 +164,6 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
     dplyr::slice(indices) %>%
     create_tabi("pred")
 
-  write.csv(train, "test", append = F)
-
   varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
   varajust <- remove_elements(varajust, el)
