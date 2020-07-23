@@ -4,7 +4,8 @@
 \alias{compute_mod}
 \title{Compute multivariable statistical model}
 \usage{
-compute_mod(tab, vardep, varindep, varajust, type, pred = FALSE, cv = FALSE)
+compute_mod(tab, vardep, varindep, varajust, type, pred = FALSE,
+  cv = FALSE)
 }
 \arguments{
 \item{tab}{The data.frame}
@@ -18,9 +19,6 @@ compute_mod(tab, vardep, varindep, varajust, type, pred = FALSE, cv = FALSE)
 \item{type}{Type: one of "linear", "logistic" or "survival"}
 
 \item{pred}{Logical: is the analysis predictive or explanatory}
-}
-\value{
-
 }
 \description{
 Compute multivariable statistical model

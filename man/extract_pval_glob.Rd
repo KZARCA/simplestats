@@ -17,9 +17,6 @@ extract_pval_glob(x, ...)
 
 \item{...}{other arguments passed to the generic function}
 }
-\value{
-
-}
 \description{
 Extract Anova p-value from objects
 }
