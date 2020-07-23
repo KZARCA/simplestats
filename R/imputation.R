@@ -25,8 +25,8 @@ get_propDM <- function(x){
 #'
 #' @examples
 imputer <- function(tab, vardep, type, exclude_mice = NULL, n_imputation = 1){
-  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x)) %>%
-    dplyr::select(-!!rlang::sym(vardep))
+  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x)) #%>%
+    #dplyr::select(-!!rlang::sym(vardep))
   if (type == "survival") tabm <- dplyr::select(tabm, -.time)
   if(get_propDM(tabm) < 0.05){
     return(tab)
@@ -39,7 +39,7 @@ imputer <- function(tab, vardep, type, exclude_mice = NULL, n_imputation = 1){
     if (any(is.na(tab[names(tabm)]))){
       require(mice)
       where <- data.frame(is.na(tab))
-      where[[vardep]] <- rep(FALSE, nrow(where))
+      #where[[vardep]] <- rep(FALSE, nrow(where))
       if (type == "survival") where[[".time"]] <- FALSE
       tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation, where = where)
     } else {
