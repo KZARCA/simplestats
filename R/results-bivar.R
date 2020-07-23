@@ -112,7 +112,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
     }
   } else {
     no_na <- remove_na(x, y, drop_factor = TRUE)
-    ligne <- create_ligne_cor(no_na$x, no_na$y)
+    ligne <- create_ligne_cor(no_na$x, no_na$y, compute_p = compute_p)
     if (is.null(ligne)) return(NULL)
     ligne %>%
       add_varname(x, noms)
@@ -182,26 +182,45 @@ create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
   }
 }
 
-create_ligne_cor <- function(x, y) {
+create_ligne_cor <- function(x, y, compute_p = TRUE) {
   l <- length(x)
   name_title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(CI95)", domain = "R-simplestats")
-  test <- find_test(x, y)
-  if (is.null(test)) return(NULL)
-
-  res <- test$result %>%
-    broom::tidy()
-  if(test$name == "Pearson") {
-    name_title <- paste(name_title, CI95)
-    title <- sprintf_number_table("%s (%s; %s)",
-                                  res$estimate, res$conf.low, res$conf.high)
+  if  (compute_p) {
+    test <- find_test(x, y)
+    if (is.null(test)) return(NULL)
+    res <- test$result %>%
+      broom::tidy()
+    if(test$name == "Pearson") {
+      name_title <- paste(name_title, CI95)
+      title <- sprintf_number_table("%s (%s; %s)",
+                                    res$estimate, res$conf.low, res$conf.high)
+    } else {
+      title <- sprintf_number_table("%s", res$estimate)
+    }
+    ligne <- tibble(!!name_title := title,
+                    n = l,
+                    p = res$p.value,
+                    test = test$name)
   } else {
-    title <- sprintf_number_table("%s", res$estimate)
+    if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+      estimate <- cor(x, y, use = "complete.obs")
+      z <- atanh(estimate)
+      sigma <- 1/sqrt(sum(complete.cases(x, y)) - 3)
+      cint <- (z + c(-1, 1) * sigma * qnorm((1 + 0.95)/2)) %>%
+        tanh() %>%
+        as.list() %>%
+        setNames(c("conf.low", "conf.high"))
+      title <- sprintf_number_table("%s (%s; %s)",
+                                    estimate, cint$conf.low, cint$conf.high)
+    } else {
+      estimate <- cor(x, y, use = "complete.obs", method = "spearman")
+      title <- sprintf_number_table("%s", estimate)
+    }
+    ligne <- tibble(!!name_title := title,
+                    n = l)
   }
-  ligne <- tibble(!!name_title := title,
-                  n = l,
-                  p = res$p.value,
-                  test = test$name)
+
 }
 
 #' Displays the univariate analysis in markdown
