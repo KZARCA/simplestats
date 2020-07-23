@@ -162,7 +162,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   progression()
   train <- data %>%
     dplyr::slice(indices) %>%
-    create_tabi("pred", vardep = vardep)
+    create_tabi("pred", keep = c(vardep, varindep))
   varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
   varajust <- remove_elements(varajust, el)
@@ -210,7 +210,7 @@ get_shrunk_coef.default <- function(dataset, coefs, lambda){
   offs <- as.vector(as.matrix(dataset[, 2:(nc - 1)]) %*% B.shrunk[-1])
   new.int <- glm.fit(x=X.i, y=Y, family = binomial(link = "logit"),
                     offset = offs)$coefficients
-  #new.int <- lrm.fit(y=Y, offset = offs)$coefficients
+  if (new.int > 10) new.int <- coefs[1]
   c(new.int, B.shrunk[-1])
 }
 

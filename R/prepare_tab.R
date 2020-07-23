@@ -259,7 +259,7 @@ make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInc
 #' @export
 #'
 #' @examples
-create_tabi <- function(tab, type, vardep = NULL){
+create_tabi <- function(tab, type, keep = NULL){
   tf <- Filter(function(x) length(table(x)) > 1 & !inherits(x, "Date") & !is.character(x), tab)
   if (type == "desc"){
     return(tf)
@@ -268,8 +268,8 @@ create_tabi <- function(tab, type, vardep = NULL){
     Filter(function(x) get_propDM(x) <= 0.2, tf)
   } else if (type == "pred"){
     elimine <- get_large_missing(tf)
-    if (!is.null(vardep)){
-      elimine <- setdiff(elimine, vardep)
+    if (!is.null(keep)){
+      elimine <- setdiff(elimine, keep)
     }
     tf[setdiff(names(tf), elimine)]
   }
