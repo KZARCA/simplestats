@@ -24,7 +24,7 @@ split_cv <- function(tab, n = 10){
 get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic") {
   set.seed(1234567)
   nona <- Filter(function(x) {
-      simplestats:::solve_contrast(tab, vardep, x)
+      solve_contrast(tab, vardep, x)
     }, tab) %>% na.exclude()
 
   formule <- paste(vardep, "~ .")
@@ -109,7 +109,7 @@ predict.mira <- function(mod, ...){
 #' @export
 get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
                           type_validation = "cv", R = 100, nCPU = 1L, mod = NULL,
-                          updateProgress = function(detail) detail, seed = 1234567){
+                          updateProgress = function(detail) detail = "", seed = 1234567){
   if (type_validation == "cv"){
     m <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress) %>%
       flatten_dbl()%>%
@@ -162,8 +162,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   progression()
   train <- data %>%
     dplyr::slice(indices) %>%
-    create_tabi("pred")
-
+    create_tabi("pred", vardep = vardep)
   varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
   varajust <- remove_elements(varajust, el)
@@ -184,9 +183,22 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   c(perf_boot, perf_test, shrinkage_factor)
 }
 
-get_shrunk_coef <- function(mod, lambda){
+get_shrunk_coef <- function(x, ...){
+  UseMethod("get_shrunk_coef")
+}
+
+get_shrunk_coef.mira <- function(mod, lambda){
+  purrr::map_dfc(getfit(mod), get_shrunk_coef.lm, lambda) %>%
+    rowMeans()
+}
+
+get_shrunk_coef.lm <- function(mod, lambda){
   dataset <- cbind(model.matrix(mod), as.numeric(mod$model[[1]])-1)
   coefs <- as.matrix(coef(mod), ncol = 1)
+  get_shrunk_coef.default(dataset, coefs, lambda)
+}
+
+get_shrunk_coef.default <- function(dataset, coefs, lambda){
   nc <- dim(dataset)[2]
   sdm <- matrix(c(0, rep(1, nc - 2)), nrow = 1)
   sdm <- t(sdm)
@@ -196,8 +208,9 @@ get_shrunk_coef <- function(mod, lambda){
   X.i <-  matrix(dataset[, 1], ncol = 1)
   Y <- dataset[, nc]
   offs <- as.vector(as.matrix(dataset[, 2:(nc - 1)]) %*% B.shrunk[-1])
-  new.int <- glm.fit(X.i, Y, family = binomial(link = "logit"),
+  new.int <- glm.fit(x=X.i, y=Y, family = binomial(link = "logit"),
                     offset = offs)$coefficients
+  #new.int <- lrm.fit(y=Y, offset = offs)$coefficients
   c(new.int, B.shrunk[-1])
 }
 
