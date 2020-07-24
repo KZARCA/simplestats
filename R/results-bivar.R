@@ -41,6 +41,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, comp
         bind_cols(d, pval_test)
       } else d
       attr(ligne, "colSums") <- base::colSums(cont)
+      attr(ligne, "type") <- "fac-fac"
       ligne
     }
   } else if (is.numeric(y)){ #fac~num
@@ -71,6 +72,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, comp
       ligne %<>% add_varname(x, noms, add_niveau = FALSE)
       names(ligne)[3] <- "niveau"
       ligne$niveau <- as.character(ligne$niveau)
+      attr(ligne, "type") <- "fac-num"
       ligne
     }
   }
@@ -107,6 +109,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
       ligne %<>% add_varname(x, noms)
       #add_column(label(x), .before = 1)
       attr(ligne, "colSums") <- table(fct_drop(no_na$y))
+      attr(ligne, "type") <- "num-fac"
       #names(ligne)[1] <- "variable"
       ligne
     }
@@ -114,8 +117,10 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
     no_na <- remove_na(x, y, drop_factor = TRUE)
     ligne <- create_ligne_cor(no_na$x, no_na$y, compute_p = compute_p)
     if (is.null(ligne)) return(NULL)
-    ligne %>%
+    ligne %<>%
       add_varname(x, noms)
+    attr(ligne, "type") <- "num-num"
+    ligne
   }
 }
 
@@ -178,7 +183,9 @@ create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
     } else {
       d
     }
-    ligne %>% add_varname(x, noms)
+    ligne %<>% add_varname(x, noms)
+    attr(ligne, "type") <- "survival"
+    ligne
   }
 }
 
