@@ -13,9 +13,6 @@ calculate_auc(pred_obs)
 
 \item{vardep}{The dependant varible}
 }
-\value{
-
-}
 \description{
 Calculate AUC
 }

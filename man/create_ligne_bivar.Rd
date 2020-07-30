@@ -8,9 +8,11 @@
 \usage{
 create_ligne_bivar(x, ...)
 
-\method{create_ligne_bivar}{factor}(x, y, noms, margin = 2, .drop = TRUE)
+\method{create_ligne_bivar}{factor}(x, y, noms, margin = 2,
+  .drop = TRUE, compute_p = TRUE)
 
-\method{create_ligne_bivar}{numeric}(x, y, noms, .drop = TRUE)
+\method{create_ligne_bivar}{numeric}(x, y, noms, .drop = TRUE,
+  compute_p = TRUE)
 }
 \arguments{
 \item{x}{The independant variable}
@@ -21,6 +23,8 @@ create_ligne_bivar(x, ...)
 
 \item{margin}{Index, or vector of indices to generate margin for.
 1 indicates rows, 2 indicates columns}
+
+\item{compute_p}{logical: should the function compute the pvalue}
 }
 \value{
 If x is a numeric vector: mean(sd), median(Q25-75), min, max, n, p.

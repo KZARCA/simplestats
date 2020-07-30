@@ -1,3 +1,34 @@
+find_test_ba <- function(x, y){
+  f <- NULL
+  if (is.numeric(x)){
+    if (length(!is.na(x)) > 30 & length(!is.na(y)) > 30) {
+      f <- t.test(x, y, paired = TRUE)
+      test <- "Paired Welch"
+    }
+    else {
+      f <- suppressWarnings(wilcox.test(x, y, paired = TRUE))
+      test <- "Paired Mann-Whitney"
+    }
+  } else {
+    x <- forcats::fct_expand(x, levels(y))
+    y <- forcats::fct_expand(y, levels(x))
+    y <- factor(y, levels = levels(x))
+    ae <- all.equal(x, y, check.attributes = FALSE)
+    if (isTRUE(ae)) return(NULL)
+    nb_dis <- stringr::str_extract(ae, "[0-9]*") %>%
+        as.numeric()
+    if (nb_dis > 10) {
+      f <- mcnemar.test(x, y)
+      test <- ifelse(nlevels(x) > 2, "McNemar-Bowker", "McNemar")
+    }
+  }
+  if (!is.null(f)){
+    return(list(result = f, name = test))
+  } else {
+    return(NULL)
+  }
+}
+
 find_test <- function(x, y, survival = FALSE, censure = NULL){
   f <- NULL
   if (survival){
@@ -80,8 +111,12 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
 #'
 #' @return
 #' @export
-extract_pval <- function(x, y, survival = FALSE, censure = NULL){
-  test <- find_test(x, y, survival, censure)
+extract_pval <- function(x, y, survival = FALSE, censure = NULL, ba = FALSE){
+  test <- if (ba){
+    find_test_ba(x, y)
+  } else {
+    find_test(x, y, survival, censure)
+  }
   if (is.null(test$result)) return(list(pval = NA, test = "-"))
   if (test$name == "Logrank"){
     pval <- broom::glance(test$result) %>%

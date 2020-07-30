@@ -5,6 +5,7 @@
 #' @param noms The variable names
 #' @param margin Index, or vector of indices to generate margin for.
 #'    1 indicates rows, 2 indicates columns
+#' @param compute_p logical: should the function compute the pvalue
 #'
 #' @return If x is a numeric vector: mean(sd), median(Q25-75), min, max, n, p.
 #'     If x is a factor: n (%)
@@ -17,7 +18,8 @@ create_ligne_bivar <- function(x, ...){
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
+create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, compute_p = TRUE){
+  if(missing(noms)) noms <- tolower(make.names(label(x)))
   if (is.factor(y)){ #fac~fac
     no_na <- remove_na(x, y)
     if (nrow(no_na) > 0){
@@ -32,11 +34,14 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
       #colnames(d) <- sprintf("%s %s", label(y), levels(y))#column_names
       d$.n <- base::rowSums(cont)
       d %<>% add_varname(x, noms)
-      pval_test <- extract_pval(x,y) %>%
-        map_df(~ c(., rep(NA, nlevels(x) - 1)))
-      names(pval_test) <- c("p", "test")
-      ligne <- bind_cols(d, pval_test)
+      ligne <- if (compute_p){
+        pval_test <- extract_pval(x,y) %>%
+          map_df(~ c(., rep(NA, nlevels(x) - 1)))
+        names(pval_test) <- c("p", "test")
+        bind_cols(d, pval_test)
+      } else d
       attr(ligne, "colSums") <- base::colSums(cont)
+      attr(ligne, "type") <- "fac-fac"
       ligne
     }
   } else if (is.numeric(y)){ #fac~num
@@ -56,14 +61,18 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
                     gettext("median [Q25-75]", domain = "R-simplestats"),
                     gettext("min", domain = "R-simplestats"),
                     gettext("max", domain = "R-simplestats"), "n")
-      pval_test <- extract_pval(x,y) %>%
-        map_df(~ c(., rep(NA, max(0, nlevels(x) - 1))))
-      names(pval_test) <- c("p", "test")
-      ligne <-
-        bind_cols(d, pval_test) %>%
-        add_varname(x, noms, add_niveau = FALSE)
+      ligne <- if (compute_p){
+        pval_test <- extract_pval(x,y) %>%
+          map_df(~ c(., rep(NA, max(0, nlevels(x) - 1))))
+        names(pval_test) <- c("p", "test")
+        bind_cols(d, pval_test)
+      } else {
+         d
+      }
+      ligne %<>% add_varname(x, noms, add_niveau = FALSE)
       names(ligne)[3] <- "niveau"
       ligne$niveau <- as.character(ligne$niveau)
+      attr(ligne, "type") <- "fac-num"
       ligne
     }
   }
@@ -71,7 +80,8 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE){
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
+create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE){ #num~fac
+  if(missing(noms)) noms <- tolower(make.names(label(x)))
   if(is.factor(y)){
     no_na <- remove_na(x, y)
     cont <- table(no_na$y)
@@ -87,23 +97,30 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
 
       d <- d[2, ]
       d$.n <- sum(cont)
-      pval_test <- extract_pval(x,y) %>%
-        as_tibble()
-      names(pval_test) <- c("p", "test")
 
-      ligne <- bind_cols(d, pval_test) %>%
-        add_varname(x, noms)
+      ligne <- if (compute_p){
+        pval_test <- extract_pval(x,y) %>%
+          as_tibble()
+        names(pval_test) <- c("p", "test")
+        bind_cols(d, pval_test)
+      } else {
+        d
+      }
+      ligne %<>% add_varname(x, noms)
       #add_column(label(x), .before = 1)
       attr(ligne, "colSums") <- table(fct_drop(no_na$y))
+      attr(ligne, "type") <- "num-fac"
       #names(ligne)[1] <- "variable"
       ligne
     }
   } else {
     no_na <- remove_na(x, y, drop_factor = TRUE)
-    ligne <- create_ligne_cor(no_na$x, no_na$y)
+    ligne <- create_ligne_cor(no_na$x, no_na$y, compute_p = compute_p)
     if (is.null(ligne)) return(NULL)
-    ligne %>%
+    ligne %<>%
       add_varname(x, noms)
+    attr(ligne, "type") <- "num-num"
+    ligne
   }
 }
 
@@ -113,12 +130,14 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE){ #num~fac
 #' @param x The independant variable
 #' @param time The vector of follow-up time
 #' @param censure The status indicator
+#' @param compute_p logical: should the function compute the pvalue
 #'
 #' @return median(IC95), max follow-up, n, n events, p.
 #' @export
 #'
 #' @examples
-create_ligne_surv_bivar <- function(x, time, noms, censure){
+create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
+  if(missing(noms)) noms <- tolower(make.names(label(x)))
   tab_cens <- create_tab_cens(x, time, censure) #remove_na(time, x, censure, drop_factor = TRUE)
   if (nrow(tab_cens) > 0){
     formule <- Surv(.time, censure) ~ x
@@ -156,35 +175,60 @@ create_ligne_surv_bivar <- function(x, time, noms, censure){
 
     x <- tab_cens$x
 
-    pval_test <- extract_pval(tab_cens$x, tab_cens$.time, survival = TRUE, tab_cens$censure) %>%
-      map_df(~ c(., rep(NA, max(0, nlevels(x) - 1))))
-    names(pval_test) <- c("p", "test")
-
-    ligne <- bind_cols(d, pval_test)
-    ligne %>% add_varname(x, noms)
+    ligne <- if (compute_p){
+      pval_test <- extract_pval(tab_cens$x, tab_cens$.time, survival = TRUE, tab_cens$censure) %>%
+        map_df(~ c(., rep(NA, max(0, nlevels(x) - 1))))
+      names(pval_test) <- c("p", "test")
+      bind_cols(d, pval_test)
+    } else {
+      d
+    }
+    ligne %<>% add_varname(x, noms)
+    attr(ligne, "type") <- "survival"
+    ligne
   }
 }
 
-create_ligne_cor <- function(x, y) {
+create_ligne_cor <- function(x, y, compute_p = TRUE) {
   l <- length(x)
   name_title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(CI95)", domain = "R-simplestats")
-  test <- find_test(x, y)
-  if (is.null(test)) return(NULL)
-
-  res <- test$result %>%
-    broom::tidy()
-  if(test$name == "Pearson") {
-    name_title <- paste(name_title, CI95)
-    title <- sprintf_number_table("%s (%s; %s)",
-                                  res$estimate, res$conf.low, res$conf.high)
+  if  (compute_p) {
+    test <- find_test(x, y)
+    if (is.null(test)) return(NULL)
+    res <- test$result %>%
+      broom::tidy()
+    if(test$name == "Pearson") {
+      name_title <- paste(name_title, CI95)
+      title <- sprintf_number_table("%s (%s; %s)",
+                                    res$estimate, res$conf.low, res$conf.high)
+    } else {
+      title <- sprintf_number_table("%s", res$estimate)
+    }
+    ligne <- tibble(!!name_title := title,
+                    n = l,
+                    p = res$p.value,
+                    test = test$name)
   } else {
-    title <- sprintf_number_table("%s", res$estimate)
+    if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+      name_title <- paste(name_title, CI95)
+      estimate <- cor(x, y, use = "complete.obs")
+      z <- atanh(estimate)
+      sigma <- 1/sqrt(sum(complete.cases(x, y)) - 3)
+      cint <- (z + c(-1, 1) * sigma * qnorm((1 + 0.95)/2)) %>%
+        tanh() %>%
+        as.list() %>%
+        setNames(c("conf.low", "conf.high"))
+      title <- sprintf_number_table("%s (%s; %s)",
+                                    estimate, cint$conf.low, cint$conf.high)
+    } else {
+      estimate <- cor(x, y, use = "complete.obs", method = "spearman")
+      title <- sprintf_number_table("%s", estimate)
+    }
+    ligne <- tibble(!!name_title := title,
+                    n = l)
   }
-  ligne <- tibble(!!name_title := title,
-                  n = l,
-                  p = res$p.value,
-                  test = test$name)
+
 }
 
 #' Displays the univariate analysis in markdown

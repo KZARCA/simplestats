@@ -12,7 +12,7 @@ test_that("get_propDM works", {
 
 test_that("imputer does not impute when less than 5% of missing data", {
   tab <- data.frame(
-    a = c(rep(NA, 3), seq_len(97)) %>% sample(),
+    a = c(rep(NA, 2), seq_len(98)) %>% sample(),
     b = c(NA, as.character(seq_len(99))) %>% sample(),
     c = rep_len(1:2, 100) %>% as.factor(),
     .time = c(NA, runif(99, 1, 1000))

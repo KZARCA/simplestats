@@ -4,7 +4,8 @@
 \alias{get_lasso_variables}
 \title{Variable selection by LASSO procedure}
 \usage{
-get_lasso_variables(tab, vardep, varindep = character(0), type = "logistic")
+get_lasso_variables(tab, vardep, varindep = character(0),
+  type = "logistic")
 }
 \arguments{
 \item{tab}{A data.frame}

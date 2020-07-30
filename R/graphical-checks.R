@@ -63,7 +63,8 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
 
 plot_nth_spline <- function(spline_gen, n){
   if (inherits(spline_gen$graph, "coxph")){
-    coord <- termplot(spline_gen$graph, term = n, se=TRUE, col.term=1, col.se=1)
+    coord <- termplot(spline_gen$graph, term = n, se=TRUE, col.term=1, col.se=1, plot = FALSE)
+    termplot(spline_gen$graph, term = n, se=TRUE, col.term=1, col.se=1, plot = TRUE)
   } else {
     coord <- plot(spline_gen$graph, select = n, scale = 0)[[n]]
   }

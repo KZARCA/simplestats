@@ -133,7 +133,7 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
   tab <- split_cv(tab, n)
   map(seq_along(tab), function(i){
     progression()
-    train <- train <- do.call(rbind, tab[-i])
+    train <- do.call(rbind, tab[-i])
     test <- tab[[i]]
     varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)

@@ -4,7 +4,7 @@
 \alias{extract_pval}
 \title{Performs univariate tests and extract p-value from objects}
 \usage{
-extract_pval(x, y, survival = FALSE, censure = NULL)
+extract_pval(x, y, survival = FALSE, censure = NULL, ba = FALSE)
 }
 \arguments{
 \item{x}{The dependant variable}
@@ -14,9 +14,6 @@ extract_pval(x, y, survival = FALSE, censure = NULL)
 \item{survival}{logical, is it a survival analysis}
 
 \item{censure}{The censor variable}
-}
-\value{
-
 }
 \description{
 Performs univariate tests and extract p-value from objects
