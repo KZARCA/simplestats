@@ -286,7 +286,7 @@ pourcent <- function(nb, symbol = TRUE, arrondi = NULL){
       base::format(val, digits = arrondi, nsmall = arrondi - 2)
     } else 0
 
-    if (symbol) paste0(val, "%") else val
+    if (symbol) paste0(val, "%") else format(val)
   })
 }
 

@@ -211,6 +211,7 @@ create_ligne_cor <- function(x, y, compute_p = TRUE) {
                     test = test$name)
   } else {
     if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+      name_title <- paste(name_title, CI95)
       estimate <- cor(x, y, use = "complete.obs")
       z <- atanh(estimate)
       sigma <- 1/sqrt(sum(complete.cases(x, y)) - 3)
