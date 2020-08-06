@@ -191,7 +191,6 @@ standardize_tab <- function(tab){
     remove_na_cols()
   tab <- tab[!is.na(names(tab)) & names(tab) != ""]
   labs <- standardize_names(names(tab), trunc = TRUE)
-
   names(tab) <- standardize_names_basic(names(tab))
 
   tab %<>%
@@ -202,6 +201,8 @@ standardize_tab <- function(tab){
     lower_tab() %>%
     factor_strings() %>%
     remove_guillemets()
+
+  names(tab) <- gsub("\\.", "_", names(tab))
 
   label(tab, self = FALSE) <- labs
   return(tab)
