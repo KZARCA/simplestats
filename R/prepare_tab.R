@@ -272,6 +272,7 @@ create_tabi <- function(tab, type, keep = NULL){
     if (!is.null(keep)){
       elimine <- setdiff(elimine, keep)
     }
-    tf[setdiff(names(tf), elimine)]
+    tf <- tf[setdiff(names(tf), elimine)]
+    Filter(function(x) get_propDM(x) <= 0.2, tf)
   }
 }
