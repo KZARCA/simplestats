@@ -133,10 +133,11 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
     mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
   }
   if(!is_model_possible(mod)){
-    if (length(var_ajust) > 0 & !pred){
-      elimine <- var_ajust
+    var_inter <- intersect(var_ajust, vars)
+    if (length(var_inter) > 0 & !pred){
+      elimine <- var_inter
       vars <- vars[-na.omit(match(elimine, vars))]
-      mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(var_ajust, collapse = " - "))))
+      mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(var_inter, collapse = " - "))))
       if (!is_model_possible(mod)) return("ERROR_MODEL")
     } else return("ERROR_MODEL")
   }
