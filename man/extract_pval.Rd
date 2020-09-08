@@ -15,6 +15,9 @@ extract_pval(x, y, survival = FALSE, censure = NULL, ba = FALSE)
 
 \item{censure}{The censor variable}
 }
+\value{
+
+}
 \description{
 Performs univariate tests and extract p-value from objects
 }

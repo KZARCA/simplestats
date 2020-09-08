@@ -34,5 +34,5 @@ Imports:
   glmnet(>= 3.0)
 Remotes: 
   KZARCA/broom
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: testthat

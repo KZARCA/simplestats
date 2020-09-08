@@ -4,8 +4,7 @@
 \alias{print_plot_desc}
 \title{Plot descriptive graphs}
 \usage{
-print_plot_desc(tab, vardep = NULL, varindep = NULL, type = "linear",
-  ...)
+print_plot_desc(tab, vardep = NULL, varindep = NULL, type = "linear", ...)
 }
 \arguments{
 \item{tab}{The data frame}

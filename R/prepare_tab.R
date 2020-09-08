@@ -258,8 +258,6 @@ make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInc
 #'
 #' @return a curated data frame
 #' @export
-#'
-#' @examples
 create_tabi <- function(tab, type, keep = NULL){
   tf <- Filter(function(x) length(table(x)) > 1 & !inherits(x, "Date") & !is.character(x), tab)
   if (type == "desc"){
@@ -275,4 +273,19 @@ create_tabi <- function(tab, type, keep = NULL){
     tf <- tf[setdiff(names(tf), elimine)]
     Filter(function(x) get_propDM(x) <= 0.2, tf)
   }
+}
+
+#' @export
+homogeneise_tab <- function(tab, before, after){
+  purrr::walk2(before, after, function(x, y){
+    if (is.factor(tab[[x]]) & !is.factor(tab[[y]]) | !is.factor(tab[[x]]) & is.factor(tab[[y]])) {
+      exlab <- label(tab[[x]])
+      tab[[x]] <<- as.numeric(as.character(tab[[x]]))
+      label(tab[[x]]) <<- exlab
+      exlab <- label(tab[[y]])
+      tab[[y]] <<- as.numeric(as.character(tab[[y]]))
+      label(tab[[y]]) <<- exlab
+    }
+  })
+  tab[c(before, after)]
 }
