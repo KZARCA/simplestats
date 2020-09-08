@@ -91,9 +91,17 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE){
 
 #' @export
 predict.mira <- function(mod, ...){
-  map(getfit(mod), function(x) predict(x, ...)) %>%
+  mods <- getfit(mod)
+  pred <- map(mods, function(x) predict(x, ...))
+  rownames <- map(pred, names) %>%
+    Reduce(union, .)
+  map(pred, function(x){
+    diff <- setdiff(rownames, names(x))
+    x[diff] <- NA
+    x
+  }) %>%
     as.data.frame() %>%
-    rowMeans()
+    rowMeans(na.rm = TRUE)
 }
 
 #' Get performance measures of a predictive model
