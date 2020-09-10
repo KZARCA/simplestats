@@ -125,12 +125,12 @@ modify_mod.mira <- function(mod, tabm){
   m <- tabm$m
   warned <- unique(attr(mod, "warning"))
   if (is.null(warned)) return(mod)
-  mod2 <- as.list(rep(0, m))
+  mod2 <- mod
   for (i in seq_len(m)){
     attr(mod$analyses[[i]], "warning") <- warned
-    mod2[[i]] <- modify_mod(mice::getfit(mod, i), mice::complete(tabm, i))
-    if(!is.null(attr(mod2[[i]], "warning"))){
-      return(mod2[[i]])
+    mod2$analyses[[i]] <- modify_mod(mice::getfit(mod, i), mice::complete(tabm, i))
+    if(!is.null(attr(mod2$analyses[[i]], "warning"))){
+      return(mod2$analyses[[i]])
     }
   }
   mod2
