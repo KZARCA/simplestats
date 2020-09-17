@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: simplestats 0.10.6\n"
-"POT-Creation-Date: 2020-04-13 10:32\n"
+"Project-Id-Version: simplestats 0.12.0\n"
+"POT-Creation-Date: 2020-09-17 13:46\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,10 +52,10 @@ msgstr ""
 msgid "Degrees of Freedom"
 msgstr ""
 
-msgid "Mean Difference (CI95)"
+msgid "Mean Difference (95% CI)"
 msgstr ""
 
-msgid "Correlation Coefficient (CI95)"
+msgid "Correlation Coefficient (95% CI)"
 msgstr ""
 
 msgid "Correlation Coefficient"
@@ -184,7 +184,7 @@ msgstr ""
 msgid "max"
 msgstr ""
 
-msgid "median (CI95)"
+msgid "median (95% CI)"
 msgstr ""
 
 msgid "max follow-up"
@@ -193,13 +193,22 @@ msgstr ""
 msgid "n events"
 msgstr ""
 
-msgid "survival rate (CI95)"
+msgid "survival rate (95% CI)"
 msgstr ""
 
 msgid "correlation coefficient"
 msgstr ""
 
-msgid "(CI95)"
+msgid "(95% CI)"
+msgstr ""
+
+msgid "Δ mean"
+msgstr ""
+
+msgid "before"
+msgstr ""
+
+msgid "after"
 msgstr ""
 
 msgid "Can't find"

@@ -85,8 +85,8 @@ get_pertinent_params.default <- function(x){
 
 rename_glance <- function(x){
   params <- c(df = gettext("Degrees of Freedom"),
-              parameter = gettext("Degrees of Freedom"), estimate_t =  gettext("Mean Difference (CI95)"),
-              estimate_p = gettext("Correlation Coefficient (CI95)"), estimate_p2 = gettext("Correlation Coefficient"),
+              parameter = gettext("Degrees of Freedom"), estimate_t =  gettext("Mean Difference (95% CI)"),
+              estimate_p = gettext("Correlation Coefficient (95% CI)"), estimate_p2 = gettext("Correlation Coefficient"),
               sumsq = gettext("Sum of Squares"), method = gettext("Test"), term = gettext("Variable"),
               p.value = "p", statistic = gettext("Test statistic"),
               logLik = gettext("Log-Likelihood"), AIC = gettext("AIC"),
