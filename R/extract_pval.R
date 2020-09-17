@@ -13,14 +13,14 @@ find_test_ba <- function(x, y){
     x <- forcats::fct_expand(x, levels(y))
     y <- forcats::fct_expand(y, levels(x))
     y <- factor(y, levels = levels(x))
-    ae <- all.equal(x, y, check.attributes = FALSE)
-    if (isTRUE(ae)) return(NULL)
-    nb_dis <- stringr::str_extract(ae, "^[0-9]*") %>%
-        as.numeric()
-    if (nb_dis > 10) {
+    #ae <- all.equal(x, y, check.attributes = FALSE)
+    # if (isTRUE(ae)) return(NULL)
+    # nb_dis <- stringr::str_extract(ae, "^[0-9]*") %>%
+    #     as.numeric()
+   # if (nb_dis > 10) {
       f <- mcnemar.test(x, y)
       test <- ifelse(nlevels(x) > 2, "McNemar-Bowker", "McNemar")
-    }
+    #}
   }
   if (!is.null(f)){
     return(list(result = f, name = test))

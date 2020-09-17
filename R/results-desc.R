@@ -179,7 +179,8 @@ create_ligne_desc_ba.numeric <- function(x, y, noms){
            p = c(extract_pval(x, y, ba = TRUE)$pval, NA))
   names(res)[6] <- delta_name
   add_varname(res, x, noms) %>%
-    add_column(niveau = c(gettext("before"), gettext("after")),
+    add_column(niveau = c(gettext("before", domain = "R-simplestats"),
+                          gettext("after", domain = "R-simplestats")),
                           .after = "variable")
 
 }
@@ -199,12 +200,12 @@ create_ligne_desc_ba.factor <- function(x, y, noms){
   before <- map2_chr(contx, propx, function(x, y) {
     sprintf_number_table("%s (%s)", x, y)
   }) %>%
-   tibble::as_tibble_col(column_name = gettext("before"))
+   tibble::as_tibble_col(column_name = gettext("before", domain = "R-simplestats"))
 
   after <-  map2_chr(conty, propy, function(x, y) {
     sprintf_number_table("%s (%s)", x, y)
   })%>%
-    tibble::as_tibble_col(column_name = gettext("after"))
+    tibble::as_tibble_col(column_name = gettext("after", domain = "R-simplestats"))
 
   pval_test <- extract_pval(x, y, ba = TRUE) %>%
     map_df(~ c(., rep(NA, nlevels(x) - 1)))
