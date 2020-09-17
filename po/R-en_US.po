@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2020-04-13 10:32\n"
+"POT-Creation-Date: 2020-09-17 13:46\n"
 "PO-Revision-Date: 2018-02-25 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -54,10 +54,10 @@ msgstr ""
 msgid "Degrees of Freedom"
 msgstr ""
 
-msgid "Mean Difference (CI95)"
+msgid "Mean Difference (95% CI)"
 msgstr ""
 
-msgid "Correlation Coefficient (CI95)"
+msgid "Correlation Coefficient (95% CI)"
 msgstr ""
 
 msgid "Correlation Coefficient"
@@ -190,7 +190,8 @@ msgstr "min"
 msgid "max"
 msgstr "max"
 
-msgid "median (CI95)"
+#, fuzzy
+msgid "median (95% CI)"
 msgstr "median (CI95)"
 
 msgid "max follow-up"
@@ -199,18 +200,30 @@ msgstr "max follow-up"
 msgid "n events"
 msgstr "n events"
 
-msgid "survival rate (CI95)"
+msgid "survival rate (95% CI)"
 msgstr ""
 
 msgid "correlation coefficient"
 msgstr ""
 
-#, fuzzy
-msgid "(CI95)"
-msgstr "median (CI95)"
+msgid "(95% CI)"
+msgstr ""
+
+msgid "Δ mean"
+msgstr ""
+
+msgid "before"
+msgstr ""
+
+msgid "after"
+msgstr ""
 
 msgid "Can't find"
 msgstr ""
+
+#, fuzzy
+#~ msgid "(CI95)"
+#~ msgstr "median (CI95)"
 
 #~ msgid ""
 #~ "Unable to load this file because of unreadable characters in the column "

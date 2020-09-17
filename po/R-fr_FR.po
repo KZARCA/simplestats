@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2020-04-13 10:32\n"
-"PO-Revision-Date: 2020-04-13 11:04+0200\n"
+"POT-Creation-Date: 2020-09-17 13:46\n"
+"PO-Revision-Date: 2020-09-17 13:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgid "Computation of Estimates..."
@@ -54,11 +54,11 @@ msgstr ""
 msgid "Degrees of Freedom"
 msgstr ""
 
-msgid "Mean Difference (CI95)"
-msgstr ""
+msgid "Mean Difference (95% CI)"
+msgstr "Différence moyenne (IC 95%)"
 
-msgid "Correlation Coefficient (CI95)"
-msgstr "Coefficient de corrélation (IC95)"
+msgid "Correlation Coefficient (95% CI)"
+msgstr "Coefficient de corrélation (IC 95%)"
 
 msgid "Correlation Coefficient"
 msgstr "Coefficient de corrélation"
@@ -186,8 +186,8 @@ msgstr "min"
 msgid "max"
 msgstr "max"
 
-msgid "median (CI95)"
-msgstr "médiane (IC95)"
+msgid "median (95% CI)"
+msgstr "médiane (IC 95%)"
 
 msgid "max follow-up"
 msgstr "suivi max"
@@ -195,17 +195,29 @@ msgstr "suivi max"
 msgid "n events"
 msgstr "n événements"
 
-msgid "survival rate (CI95)"
-msgstr "taux de survie (IC95)"
+msgid "survival rate (95% CI)"
+msgstr "taux de survie (IC 95%)"
 
 msgid "correlation coefficient"
 msgstr "coefficient de corrélation"
 
-msgid "(CI95)"
-msgstr "(IC95)"
+msgid "(95% CI)"
+msgstr "IC 95%"
+
+msgid "Δ mean"
+msgstr ""
+
+msgid "before"
+msgstr "avant"
+
+msgid "after"
+msgstr "après"
 
 msgid "Can't find"
 msgstr ""
+
+#~ msgid "(CI95)"
+#~ msgstr "(IC95)"
 
 #~ msgid "Did you convert your file into Unicode Text?"
 #~ msgstr "Avez-vous converti votre fichier en texte Unicode ?"

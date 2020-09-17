@@ -167,11 +167,11 @@ create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
       nEvent,
       surv_rates
     )
-    names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
+    names(d) <- c(gettext("median (95% CI)", domain = "R-simplestats"),
                   gettext("max follow-up", domain = "R-simplestats"),
                   "n",
                   gettext("n events", domain = "R-simplestats"),
-                  gettext("survival rate (CI95)", domain = "R-simplestats"))
+                  gettext("survival rate (95% CI)", domain = "R-simplestats"))
 
     x <- tab_cens$x
 
@@ -192,7 +192,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
 create_ligne_cor <- function(x, y, compute_p = TRUE) {
   l <- length(x)
   name_title <- gettext("correlation coefficient", domain = "R-simplestats")
-  CI95 <- gettext("(CI95)", domain = "R-simplestats")
+  CI95 <- gettext("(95% CI)", domain = "R-simplestats")
   if  (compute_p) {
     test <- find_test(x, y)
     if (is.null(test)) return(NULL)

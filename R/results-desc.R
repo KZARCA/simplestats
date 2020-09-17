@@ -78,10 +78,10 @@ create_ligne_surv_desc <- function(time, censure){
               pourcent(surv$upper[l], arrondi = 3))
     )
 
-    names(d) <- c(gettext("median (CI95)", domain = "R-simplestats"),
+    names(d) <- c(gettext("median (95% CI)", domain = "R-simplestats"),
                   gettext("max follow-up", domain = "R-simplestats"), "n",
                   gettext("n events", domain = "R-simplestats"),
-                  gettext("survival rate (CI95)", domain = "R-simplestats"))
+                  gettext("survival rate (95% CI)", domain = "R-simplestats"))
 
     d %<>% add_column(id = "survival", variable = gettext("max follow-up", domain = "R-simplestats"), .before = 1)
   }

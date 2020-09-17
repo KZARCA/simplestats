@@ -26,7 +26,7 @@ test_that("get_glance Pearson is working", {
   t <- get_glance(tab$mpg, tab$wt)
   expect_error(t, NA)
   expect_warning(t, NA)
-  expect_equal(names(t), c("Correlation Coefficient (CI95)", "Degrees of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(names(t), c("Correlation Coefficient (95% CI)", "Degrees of Freedom", "Test statistic", "p", "Test"))
   expect_equal(t$Test, "Pearson's product-moment correlation")
   a <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 43, 40, 18, NA, 28.5, NA,
          17, 10, 11, NA, 63, 23.5, NA, 36.3, 90, NA, NA, 9.5, 53, NA, NA, NA, 12,
@@ -66,7 +66,7 @@ test_that("get_glance Welch is working", {
   t <- get_glance(tab$age, tab$sex)
   expect_error(t, NA)
   expect_warning(t, NA)
-  expect_equal(names(t), c("Mean Difference (CI95)", "Degrees of Freedom", "Test statistic", "p", "Test"))
+  expect_equal(names(t), c("Mean Difference (95% CI)", "Degrees of Freedom", "Test statistic", "p", "Test"))
   expect_equal(t$Test, "Welch Two Sample t-test")
 })
 test_that("get_glance Anova is working", {
