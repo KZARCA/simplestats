@@ -133,7 +133,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
     mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
   }
   if(!is_model_possible(mod)){
-    var_inter <- intersect(var_ajust, vars)
+    var_inter <- intersect(var_ajust, c(vars, elimine))
     if (length(var_inter) > 0 & !pred){
       elimine <- var_inter
       vars <- vars[-na.omit(match(elimine, vars))]
