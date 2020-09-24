@@ -138,7 +138,7 @@ create_ligne_desc_ba <- function(x, ...){
 
 #' @export
 #' @rdname create_ligne_desc_ba
-create_ligne_desc_ba.numeric <- function(x, y, noms){
+create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p = TRUE){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   meanx <- mean(x, na.rm =  TRUE)
   meany <- mean(y, na.rm = TRUE)
@@ -149,7 +149,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms){
   nx <- sum(!is.na(x))
   ny <- sum(!is.na(y))
   before <- tibble(
-    sprintf_number_table("%s (%s)", meanx, sdx),
+    sprintf_number_table("%s (±%s)", meanx, sdx),
     sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]),
     sprintf_number_table("%s", qx[1]),
     sprintf_number_table("%s", qx[5]),
@@ -161,37 +161,59 @@ create_ligne_desc_ba.numeric <- function(x, y, noms){
                      gettext("max", domain = "R-simplestats"),
                      "n")
   after <- tibble(
-    sprintf_number_table("%s (%s)", meany, sdy),
+    sprintf_number_table("%s (±%s)", meany, sdy),
     sprintf_number_table("%s [%s; %s]", qy[3], qy[2], qy[4]),
     sprintf_number_table("%s", qy[1]),
     sprintf_number_table("%s", qy[5]),
     ny
   )
-  names(after) <- c(gettext("mean (sd)", domain = "R-simplestats"),
-                     gettext("median [Q25-75]", domain = "R-simplestats"),
-                     gettext("min", domain = "R-simplestats"),
-                     gettext("max", domain = "R-simplestats"),
-                    "n")
+  names(after) <- names(before)
 
+  delta =  format_number(meany - meanx)
   delta_name  <- gettext("Δ mean")
-  res <- rbind(before, after) %>%
-    mutate(delta = c(sprintf_number_table("%s", meany - meanx), NA),
-           p = c(extract_pval(x, y, ba = TRUE)$pval, NA))
-  names(res)[6] <- delta_name
-  add_varname(res, x, noms) %>%
+
+
+  pval_test <- NULL
+  if  (compute_p){
+    pval_test <- extract_pval(x, y, ba = TRUE)
+    names(pval_test) <- c("p", "test")
+  }
+
+  if (!invert) {
+    ligne <- tibble(before[[1]], after[[1]], delta, min(before$n, after$n))
+    names(ligne) <- c(gettext("before", domain = "R-simplestats"),
+                      gettext("after", domain = "R-simplestats"),
+                      delta_name,
+                      "n")
+    ligne <- bind_cols(ligne, pval_test) %>%
+      add_varname(x, noms)
+    attr(ligne, "colSums") <- c(nx, ny)
+  }
+  else {
+  ligne <- rbind(before, after) %>%
+    mutate(delta = c(NA, delta))
+
+  ligne <- bind_cols(ligne, pval_test) #%>%
+
+  names(ligne)[6] <- delta_name
+  ligne <- add_varname(ligne, x, noms) %>%
     add_column(niveau = c(gettext("before", domain = "R-simplestats"),
                           gettext("after", domain = "R-simplestats")),
                           .after = "variable")
+  }
+
+  ligne
 
 }
 
 #' @export
 #' @rdname create_ligne_desc_ba
-create_ligne_desc_ba.factor <- function(x, y, noms){
+create_ligne_desc_ba.factor <- function(x, y, noms, compute_p = TRUE, ...){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   x <- forcats::fct_expand(x, levels(y))
   y <- forcats::fct_expand(y, levels(x))
   y <- factor(y, levels = levels(x))
+  n <- c(nrow(na.exclude(data.frame(x, y))), rep(NA, nlevels(x) - 1)) # n represents the number of observations without a missing value
   contx <- table(x)
   propx <- prop.table(contx) %>%  pourcent()
   conty <- table(y)
@@ -207,14 +229,16 @@ create_ligne_desc_ba.factor <- function(x, y, noms){
   })%>%
     tibble::as_tibble_col(column_name = gettext("after", domain = "R-simplestats"))
 
-  pval_test <- extract_pval(x, y, ba = TRUE) %>%
-    map_df(~ c(., rep(NA, nlevels(x) - 1)))
+  pval_test <- NULL
+  if  (compute_p){
+    pval_test <- extract_pval(x, y, ba = TRUE) %>%
+      map_df(~ c(., rep(NA, nlevels(x) - 1)))
+    names(pval_test) <- c("p", "test")
+  }
 
-  names(pval_test) <- c("p", "test")
-
-  ligne <- bind_cols(before, after, pval_test) %>%
+  ligne <- bind_cols(before, after, n = n, pval_test) %>%
     add_varname(x, noms)
-
+  attr(ligne, "colSums") <- c(sum(contx), sum(conty))
   ligne
 }
 
