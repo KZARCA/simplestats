@@ -1,12 +1,15 @@
+#' @rdname get_pertinent_params
 get_pertinent_params <- function(x){
   UseMethod("get_pertinent_params")
 }
 
+#' @export
 get_pertinent_params.mira <- function(x){
   select(x, term, estimate, ubar, b, t, dfcom, df, riv,
          lambda, fmi)
 }
 
+#' @export
 get_pertinent_params.coxph <- function(x){
   res <- broom::glance(x) %>%
     mutate(likelihood = sprintf_number_table("%s (%s)", statistic.log, p.value.log),
@@ -17,6 +20,7 @@ get_pertinent_params.coxph <- function(x){
     select(squared_cox, concordance, logLik, AIC, BIC, likelihood, score, wald)
 }
 
+#' @export
 get_pertinent_params.lm <- function(x){
   res <- broom::glance(x) %>%
     mutate(squared_lm = sprintf_number_table("%s (%s)", r.squared, adj.r.squared),
@@ -25,6 +29,7 @@ get_pertinent_params.lm <- function(x){
 
 }
 
+#' @export
 get_pertinent_params.glm <- function(x){
   res <- broom::glance(x) %>%
     mutate(null = sprintf_number_table("%s (%s)", null.deviance, df.null),
@@ -32,6 +37,8 @@ get_pertinent_params.glm <- function(x){
     select(null, residual, logLik, AIC, BIC)
 }
 
+#' @rdname get_pertinent_params
+#' @export
 get_pertinent_params.default <- function(x){
   test_name <- x$name
   res <- x$result
@@ -50,12 +57,12 @@ get_pertinent_params.default <- function(x){
     res <- broom::glance(res)
     return(select(res, estimate_p2 = estimate, statistic, p.value, method))
   }
-  if (test_name == "Welch"){
+  if (grepl("Welch", test_name)){
     res <- broom::glance(res)
     res <- mutate(res, estimate_t = sprintf_number_table("%s (%s; %s)", estimate, conf.low, conf.high))
     return(select(res, estimate_t, parameter, statistic, p.value, method))
   }
-  if (test_name == "Mann-Whitney") {
+  if (grepl("Mann-Whitney", test_name)) {
     res <- broom::glance(res)
     return(select(res, statistic, p.value, method))
   }
@@ -80,6 +87,10 @@ get_pertinent_params.default <- function(x){
     res <- broom::glance(res) %>%
       mutate(method = "Mantel-Haenszel - Logrank")
     return(select(res, df, statistic, p.value, method))
+  }
+  if (grepl("McNemar", test_name)) {
+    res <- broom::glance(res)
+    return(select(res, parameter, statistic, p.value, method))
   }
 }
 
@@ -153,3 +164,10 @@ get_glance.mira <- function(x){
     rename_glance() %>%
     add_class("glance_mira")
 }
+
+#' @export
+#' @rdname get_glance
+get_glance_ba <- function(x, y){
+  find_test_ba(x, y) %>% get_pertinent_params() %>% rename_glance()
+}
+
