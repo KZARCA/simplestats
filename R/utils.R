@@ -172,7 +172,8 @@ get_nvar_mod <- function(tab, var_ajust){
 #' @examples
 format_number <- function(numbers, digits = 3){
   map_chr(numbers, function(x){
-    if (is.na(x) | is.nan(x)) return("-")
+    if (is.nan(x)) return("NaN")
+    if (is.na(x)) return("-")
     if  (x > 1E6) return("+Inf")
     if  (x < -1E6) return("-Inf")
     if (abs(x) < 1E-4) return(base::format(0))
