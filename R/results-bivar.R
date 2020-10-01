@@ -80,7 +80,8 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, comp
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE){ #num~fac
+create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE, summary = c("mean", "median")){ #num~fac
+  type <- match.arg(summary)
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   if(is.factor(y)){
     no_na <- remove_na(x, y)
@@ -90,8 +91,9 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
       y <- no_na$y
       d <- no_na %>%
         group_by(y, .drop = .drop) %>%
-        summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) %>%
-        base::t()
+        {if  (type == "mean") summarise(., sprintf_number_table("%s (±%s)", mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) else
+          summarise(.,  sprintf_number_table("%s [%s - %s]", median(x, na.rm=TRUE), quantile(x, na.rm=TRUE)[2], quantile(x, na.rm=TRUE)[4])) }%>%
+        t()
       colnames(d) <- paste(label(y), d[1,])#column_names
       d <- as_tibble(d)
 
@@ -110,6 +112,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
       #add_column(label(x), .before = 1)
       attr(ligne, "colSums") <- table(fct_drop(no_na$y))
       attr(ligne, "type") <- "num-fac"
+      attr(ligne, "summary") <- type
       #names(ligne)[1] <- "variable"
       ligne
     }
