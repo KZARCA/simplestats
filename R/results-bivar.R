@@ -18,7 +18,7 @@ create_ligne_bivar <- function(x, ...){
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, compute_p = TRUE){
+create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, compute_p = TRUE, ...){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   if (is.factor(y)){ #fac~fac
     no_na <- remove_na(x, y)
@@ -80,8 +80,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, comp
 
 #' @export
 #' @rdname create_ligne_bivar
-create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE, summary = c("mean", "median")){ #num~fac
-  type <- match.arg(summary)
+create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE, summary = NULL){ #num~fac
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   if(is.factor(y)){
     no_na <- remove_na(x, y)
@@ -89,11 +88,30 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
     if (nrow(no_na) > 0){
       x <- no_na$x
       y <- no_na$y
+      if (compute_p){
+        pval_test <- extract_pval(x,y) %>%
+          as_tibble()
+        names(pval_test) <- c("p", "test")
+      } else
+        pval_test <- NULL
       d <- no_na %>%
-        group_by(y, .drop = .drop) %>%
-        {if  (type == "mean") summarise(., sprintf_number_table("%s (±%s)", mean(x, na.rm=TRUE), sd(x, na.rm=TRUE))) else
-          summarise(.,  sprintf_number_table("%s [%s - %s]", median(x, na.rm=TRUE), quantile(x, na.rm=TRUE)[2], quantile(x, na.rm=TRUE)[4])) }%>%
-        t()
+        group_by(y, .drop = .drop)
+
+      show_summary <- dplyr::case_when(!is.null(summary) && summary == "mean" ~ "mean",
+                                !is.null(summary) && summary == "median" ~ "median",
+                                !is.null(pval_test) && !grepl("Mann-Whitney", pval_test$test[1]) ~ "mean",
+                                !is.null(pval_test) && grepl("Mann-Whitney", pval_test$test[1]) ~ "median",
+                                TRUE ~ "mean")
+
+
+      d <- if(show_summary == "median") {
+          summarise(d,  sprintf_number_table("%s [%s; %s]", median(x, na.rm=TRUE),
+                                                  quantile(x, na.rm=TRUE)[2], quantile(x, na.rm=TRUE)[4]))%>%
+          t()
+      } else {
+        summarise(d, sprintf_number_table("%s (±%s)", mean(x, na.rm=TRUE), sd(x, na.rm=TRUE)))%>%
+          t()
+      }
       colnames(d) <- paste(label(y), d[1,])#column_names
       d <- as_tibble(d)
 
@@ -101,9 +119,6 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
       d$.n <- sum(cont)
 
       ligne <- if (compute_p){
-        pval_test <- extract_pval(x,y) %>%
-          as_tibble()
-        names(pval_test) <- c("p", "test")
         bind_cols(d, pval_test)
       } else {
         d
@@ -112,7 +127,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
       #add_column(label(x), .before = 1)
       attr(ligne, "colSums") <- table(fct_drop(no_na$y))
       attr(ligne, "type") <- "num-fac"
-      attr(ligne, "summary") <- type
+      attr(ligne, "summary") <- show_summary
       #names(ligne)[1] <- "variable"
       ligne
     }
