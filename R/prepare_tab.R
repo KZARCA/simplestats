@@ -1,6 +1,7 @@
 make_correspondance <- function(tab, trunc = TRUE, length = 40){
   df <- tibble(noms = names(tab))
   mutate(df,
+         index = dplyr::row_number(),
          present = noms %in% names(remove_na_cols(tab)),
          correspondance = standardize_names_basic(noms),
          labs = standardize_names(noms, trunc = trunc, length = length))
