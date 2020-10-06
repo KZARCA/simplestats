@@ -26,7 +26,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   nona <- Filter(function(x) {
       solve_contrast(tab, vardep, x)
     }, tab) %>% na.exclude()
-
+  if (length(varindep) >= ncol(nona) - 1) return(character(0))
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
