@@ -138,7 +138,7 @@ create_ligne_desc_ba <- function(x, ...){
 
 #' @export
 #' @rdname create_ligne_desc_ba
-create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p = TRUE){
+create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p = TRUE, summary = NULL){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   meanx <- mean(x, na.rm =  TRUE)
   meany <- mean(y, na.rm = TRUE)
@@ -180,7 +180,16 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
   }
 
   if (!invert) {
-    ligne <- tibble(before[[1]], after[[1]], delta, min(before$n, after$n))
+    show_summary <- dplyr::case_when(!is.null(summary) && summary == "mean" ~ "mean",
+                                     !is.null(summary) && summary == "median" ~ "median",
+                                     !is.null(pval_test) && !grepl("Mann-Whitney", pval_test$test[1]) ~ "mean",
+                                     !is.null(pval_test) && grepl("Mann-Whitney", pval_test$test[1]) ~ "median",
+                                     TRUE ~ "mean")
+    ligne <- if (show_summary == "mean") {
+      tibble(before[[1]], after[[1]], delta, min(before$n, after$n))
+    } else {
+      tibble(before[[2]], after[[2]], delta, min(before$n, after$n))
+    }
     names(ligne) <- c(gettext("before", domain = "R-simplestats"),
                       gettext("after", domain = "R-simplestats"),
                       delta_name,
@@ -188,6 +197,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
     ligne <- bind_cols(ligne, pval_test) %>%
       add_varname(x, noms)
     attr(ligne, "colSums") <- c(nx, ny)
+    attr(ligne, "summary") <- show_summary
   }
   else {
   ligne <- rbind(before, after) %>%
