@@ -13,14 +13,15 @@ find_test_ba <- function(x, y){
     x <- forcats::fct_expand(x, levels(y))
     y <- forcats::fct_expand(y, levels(x))
     y <- factor(y, levels = levels(x))
-    #ae <- all.equal(x, y, check.attributes = FALSE)
-    # if (isTRUE(ae)) return(NULL)
-    # nb_dis <- stringr::str_extract(ae, "^[0-9]*") %>%
-    #     as.numeric()
-   # if (nb_dis > 10) {
+    ae <- x == y
+    nb_dis <- sum(ae, na.rm = TRUE)
+    if (nb_dis > 10 | nlevels(x) > 2) {
       f <- mcnemar.test(x, y)
       test <- ifelse(nlevels(x) > 2, "McNemar-Bowker", "McNemar")
-    #}
+    } else {
+      f <- mcnemar.exact(x, y)
+      test <- "McNemar"
+    }
   }
   if (!is.null(f)){
     return(list(result = f, name = test))
@@ -79,20 +80,22 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
     suppressWarnings(f <- chisq.test(cont, correct = FALSE))
     if (any(purrr::as_vector(f$expected, "double") < 5)){
       f <- NULL
-      if (prod(dim(cont)) < 50){
-        try({
-          f <- fisher.test(cont)
-          test <- "Fisher"
-        }, silent = TRUE)
-      }
-      if (is.null(f)){
-        set.seed(1234567)
-        f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
-        if (!isTRUE(all.equal(dim(cont), c(2, 2)))){
-          f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
+      if(identical(dim(cont), c(2,2))){
+        f <- fisher.exact(cont)
+      } else {
+        if (prod(dim(cont)) < 50){ # This fails (with an error message) when the entries of the table are too large
+          try({
+            f <- fisher.test(cont)
+            test <- "Fisher"
+          }, silent = TRUE)
         }
-        test <- "Fisher"
+        if (is.null(f)){
+           set.seed(1234567)
+           f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
+        }
+        f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
       }
+      test <- "Fisher"
     } else test <- "Chi2"
   }
   if (!is.null(f)){

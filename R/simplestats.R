@@ -106,6 +106,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom splines ns
 #' @importFrom plotROC geom_roc style_roc
 #' @importFrom glmnet cv.glmnet
+#' @importFrom exact2x2 fisher.exact mcnemar.exact
 #' @import ggplot2
 #' @import magrittr
 NULL
