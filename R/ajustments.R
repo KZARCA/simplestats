@@ -13,8 +13,8 @@ define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
   a <- NULL
   vars <- create_tabi(tab, "desc") %>%
     get_choix_var()
-  #seuil <- min(0.2, 5/length(vars))
-  seuil <- 0.2
+  seuil <- min(0.2, 5/length(vars))
+  #seuil <- 0.2
   map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
@@ -123,6 +123,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
       formule <- as.formula(paste(vardep, "~", paste(vars, collapse = " + ")))
     }
   }
+  set.seed(1234567)
   left_form <- NULL
   if (type == "logistic"){
     mod <- glm(formule, data = tab, family = "binomial")
