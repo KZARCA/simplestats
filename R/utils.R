@@ -421,7 +421,24 @@ solve_contrast <- function(tab, vardep, x, univ = FALSE) {
     if (identical(class(x), class(tab[[vardep]])) && isTRUE(all.equal(x, tab[[vardep]], check.attributes = FALSE))) return(TRUE)
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
-    are_enough_cor(tmp, "a", "b", univ) && are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
+    if (is.factor(tmp$a) & is.factor(tmp$b)){
+      ma <- model.matrix(~ a + 0, data = tmp)
+      mb <- model.matrix(~ b + 0, data = tmp)
+      m <- cbind(ma, mb)
+      l <- ncol(m)
+
+      for  (i in seq_len(l)){
+        if (i < l){
+          for (j in seq.int(i + 1, l)){
+            if (sum(m[, i] == m[, j]) == nrow(m)){
+              return(FALSE)
+            }
+          }
+        }
+      }
+    }
+    are_enough_cor(tmp, "a", "b", univ) &&
+      are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
   } else FALSE
 }
 
