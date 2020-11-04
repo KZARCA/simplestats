@@ -122,7 +122,9 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
     m <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress) %>%
       flatten_dbl()%>%
       mean()
-    return(list(mean = m))
+    lambda <- get_lambda(mod) #heuristic formula (see Steyenberg)
+    shrunk <- get_shrunk_coef(mod, lambda)
+    return(list(mean = m, shrunk = shrunk))
   }
   set.seed(seed)
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
@@ -145,7 +147,7 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
     test <- tab[[i]]
     varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
-    varajust <- remove_elements(varajust, el)
+    varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
     create_pred_obs(results$mod) %>%
       calculate_auc()
@@ -173,7 +175,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
     create_tabi("pred", keep = c(vardep, varindep))
   varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
-  varajust <- remove_elements(varajust, el)
+  varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
   results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
 
   for(i in seq_along(results$mod$xlevels)){
@@ -220,6 +222,15 @@ get_shrunk_coef.default <- function(dataset, coefs, lambda){
                     offset = offs)$coefficients
   if (new.int > 10) new.int <- coefs[1]
   c(new.int, B.shrunk[-1])
+}
+
+get_lambda <- function(mod){
+  LL1 <- logLik(mod)
+  LL0 <- update(mod, ". ~ 1") %>%
+    logLik()
+  LR <- -2 * (LL0 - LL1)
+  df <- mod$df.null - mod$df.residual
+  (LR - df) / LR
 }
 
 #' @export
