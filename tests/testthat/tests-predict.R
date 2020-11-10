@@ -12,8 +12,8 @@ test_that("get_lasso_variables returns a character vector with no forced variabl
 test_that("get_lasso_variables returns a character vector with forced variable ", {
   expect_type(get_lasso_variables(tab, "status", c('age', "rx")), "character")
   expect_type(get_lasso_variables(tab, "adhere", c('age', "rx")), "character")
-  expect_equal(get_lasso_variables(tab, "status", c("rx", "age")), c("rx", "age", "time"))
-  expect_equal(get_lasso_variables(tab, "adhere", c("rx", "age")), c("rx", "age"))
+  expect_equal(get_lasso_variables(tab, "status", c("rx", "age")), c("time"))
+  expect_equal(get_lasso_variables(tab, "adhere", c("rx", "age")), character(0))
 })
 
 

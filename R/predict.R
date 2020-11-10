@@ -57,7 +57,8 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   res <- coef(cv, cv$lambda.1se)
   expanded_fac[expanded_fac %in% res@Dimnames[[1]][res@i+1]] %>%
     names() %>%
-    unique()
+    unique() %>%
+  setdiff(varindep)
 }
 
 
@@ -139,13 +140,13 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk))
 }
 
-get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = progression){
+get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = function() cat("=")){
   tab <- split_cv(tab, n)
   map(seq_along(tab), function(i){
     progression()
     train <- do.call(rbind, tab[-i])
     test <- tab[[i]]
-    varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
+    varajust <- get_lasso_variables(train, vardep, varindep, type)
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
     varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
@@ -173,7 +174,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   train <- data %>%
     dplyr::slice(indices) %>%
     create_tabi("pred", keep = c(vardep, varindep))
-  varajust <- setdiff(get_lasso_variables(train, vardep, varindep, type), varindep)
+  varajust <- get_lasso_variables(train, vardep, varindep, type)
   el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
   varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
   results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)

@@ -4,12 +4,15 @@
 #' @param vardep A character string of the dependant variable
 #' @param varindep  A character vector of the independant variables
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
-#'
+#' @param by_lasso a logical: is the adjustment variable computed with lasso?
 #' @return
 #' @export
 #'
 #' @examples
-define_varAjust <- function(tab, vardep, varindep, type, test = FALSE){
+define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE){
+  if (by_lasso){
+    return(get_lasso_variables(tab, vardep, varindep, type))
+  }
   a <- NULL
   vars <- create_tabi(tab, "desc") %>%
     get_choix_var()
