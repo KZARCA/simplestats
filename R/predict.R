@@ -27,6 +27,10 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
       solve_contrast(tab, vardep, x)
     }, tab) %>% na.exclude()
   if (length(varindep) >= ncol(nona) - 1) return(character(0))
+  nb_max <- get_number_variables_max(nona, vardep, type)
+  nb_remaining <- floor(nb_max - length(varindep))
+  if (nb_remaining <= 0) return(character(0))
+
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
@@ -54,7 +58,17 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
                   y = y,
                   family = family,
                   penalty.factor = penalties)
-  res <- coef(cv, cv$lambda.1se)
+
+  idx_lambda <- which(cv$lambda == cv$lambda.1se)
+  nzero <- cv$nzero
+
+  res <- if (nzero[idx_lambda] <= nb_max){
+    coef(cv, cv$lambda.1se)
+  } else {
+    idx <- tail(which(nzero <= nb_remaining), n = 1)
+    coef(cv, cv$lambda[idx])
+  }
+
   expanded_fac[expanded_fac %in% res@Dimnames[[1]][res@i+1]] %>%
     names() %>%
     unique() %>%
