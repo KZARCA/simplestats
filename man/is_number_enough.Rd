@@ -4,7 +4,7 @@
 \alias{is_number_enough}
 \title{Is the number of observations enough to perform the modeling?}
 \usage{
-is_number_enough(tab, vardep, vars, type = "linear", event_value = "1")
+is_number_enough(tab, vardep, vars, type = "linear")
 }
 \arguments{
 \item{tab}{A data frame}

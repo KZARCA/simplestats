@@ -8,32 +8,29 @@
 #' @export
 #'
 #' @examples
-is_number_enough <- function(tab, vardep, vars, type = "linear", event_value = "1"){
-  tab <- na.exclude(tab[, c(vars, vardep), drop = FALSE])
+is_number_enough <- function(tab, vardep, vars, type = "linear"){
+  tab <- na.exclude(tab[, c(vardep, vars), drop = FALSE])
+  n_max <- get_number_variables_max(tab, vardep, type)
   nVars <- map_dbl(vars, function(x){
     tvars <- tab[[x]]
     if (is.factor(tvars)) nlevels(tvars) - 1
     else 1
   }) %>%
-    sum
+    sum()
+  if (nVars <= n_max) TRUE else FALSE
+}
 
+get_number_variables_max <- function(tab, vardep, type = "linear"){
+  threshold <- 10
   if (type == "linear"){
-    seuil <- 10
-    if (nrow(tab)/(nVars) <= seuil ){
-      return(FALSE)
-    } else
-      return(TRUE)
+    nrow(tab)/threshold
   } else if (type == "logistic" | type == "survival") {
-    seuil <- 10
     N <- if(type == "logistic"){
       min(table(tab[[vardep]]))
     } else {
-      sum(tab[[vardep]] == event_value)
+      sum(tab[[vardep]] == 1)
     }
-    if (N/(nVars) <= seuil) {
-      return(FALSE)
-    } else
-      return(TRUE)
+    N/threshold
   }
 }
 

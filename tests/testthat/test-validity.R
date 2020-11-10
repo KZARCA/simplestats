@@ -15,9 +15,9 @@ test_that("is_number_enough works", {
     expect_true()
   is_number_enough(t1, "sex", c("age", "rx"), "logistic") %>%
     expect_false()
-  is_number_enough(t1, "status", c("age", "obstruct", "sex"), "survival", 1) %>%
+  is_number_enough(t1, "status", c("age", "obstruct", "sex"), "survival") %>%
     expect_true()
-  is_number_enough(t1, "status", c("age", "rx", "sex"), "survival", 1) %>%
+  is_number_enough(t1, "status", c("age", "rx", "sex"), "survival") %>%
     expect_false()
 })
 
