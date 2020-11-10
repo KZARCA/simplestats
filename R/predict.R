@@ -224,13 +224,22 @@ get_shrunk_coef.default <- function(dataset, coefs, lambda){
   c(new.int, B.shrunk[-1])
 }
 
-get_lambda <- function(mod){
+get_lambda <- function(x){
+  UseMethod("get_lambda")
+}
+
+get_lambda.default <- function(mod){
   LL1 <- logLik(mod)
   LL0 <- update(mod, ". ~ 1") %>%
     logLik()
   LR <- -2 * (LL0 - LL1)
   df <- mod$df.null - mod$df.residual
   (LR - df) / LR
+}
+
+get_lambda.mira <- function(mod){
+  purrr::map_dfc(getfit(mod), get_lambda.default) %>%
+    rowMeans()
 }
 
 #' @export
