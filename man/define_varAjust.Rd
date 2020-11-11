@@ -4,7 +4,14 @@
 \alias{define_varAjust}
 \title{Detect adjustment variables}
 \usage{
-define_varAjust(tab, vardep, varindep, type, test = FALSE)
+define_varAjust(
+  tab,
+  vardep,
+  varindep,
+  type,
+  by_lasso = FALSE,
+  all_vars = FALSE
+)
 }
 \arguments{
 \item{tab}{A data frame}
@@ -14,6 +21,8 @@ define_varAjust(tab, vardep, varindep, type, test = FALSE)
 \item{varindep}{A character vector of the independant variables}
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
+
+\item{by_lasso}{a logical: is the adjustment variable computed with lasso?}
 }
 \value{
 

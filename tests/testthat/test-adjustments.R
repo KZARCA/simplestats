@@ -2,7 +2,7 @@ context("adjustment")
 library(survival)
 
 test_def <- function(tab, threshold, args){
-  test <- do.call(define_varAjust, c(list(tab), args, list(test = TRUE)))
+  test <- do.call(define_varAjust, c(list(tab), args, list(all_vars = TRUE)))
   expect_equal(test[test < threshold], do.call(define_varAjust, c(list(tab), args)))
   if(args[[3]] == 'linear') {
     .fun <- lm

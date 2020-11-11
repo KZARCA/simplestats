@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE){
+define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_vars = FALSE){
   if (by_lasso){
     return(get_lasso_variables(tab, vardep, varindep, type))
   }
@@ -58,7 +58,7 @@ define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE){
           return(NULL)
         } else {
           names(p) <- vars[i]
-          if (p < seuil | test == TRUE) return(p)
+          if (p < seuil | all_vars == TRUE) return(p)
           else return(NULL)
         }
       }
