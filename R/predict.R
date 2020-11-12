@@ -31,7 +31,9 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   nb_remaining <- floor(nb_max - length(varindep))
   if (nb_remaining <= 0) return(character(0))
 
-  formule <- paste(vardep, "~ .")
+  varajust <- prepare_varajust(nona, names(nona)[-which(names(nona) %in% c(vardep, varindep))], type)
+  formule <- sprintf("%s ~ %s", vardep, paste(c(varindep, varajust), collapse = " + "))
+  #formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
     y <- Surv(nona$.time, nona[[vardep]])
@@ -40,11 +42,12 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   }
   mat <- model.matrix(as.formula(formule), data = nona)
   penalties <- rep(1, ncol(mat))
-  names_tab <- names(tab)
   expanded_fac <- map(names(nona), function(x){
     if (is.factor(nona[[x]])){
-      lev <- levels(tab[[x]])
-      paste0(x, lev[2:length(lev)]) %>% setNames(rep(names(tab[x]), length(lev)-1))
+      lev <- levels(nona[[x]])
+      paste0(x, lev[2:length(lev)]) %>% setNames(rep(names(nona[x]), length(lev)-1))
+    } else if (x %in% names(varajust)) {
+      paste0("rcs(", x, ")",1:4) %>% setNames(rep(names(nona[x]), 4))
     } else {
       setNames(x, x)
     }

@@ -30,6 +30,7 @@ test_that("define_varajust returns variables with a univariate pvalue < 0.2", {
   tab <- standardize_tab(colon)
   expect_length(define_varajust(tab, "rx", "age", "multiple", by_lasso = FALSE), 0)
   expect_equivalent(define_varajust(tab, "age", "rx", "linear", by_lasso = FALSE), c("adhere", "node4", "nodes", "obstruct"))
+  expect_length(define_varajust(tab, "age", "rx", "linear", by_lasso = TRUE), 0)
   varindep <- "extent"
   test_def(tab, .2, args = c(list("age"), list(varindep), list("linear")))
   test_def(tab, .2, args = c(list("obstruct"), list(varindep), list("logistic")))
@@ -41,6 +42,7 @@ test_that("define_varajust returns variables with a univariate pvalue < 0.2", {
 test_that("define_varajust removes variables with contrasts problems", {
   tab <- data.frame(V1 = c(rep("non", 49), "oui"), V2 = c((1:49)^2, NA), V3 = rnorm(50), V4 = 1:50)
   expect_equivalent(define_varajust(tab, "V2", "V3", "linear", by_lasso = FALSE), "V4")
+  expect_equivalent(define_varajust(tab, "V2", "V3", "linear", by_lasso = TRUE), "V4")
 })
 
 test_that("define_varajust returns variables with a univariate pvalue < any threshold", {
