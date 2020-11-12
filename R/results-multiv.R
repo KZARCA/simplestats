@@ -60,7 +60,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
     resume_imputer <- FALSE
   }
 
-  varajust_m <- if (!pred) prepare_varAjust(tab, varajust, type) else varajust
+  varajust_m <- if (!pred) prepare_varajust(tab, varajust, type) else varajust
   varindep_m <- if(pred) varindep else format_precision(tab, varindep)
   allVars <- c(varindep_m, varajust_m)
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)

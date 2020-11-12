@@ -2,8 +2,8 @@ context("adjustment")
 library(survival)
 
 test_def <- function(tab, threshold, args){
-  test <- do.call(define_varAjust, c(list(tab), args, list(all_vars = TRUE)))
-  expect_equal(test[test < threshold], do.call(define_varAjust, c(list(tab), args)))
+  test <- do.call(define_varajust, c(list(tab), args, list(all_vars = TRUE)))
+  expect_equal(test[test < threshold], do.call(define_varajust, c(list(tab), args)))
   if(args[[3]] == 'linear') {
     .fun <- lm
     formule <- sprintf("%s ~ adhere", args[[1]]) %>% as.formula()
@@ -25,10 +25,10 @@ test_def <- function(tab, threshold, args){
     expect_equal(unname(test[1]))
 }
 
-test_that("define_varAjust returns variables with a univariate pvalue < 0.2", {
+test_that("define_varajust returns variables with a univariate pvalue < 0.2", {
   tab <- standardize_tab(colon)
-  expect_equal(define_varAjust(tab, "rx", "age", "multiple"), numeric(0))
-  expect_equal(names(define_varAjust(tab, "age", "rx", "linear")), c("adhere", "node4", "nodes", "obstruct"))
+  expect_equal(define_varajust(tab, "rx", "age", "multiple"), numeric(0))
+  expect_equal(names(define_varajust(tab, "age", "rx", "linear")), c("adhere", "node4", "nodes", "obstruct"))
   varindep <- "extent"
   test_def(tab, .2, args = c(list("age"), list(varindep), list("linear")))
   test_def(tab, .2, args = c(list("obstruct"), list(varindep), list("logistic")))
@@ -37,12 +37,12 @@ test_that("define_varAjust returns variables with a univariate pvalue < 0.2", {
 
 })
 
-test_that("define_varAjust removes variables with contrasts problems", {
+test_that("define_varajust removes variables with contrasts problems", {
   tab <- data.frame(V1 = c(rep("non", 49), "oui"), V2 = c((1:49)^2, NA), V3 = rnorm(50), V4 = 1:50)
-  expect_equal(names(define_varAjust(tab, "V2", "V3", "linear")), "V4")
+  expect_equal(names(define_varajust(tab, "V2", "V3", "linear")), "V4")
 })
 
-test_that("define_varAjust returns variables with a univariate pvalue < any threshold", {
+test_that("define_varajust returns variables with a univariate pvalue < any threshold", {
   tab <- colon %>% standardize_tab()
   tab2 <- data.frame(cbind(tab, select(tab, -nodes)))
   varindep <- "extent"
@@ -80,17 +80,17 @@ test_that("recherche_multicol works with all types of models", {
   tab <- standardize_tab(colon) %>% make_tab_survival("status", var_time = "time")
   vardep <- "age"
   varindep <- "sex"
-  varajust <- define_varAjust(tab, vardep, varindep, "linear")
+  varajust <- define_varajust(tab, vardep, varindep, "linear")
   recherche_multicol(tab, vardep, varindep , varajust, "linear") %>%
     expect_error(NA)
   vardep <- "sex"
   varindep <- "age"
-  varajust <- define_varAjust(tab, vardep, varindep, "logistic")
+  varajust <- define_varajust(tab, vardep, varindep, "logistic")
   recherche_multicol(tab, vardep, varindep , varajust, "logistic") %>%
     expect_error(NA)
   vardep <- "status"
   varindep <- "sex"
-  varajust <- define_varAjust(tab, vardep, varindep, "survival")
+  varajust <- define_varajust(tab, vardep, varindep, "survival")
   recherche_multicol(tab, vardep, varindep , varajust, "survival") %>%
     expect_error(NA)
 })
@@ -124,7 +124,7 @@ test_that("recherche_multicol removes high vif covariates", {
     expect_equal(c("x2", "cyl", "wt"))
 })
 
-test_that("recherche_multicol removes high vif varAjust in priority over varindep", {
+test_that("recherche_multicol removes high vif varajust in priority over varindep", {
   recherche_multicol(mtcars, "mpg", c("hp", "wt", "qsec", "disp"), "cyl", type = "linear") %>%
     expect_equal(c("disp", "cyl"))
 })

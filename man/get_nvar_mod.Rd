@@ -4,12 +4,12 @@
 \alias{get_nvar_mod}
 \title{Get the predicted number of terms in a statistical model}
 \usage{
-get_nvar_mod(tab, var_ajust)
+get_nvar_mod(tab, varajust)
 }
 \arguments{
 \item{tab}{The data frame}
 
-\item{var_ajust}{A character vector of adjustment variables}
+\item{varajust}{A character vector of adjustment variables}
 }
 \value{
 

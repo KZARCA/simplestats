@@ -4,7 +4,7 @@
 \alias{plot_all_splines}
 \title{Plots splines}
 \usage{
-plot_all_splines(tab, vardep, varindep, var_ajust, type)
+plot_all_splines(tab, vardep, varindep, varajust, type)
 }
 \arguments{
 \item{tab}{The data frame}
@@ -13,7 +13,7 @@ plot_all_splines(tab, vardep, varindep, var_ajust, type)
 
 \item{varindep}{A character vector of independant variables}
 
-\item{var_ajust}{A character vector of adjustment variables}
+\item{varajust}{A character vector of adjustment variables}
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
 }
