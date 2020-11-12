@@ -84,10 +84,10 @@ define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_v
 #' @export
 #'
 #' @examples
-recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FALSE) {
-  if (length(var_ajust) == 0 && length(varindep) < 2) return(NULL)
-  if (is.null(var_ajust)) var_ajust <- character(0)
-  vars <- c(varindep, var_ajust)
+recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FALSE) {
+  if (length(varajust) == 0 && length(varindep) < 2) return(NULL)
+  if (is.null(varajust)) varajust <- character(0)
+  vars <- c(varindep, varajust)
   elimine <- NULL
   if (type == "survival") {
     tab <- tab[c(vardep, vars, ".time")]
@@ -95,7 +95,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
     tab <- tab[c(vardep, vars)]
   }
   # exLabel <- label(tab)
-  # tab <- imputer(tab, vardep, type, var_ajust)
+  # tab <- imputer(tab, vardep, type, varajust)
   # if (inherits(tab, "mids")) {
   #   tab <- suppressWarnings(complete(tab))
   #   label(tab, self = FALSE) <- exLabel
@@ -138,7 +138,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
     mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
   }
   if(!is_model_possible(mod)){
-    var_inter <- intersect(var_ajust, c(vars, elimine))
+    var_inter <- intersect(varajust, c(vars, elimine))
     if (length(var_inter) > 0 & !pred){
       elimine <- var_inter
       vars <- vars[-na.omit(match(elimine, vars))]
@@ -161,7 +161,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
   #   vars <- remove_elements(vars, elimine)
   #   mod <- update_mod(tab, mod, vardep, vars, type, left_form)
   # }
-  big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, mod, left_form)
+  big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(varajust, vars), type, mod, left_form)
   if (length(big_vif)){
     elimine <- append(elimine, big_vif)
   }
@@ -174,18 +174,18 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
 #' Models the numeric adjustment variables with the natural spline, to be used in a formula
 #'
 #' @param tab The data frame
-#' @param var_ajust The adjustment variables
+#' @param varajust The adjustment variables
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
 #'
 #' @return A character vector surrounded by "ns()" when relevant
 #' @export
 #'
 #' @examples
-prepare_varAjust <- function(tab, var_ajust, type){
+prepare_varAjust <- function(tab, varajust, type){
   ifelse(
-    map_lgl(tab[var_ajust], is.numeric),
+    map_lgl(tab[varajust], is.numeric),
     paste0(
       ifelse(type == "survival", "ns(","ns("),
-      var_ajust, ")"),
-    var_ajust)
+      varajust, ")"),
+    varajust)
 }

@@ -1,5 +1,5 @@
-create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
-  vars <- c(vardep, varindep, var_ajust)
+create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
+  vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars <- append(vars, ".time")
   tab <- na.exclude(tab[vars])
   model <- NULL
@@ -14,10 +14,10 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
       } else
         as.character(x)
     })
-  var_ajust_num <- Filter(is.numeric, tab[var_ajust]) %>% colnames()
+  varajust_num <- Filter(is.numeric, tab[varajust]) %>% colnames()
 
   varsfac <- Filter(is.factor, tab[varindep]) %>% colnames()
-  var_ajust_fac <- Filter(is.factor, tab[var_ajust]) %>% colnames()
+  varajust_fac <- Filter(is.factor, tab[varajust]) %>% colnames()
   if(length(varsnum)){
     right <- paste0(ifelse(type == "survival", "pspline(", "s("), varsnumGam, ")", collapse=" + ")
     rightLin <- paste0(varsnum, collapse=" + ")
@@ -25,13 +25,13 @@ create_spline <- function(tab, vardep, varindep, var_ajust = NULL, type){
       right <- paste(right, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
       rightLin <- paste(rightLin, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
     }
-    if (length(var_ajust_num)){
-      right <- paste(right, "+", paste0("ns(", var_ajust_num, ")", collapse=" + "))
-      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(var_ajust_num, collapse = " + ")))
+    if (length(varajust_num)){
+      right <- paste(right, "+", paste0("ns(", varajust_num, ")", collapse=" + "))
+      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(varajust_num, collapse = " + ")))
     }
-    if (length(var_ajust_fac)){
-      right <- paste(right, sprintf("+ %s", paste0(var_ajust_fac, collapse = " + ")))
-      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(var_ajust_fac, collapse = " + ")))
+    if (length(varajust_fac)){
+      right <- paste(right, sprintf("+ %s", paste0(varajust_fac, collapse = " + ")))
+      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(varajust_fac, collapse = " + ")))
     }
     if (type %in% c("linear", "logistic")) {
       formule <- paste(vardep, "~", right)
@@ -79,27 +79,27 @@ plot_nth_spline <- function(spline_gen, n){
 #' @param tab The data frame
 #' @param vardep A character string of dependent variable
 #' @param varindep A character vector of independant variables
-#' @param var_ajust A character vector of adjustment variables
+#' @param varajust A character vector of adjustment variables
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
 #'
 #' @return All plots
 #' @export
 #'
 #' @examples
-plot_all_splines <- function(tab, vardep, varindep, var_ajust, type){
+plot_all_splines <- function(tab, vardep, varindep, varajust, type){
   varSpline <- tab %>%
     dplyr::select(one_of(varindep)) %>%
     select_if(is.numeric) %>%
     colnames()
 
-  spline_gen <- create_spline(tab, vardep, varindep, var_ajust, type)
+  spline_gen <- create_spline(tab, vardep, varindep, varajust, type)
   for (n in seq_along(varSpline)){
     plot_nth_spline(spline_gen, n)
   }
 }
 
-prepare_zph <- function(tab, vardep, varindep, var_ajust) {
-  allVars <- c(varindep, var_ajust)
+prepare_zph <- function(tab, vardep, varindep, varajust) {
+  allVars <- c(varindep, varajust)
   formule <- as.formula(paste0("Surv(.time, ", vardep, ")", " ~ ", paste(allVars, collapse = " + ")))
   coxph(formule, data = tab %>% prepare_model())
 }
@@ -118,14 +118,14 @@ plot_nth_zph <- function(model, n){
 #' @param tab The data frame
 #' @param vardep A character string of dependent variable
 #' @param varindep A character vector of independant variables
-#' @param var_ajust A character vector of adjustment variables
+#' @param varajust A character vector of adjustment variables
 #'
 #' @return All plots
 #' @export
 #'
 #' @examples
-plot_all_zph <- function(tab, vardep, varindep, var_ajust){
-  model <- prepare_zph(tab, vardep, varindep, var_ajust)
+plot_all_zph <- function(tab, vardep, varindep, varajust){
+  model <- prepare_zph(tab, vardep, varindep, varajust)
   nb <- map_dbl(varindep, function(x){
     if (is.numeric(tab[[x]])) 1 else nlevels(tab[[x]]) - 1
   })
