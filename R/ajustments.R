@@ -18,7 +18,7 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
     get_choix_var()
   seuil <- min(0.2, 5/length(vars))
   #seuil <- 0.2
-  map(seq_along(vars), function(i){
+  varajust <- map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
     tab <- if(type == "survival") {
@@ -67,6 +67,7 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
   }) %>%
     purrr::compact() %>%
     purrr::flatten_dbl()
+  if(length(varajust)) structure(names(varajust), value = unname(varajust))
 }
 
 #' Search for multicolinearity

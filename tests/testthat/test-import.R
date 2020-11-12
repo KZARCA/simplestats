@@ -19,7 +19,7 @@ test_that("read_tab_import is working with txt utf16", {
   colon2 <- standardize_tab(colon)
   expect_equal(readed[[1]],  colon2)
   expect_equal(readed[[2]]$noms, names(colon))
-  expect_equal(names(readed[[1]])[1], "id.ée")
+  expect_equal(names(readed[[1]])[1], "id_ée")
   expect_equal(as.character(readed[[1]][1,2]), "idée")
   expect_equal(readed[[2]]$noms[1], "id ée")
   expect_equivalent(label(readed[[1]])[1], "Id ée")

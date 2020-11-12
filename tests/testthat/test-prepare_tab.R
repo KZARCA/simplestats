@@ -126,7 +126,8 @@ test_that("factor_strings works", {
 test_that("remove_guillemets works", {
   tab <- data.frame(
     a = c('"bonjour"', "'Comment vas-tu'", '"Mon ami"'),
-    b = c('"1"', '"2"', '"3"')
+    b = c('"1"', '"2"', '"3"'),
+    stringsAsFactors = TRUE
   )
   tab2 <- remove_guillemets(tab)
   expect_equal(as.character(tab2$a), c("bonjour", "Comment vas-tu", "Mon ami"))
