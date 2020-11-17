@@ -169,36 +169,3 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
 
   return(setdiff(elimine, varindep[1]))
 }
-
-#' Format adjustment variables
-#'
-#' Models the numeric adjustment variables with the natural spline, to be used in a formula
-#'
-#' @param tab The data frame
-#' @param varajust The adjustment variables
-#' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
-#'
-#' @return A character vector surrounded by "ns()" when relevant
-#' @export
-#'
-#' @examples
-prepare_varajust <- function(tab, varajust, type){
-  ifelse(
-    map_lgl(tab[varajust], is.numeric),
-    paste0(
-      ifelse(type == "survival", "rcs(","rcs("),
-      varajust, ")"),
-    varajust)
-}
-
-rcs <- function(x, n = 3){
-  pos <- if (n == 3){
-    c(0.1, 0.5, 0.9)
-  } else if (n == 4){
-    c(0.05, 0.35, 0.65, 0.95)
-  } else if (n >= 5){
-    c(0.05, 0.275, 0.5, 0.725, 0.95)
-  }
-  k <- quantile(x, pos, na.rm = TRUE)
-  ns(x, knots = k)
-}

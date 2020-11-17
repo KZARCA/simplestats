@@ -23,7 +23,7 @@ test_def <- function(tab, threshold, args){
     broom::tidy() %>%
     magrittr::extract2("p.value") %>%
     magrittr::extract(i) %>%
-    expect_equal(vals[1])
+    expect_equivalent(vals[1])
 }
 
 test_that("define_varajust returns variables with a univariate pvalue < 0.2", {

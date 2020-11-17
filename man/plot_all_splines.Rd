@@ -4,7 +4,7 @@
 \alias{plot_all_splines}
 \title{Plots splines}
 \usage{
-plot_all_splines(tab, vardep, varindep, varajust, type)
+plot_all_splines(tab, vardep, varindep, varajust, type, pred = FALSE)
 }
 \arguments{
 \item{tab}{The data frame}

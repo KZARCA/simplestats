@@ -1,10 +1,11 @@
-create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
+create_spline <- function(tab, vardep, varindep, varajust = NULL, type, pred = FALSE){
   vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars <- append(vars, ".time")
   tab <- na.exclude(tab[vars])
   model <- NULL
   if (type == "survival") varindep <- remove_elements(varindep, ".time")
-  varsnum <- Filter(is.numeric, tab[varindep]) %>% colnames()
+  varspline <- if(!pred) varindep else c(varindep, varajust)
+  varsnum <- Filter(is.numeric, tab[varspline]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
       if (length(table(tab[, x, drop = FALSE])) < 20){
@@ -81,18 +82,19 @@ plot_nth_spline <- function(spline_gen, n){
 #' @param varindep A character vector of independant variables
 #' @param varajust A character vector of adjustment variables
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
+#' @param pred A logical indicating whether the analysis is predictive
 #'
 #' @return All plots
 #' @export
 #'
 #' @examples
-plot_all_splines <- function(tab, vardep, varindep, varajust, type){
+plot_all_splines <- function(tab, vardep, varindep, varajust, type, pred = FALSE){
   varSpline <- tab %>%
     dplyr::select(one_of(varindep)) %>%
     select_if(is.numeric) %>%
     colnames()
 
-  spline_gen <- create_spline(tab, vardep, varindep, varajust, type)
+  spline_gen <- create_spline(tab, vardep, varindep, varajust, type, pred)
   for (n in seq_along(varSpline)){
     plot_nth_spline(spline_gen, n)
   }
