@@ -42,7 +42,7 @@ prepare_variables <- function(tab, varindep, varajust, pred = FALSE){
 
     varajust_m <- map_chr(varajust, function(x){
       y <- tab[[x]]
-      if (is.numeric(y)){
+      if (is.numeric(y) && length(unique(y)) > 20){
         q <- quantile(y, pos, na.rm = TRUE)
         sprintf("ns(%s, knots = c(%s))", x, paste0(q, collapse = ", " ))
       } else {
@@ -64,7 +64,7 @@ format_precision <- function(tab, varindep){
   map_chr(varindep, function(x){
     if (is_entier(tab[[x]])) x
     else if(is.numeric(tab[[x]])){
-      precision <- find_best_precision(tab, x)
+      precision <- find_best_precision(tab[[x]])
       if (precision != 1) paste0("I(", x, "/", precision, ")") else x
     } else x
   })

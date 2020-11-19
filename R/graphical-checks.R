@@ -1,3 +1,10 @@
+#' @export
+add_knots <- function(varindep, variable, position){
+  attr(varindep, paste("knots", variable, sep = "_")) <- position
+  varindep
+}
+
+
 create_spline <- function(tab, vardep, varindep, varajust = NULL, type, pred = FALSE){
   vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars <- append(vars, ".time")

@@ -16,6 +16,8 @@ plot_all_splines(tab, vardep, varindep, varajust, type, pred = FALSE)
 \item{varajust}{A character vector of adjustment variables}
 
 \item{type}{A character string of the type of modeling, having a value among "linear", "logistic" or "survival"}
+
+\item{pred}{A logical indicating whether the analysis is predictive}
 }
 \value{
 All plots
