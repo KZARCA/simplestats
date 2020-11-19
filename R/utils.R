@@ -507,23 +507,21 @@ is_wholenumber <-
 #' Find object in the parents of the calling environment
 #'
 #' @param name a length 1 character vector of the objet to find
-#' @param parents list of environments
+#' @param parent list of environments
 #'
-#' @return the first environment in the list where the  object is found
+#' @return the last environment where the  object is found
 #'
-find_env <- function(name, parents = rlang::current_env()){
-  n <- 1
-  while(!identical(parents, .GlobalEnv)){
-    env <- rlang::caller_env(n)
-      if (name %in% ls(env)) {
-        return(env)
-      }
+find_env <- function(name, parents = parent.frame()){
+  n <- 0
+  env <- sys.frame(n)
+  while(!identical(env, parents)){
+    if (name %in% ls(env)) {
+      found <-  env
+    }
     n <- n + 1
+    env <- sys.frame(n)
   }
-  if (name %in% ls(env)) {
-    return(env)
-  }
-  stop("Can't find ", name)
+  return(found)
 }
 
 create_tab_cens <- function(x, time, censure){
