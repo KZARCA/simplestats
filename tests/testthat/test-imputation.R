@@ -29,7 +29,8 @@ test_that("imputer uses impute for variables with less than 5% of missing data",
     a = c(rep(NA, 3), seq_len(97)),
     b = c(as.character(seq_len(96)), rep(NA, 4)),
     c = rep_len(1:2, 100) %>% as.factor(),
-    .time = c(rep(NA, 3), runif(97, 1, 1000))
+    .time = c(rep(NA, 3), runif(97, 1, 1000)),
+    stringsAsFactors = TRUE
   )
   tab2 <- imputer(tab, "a", type = 'linear')
   expect_length(attr(tab2$b, "imputed"), 4)
@@ -62,7 +63,8 @@ test_that("imputer uses impute for variables with more than 5% of missing data w
     a = c(rep(NA, 3), seq_len(5997)) %>% sample(),
     b = c(rep(NA, 600), rep_len(1:2, 5400)) %>% sample(),
     c = c(rep(NA, 600), rep_len(letters[1:9], 5400)) %>% sample(),
-    d = c(rep(NA, 600), rep_len(LETTERS[1:9], 5400)) %>% sample()
+    d = c(rep(NA, 600), rep_len(LETTERS[1:9], 5400)) %>% sample(),
+    stringsAsFactors = TRUE
   )
   expect_equivalent(imputer(tab, "a", type = "linear", c("c", "d"))$method, c("", "pmm", "", ""))
   expect_equivalent(imputer(tab, "a", type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))

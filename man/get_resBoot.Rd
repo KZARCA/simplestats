@@ -12,7 +12,7 @@ get_resBoot(
   model_base,
   nCPU,
   updateProgress = function(detail) detail,
-  var_ajust = NULL
+  varajust = NULL
 )
 
 get_resBoot_p(
@@ -21,7 +21,7 @@ get_resBoot_p(
   model_base,
   nCPU,
   updateProgress = function(detail) detail,
-  var_ajust = NULL
+  varajust = NULL
 )
 
 get_resBoot_anova(
@@ -30,7 +30,7 @@ get_resBoot_anova(
   model_base,
   nCPU,
   updateProgress = function(detail) detail,
-  var_ajust = NULL
+  varajust = NULL
 )
 }
 \arguments{
@@ -44,7 +44,7 @@ get_resBoot_anova(
 
 \item{updateProgress}{Function to show when used in Shiny}
 
-\item{var_ajust}{The adjustment variables of the model}
+\item{varajust}{The adjustment variables of the model}
 }
 \value{
 An object of class boot

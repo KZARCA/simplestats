@@ -4,7 +4,7 @@
 \alias{plot_all_zph}
 \title{Title}
 \usage{
-plot_all_zph(tab, vardep, varindep, var_ajust)
+plot_all_zph(tab, vardep, varindep, varajust)
 }
 \arguments{
 \item{tab}{The data frame}
@@ -13,7 +13,7 @@ plot_all_zph(tab, vardep, varindep, var_ajust)
 
 \item{varindep}{A character vector of independant variables}
 
-\item{var_ajust}{A character vector of adjustment variables}
+\item{varajust}{A character vector of adjustment variables}
 }
 \value{
 All plots

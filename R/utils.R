@@ -50,8 +50,8 @@ remove_alias <- function(vars, mod, correction = FALSE) {
 
 }
 
-get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
-  vars <- c(varindep, var_ajust)
+get_big_vif <- function(tab, vardep, varindep, varajust, type, mod, left_form){
+  vars <- c(varindep, varajust)
   elimine <- character(0)
 
   if(length(varindep) > 1) { ## first, test multicolinearity among varindep only
@@ -61,7 +61,7 @@ get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
     elimine <- remove_big_vif(tab, vardep, varindep, character(0), type, infl)
     if(length(elimine)){
       varindep <- remove_elements(varindep, elimine)
-      vars <- c(varindep, var_ajust)
+      vars <- c(varindep, varajust)
       if (length(vars) > 1){
         mod <- update_mod(tab, mod, vardep, vars, type, left_form)
         infl <- suppressWarnings(car::vif(mod))
@@ -74,7 +74,7 @@ get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
   if (length(vars) > 1){
     infl <- suppressWarnings(car::vif(mod))
     if(!is.null(dim(infl))) infl <- infl[, 1, drop = TRUE]
-    elimine_ajust <- remove_big_vif(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = TRUE) # ##  test multicolinearity among var_ajust + varindep only without removing varindep
+    elimine_ajust <- remove_big_vif(tab, vardep, varindep, varajust, type, infl, only_varajust = TRUE) # ##  test multicolinearity among varajust + varindep only without removing varindep
     if(length(elimine_ajust)){
       vars <- remove_elements(vars, elimine_ajust)
       if (length(vars) > 1){
@@ -90,7 +90,7 @@ get_big_vif <- function(tab, vardep, varindep, var_ajust, type, mod, left_form){
     #   remaining_varindep <- intersect(vars, varindep)
     #   if (all(remaining_varindep %in% names(big_vif))) infl[remaining_varindep] <- 0
       elimine <- append(elimine,
-                        remove_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, infl, only_var_ajust = TRUE)) # if necessary, remove all other vars
+                        remove_big_vif(tab, vardep, intersect(varindep, vars), intersect(varajust, vars), type, infl, only_varajust = TRUE)) # if necessary, remove all other vars
     #}
   }
   return(elimine)
@@ -142,16 +142,16 @@ nearest_up_thousand <- function(x){
 #' Get the predicted number of terms in a statistical model
 #'
 #' @param tab The data frame
-#' @param var_ajust A character vector of adjustment variables
+#' @param varajust A character vector of adjustment variables
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_nvar_mod <- function(tab, var_ajust){
-  if(!is.null(var_ajust)) {
+get_nvar_mod <- function(tab, varajust){
+  if(!is.null(varajust)) {
     tab %<>%
-      dplyr::select(-dplyr::one_of(var_ajust))
+      dplyr::select(-dplyr::one_of(varajust))
   }
   map_dbl(tab, function(x){
     if(is.numeric(x)) 1
@@ -332,9 +332,9 @@ are_enough_cor <- function(tab, x, y, univ){
   }
 }
 
-remove_big_vif <- function(tab, vardep, varindep, var_ajust, type, infl, only_var_ajust = FALSE) {
-  vars <- c(varindep, var_ajust)
-  selected_vars <- (if(only_var_ajust) var_ajust else vars)
+remove_big_vif <- function(tab, vardep, varindep, varajust, type, infl, only_varajust = FALSE) {
+  vars <- c(varindep, varajust)
+  selected_vars <- (if(only_varajust) varajust else vars)
   ajust <- infl[which(names(infl) %in% selected_vars)]
   elimine <- character(0)
 
@@ -587,8 +587,8 @@ get_min_class <- function(tab, vardep, type = "logistic"){
 }
 
 #' @export
-find_best_precision <- function(tab, variable){
-  range(tab[[variable]], na.rm = TRUE) %>%
+find_best_precision <- function(variable){
+  range(variable, na.rm = TRUE) %>%
     base::diff() %>%
     log10() %>%
     ceiling() %>%

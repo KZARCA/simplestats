@@ -4,15 +4,15 @@
 \alias{find_env}
 \title{Find object in the parents of the calling environment}
 \usage{
-find_env(name, parents = rlang::current_env())
+find_env(name, parents = parent.frame())
 }
 \arguments{
 \item{name}{a length 1 character vector of the objet to find}
 
-\item{parents}{list of environments}
+\item{parent}{list of environments}
 }
 \value{
-the first environment in the list where the  object is found
+the last environment where the  object is found
 }
 \description{
 Find object in the parents of the calling environment

@@ -4,12 +4,12 @@
 \alias{print_all_boots}
 \title{Print all bootstraps}
 \usage{
-print_all_boots(model_base, var_ajust = NULL, nCPU = 2, R = NULL)
+print_all_boots(model_base, varajust = NULL, nCPU = 2, R = NULL)
 }
 \arguments{
 \item{model_base}{The base model}
 
-\item{var_ajust}{The adjustment variables of the model}
+\item{varajust}{The adjustment variables of the model}
 
 \item{nCPU}{The number of CPU used in parallel processing}
 

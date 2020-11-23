@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_vars = FALSE){
+define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_vars = FALSE){
   if (by_lasso){
     return(get_lasso_variables(tab, vardep, varindep, type))
   }
@@ -18,7 +18,7 @@ define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_v
     get_choix_var()
   seuil <- min(0.2, 5/length(vars))
   #seuil <- 0.2
-  map(seq_along(vars), function(i){
+  varajust <- map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
     tab <- if(type == "survival") {
@@ -67,6 +67,7 @@ define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_v
   }) %>%
     purrr::compact() %>%
     purrr::flatten_dbl()
+  if(length(varajust)) structure(names(varajust), value = varajust)
 }
 
 #' Search for multicolinearity
@@ -76,7 +77,7 @@ define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_v
 #' @param tab A data frame
 #' @param vardep A character string of the dependant variable
 #' @param varindep A character vector of the independant variables
-#' @param varAjust A character vector of the adjustment variables
+#' @param varajust A character vector of the adjustment variables
 #' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
 
 #'
@@ -84,10 +85,10 @@ define_varAjust <- function(tab, vardep, varindep, type, by_lasso = FALSE, all_v
 #' @export
 #'
 #' @examples
-recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FALSE) {
-  if (length(var_ajust) == 0 && length(varindep) < 2) return(NULL)
-  if (is.null(var_ajust)) var_ajust <- character(0)
-  vars <- c(varindep, var_ajust)
+recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FALSE) {
+  if (length(varajust) == 0 && length(varindep) < 2) return(NULL)
+  if (is.null(varajust)) varajust <- character(0)
+  vars <- c(varindep, varajust)
   elimine <- NULL
   if (type == "survival") {
     tab <- tab[c(vardep, vars, ".time")]
@@ -95,7 +96,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
     tab <- tab[c(vardep, vars)]
   }
   # exLabel <- label(tab)
-  # tab <- imputer(tab, vardep, type, var_ajust)
+  # tab <- imputer(tab, vardep, type, varajust)
   # if (inherits(tab, "mids")) {
   #   tab <- suppressWarnings(complete(tab))
   #   label(tab, self = FALSE) <- exLabel
@@ -138,7 +139,7 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
     mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
   }
   if(!is_model_possible(mod)){
-    var_inter <- intersect(var_ajust, c(vars, elimine))
+    var_inter <- intersect(varajust, c(vars, elimine))
     if (length(var_inter) > 0 & !pred){
       elimine <- var_inter
       vars <- vars[-na.omit(match(elimine, vars))]
@@ -161,31 +162,10 @@ recherche_multicol <- function(tab, vardep, varindep, var_ajust, type, pred = FA
   #   vars <- remove_elements(vars, elimine)
   #   mod <- update_mod(tab, mod, vardep, vars, type, left_form)
   # }
-  big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(var_ajust, vars), type, mod, left_form)
+  big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(varajust, vars), type, mod, left_form)
   if (length(big_vif)){
     elimine <- append(elimine, big_vif)
   }
 
   return(setdiff(elimine, varindep[1]))
-}
-
-#' Format adjustment variables
-#'
-#' Models the numeric adjustment variables with the natural spline, to be used in a formula
-#'
-#' @param tab The data frame
-#' @param var_ajust The adjustment variables
-#' @param type A character string of the type of modeling, having a value among "linear", "logistic" or "survival"
-#'
-#' @return A character vector surrounded by "ns()" when relevant
-#' @export
-#'
-#' @examples
-prepare_varAjust <- function(tab, var_ajust, type){
-  ifelse(
-    map_lgl(tab[var_ajust], is.numeric),
-    paste0(
-      ifelse(type == "survival", "ns(","ns("),
-      var_ajust, ")"),
-    var_ajust)
 }

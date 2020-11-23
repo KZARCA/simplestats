@@ -1,9 +1,10 @@
 context("validity")
+library(survival)
 test_that("is_number_enough works", {
   slice(colon, 1:31) %>%
     is_number_enough("age", c("rx", "sex")) %>%
     expect_true()
-  slice(colon, 1:30) %>%
+  slice(colon, 1:29) %>%
     is_number_enough("age", c("rx", "sex")) %>%
     expect_false()
   t1 <- colon %>%

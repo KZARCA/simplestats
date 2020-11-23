@@ -16,6 +16,42 @@ get_fun <- function(type){
   return(list(fun = .fun, args_sup = args_sup))
 }
 
+prepare_variables <- function(tab, varindep, varajust, pred = FALSE){
+  vars <- c(varindep, varajust)
+    if (pred){
+    map(vars, function(x){
+      knots <- attr(varindep, paste("knots", x, sep = "_"))
+      if (!is.null(knots)){
+        sprintf("ns(%s, knots = c(%s))", x, paste(knots, collapse = ", "))
+      } else {
+        x
+      }
+    })
+  } else {
+    varindep_m <- format_precision(tab, varindep)
+
+    n <- 3
+
+    pos <- if (n == 3){
+      c(0.1, 0.5, 0.9)
+    } else if (n == 4){
+      c(0.05, 0.35, 0.65, 0.95)
+    } else if (n >= 5){
+      c(0.05, 0.275, 0.5, 0.725, 0.95)
+    }
+
+    varajust_m <- map_chr(varajust, function(x){
+      y <- tab[[x]]
+      if (is.numeric(y) && length(unique(y)) > 20){
+        q <- quantile(y, pos, na.rm = TRUE)
+        sprintf("ns(%s, knots = c(%s))", x, paste0(q, collapse = ", " ))
+      } else {
+        x
+      }
+    })
+    list(varindep = varindep_m, varajust = varajust_m)
+  }
+}
 
 #' Get the best precision for all indepedant variables
 #'
@@ -28,7 +64,7 @@ format_precision <- function(tab, varindep){
   map_chr(varindep, function(x){
     if (is_entier(tab[[x]])) x
     else if(is.numeric(tab[[x]])){
-      precision <- find_best_precision(tab, x)
+      precision <- find_best_precision(tab[[x]])
       if (precision != 1) paste0("I(", x, "/", precision, ")") else x
     } else x
   })
@@ -60,13 +96,15 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
     resume_imputer <- FALSE
   }
 
-  varajust_m <- if (!pred) prepare_varAjust(tab, varajust, type) else varajust
-  varindep_m <- if(pred) varindep else format_precision(tab, varindep)
-  allVars <- c(varindep_m, varajust_m)
-  vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
-  formule <- sprintf("%s ~ %s", vardep_m, paste(allVars, collapse = " + "))
-  formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(varindep_m, varajust), collapse = " +"))
+  # varajust_m <- prepare_varajust(tab, varajust, type)
+  # varindep_m <- prepare_varindep(tab, varindep, pred)
+  # allVars <- c(varindep_m, varajust_m)
+  allVars <- prepare_variables(tab, varindep, varajust, pred)
 
+  vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
+  formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::flatten_chr(allVars), collapse = " + "))
+  formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(allVars$varindep, varajust), collapse = " +"))
+  #formule2 <- formule
   if (cv && length(varindep) == 0 && length(varajust) == 0) {
     formule <- formule2 <- sprintf("%s ~ 1", vardep_m)
   }

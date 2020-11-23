@@ -30,7 +30,6 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   nb_max <- get_number_variables_max(nona, vardep, type)
   nb_remaining <- floor(nb_max - length(varindep))
   if (nb_remaining <= 0) return(character(0))
-
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
     formule <- paste(formule, "-.time")
@@ -40,11 +39,10 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   }
   mat <- model.matrix(as.formula(formule), data = nona)
   penalties <- rep(1, ncol(mat))
-  names_tab <- names(tab)
   expanded_fac <- map(names(nona), function(x){
     if (is.factor(nona[[x]])){
-      lev <- levels(tab[[x]])
-      paste0(x, lev[2:length(lev)]) %>% setNames(rep(names(tab[x]), length(lev)-1))
+      lev <- levels(nona[[x]])
+      paste0(x, lev[2:length(lev)]) %>% setNames(rep(names(nona[x]), length(lev)-1))
     } else {
       setNames(x, x)
     }

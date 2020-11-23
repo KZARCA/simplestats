@@ -11,23 +11,24 @@ tab <- data.frame(
 test_that("create_ligne_desc_ba.numeric is working", {
   x <- tab$a
   y <- tab$b
-  ligne <- create_ligne_desc_ba(x, y)
+  ligne <- create_ligne_desc_ba(x, y, invert = T)[4:10]
   expect_equal(names(ligne), c(gettext("mean (sd)", domain = "R-simplestats"),
                               gettext("median [Q25-75]", domain = "R-simplestats"),
                               gettext("min", domain = "R-simplestats"),
                               gettext("max", domain = "R-simplestats"),
-                              gettext("Δ mean"),
+                              gettext("n", domain = "R-simplestats"),
+                              gettext("Δ mean", domain = "R-simplestats"),
                               "p"))
   qx <- quantile(x)
   qy <- quantile(y)
-  expect_equal(ligne[[1]],  c(sprintf_number_table("%s (%s)", mean(x), sd(x)),
-                            sprintf_number_table("%s (%s)", mean(y), sd(y))))
+  expect_equal(ligne[[1]],  c(sprintf_number_table("%s (±%s)", mean(x), sd(x)),
+                            sprintf_number_table("%s (±%s)", mean(y), sd(y))))
   expect_equal(ligne[[2]],  c(sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]),
                               sprintf_number_table("%s [%s; %s]", qy[3], qy[2], qy[4])))
   expect_equivalent(ligne[[3]], format_number(c(qx[1], qy[1])))
   expect_equivalent(ligne[[4]], format_number(c(qx[5], qy[5])))
-  expect_equal(ligne[[5]], c(format_number(mean(y) - mean(x)), NA))
-  expect_equal(ligne[[6]], c(wilcox.test(x, y, paired = TRUE)$p.value, NA))
+  expect_equal(ligne[[6]], c(NA, format_number(mean(y) - mean(x))))
+  expect_equal(ligne[[7]], rep(t.test(x, y, paired = TRUE)$p.value, 2))
 })
 
 test_that("create_ligne_desc_ba.factor is working with unequal number of categories", {
@@ -35,7 +36,8 @@ test_that("create_ligne_desc_ba.factor is working with unequal number of categor
   y <- tab$d
   z <- tab$e
   ligne <- create_ligne_desc_ba(x, y)
-  expect_equal(names(ligne), c("id", "variable", "niveau", "before", "after", "p", "test"))
+  expect_equal(names(ligne), c("id", "variable", "niveau", gettext("before", domain = "R-simplestats"),
+                               gettext("after", domain = "R-simplestats"), "n", "p", "test"))
   expect_equal(ligne$niveau, as.character(1:4))
   expect_equivalent(ligne$after[4], "0 (0%)")
   expect_equal(ligne$test, c("McNemar-Bowker", rep(NA, 3)))

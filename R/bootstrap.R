@@ -141,7 +141,7 @@ get_confint_p_boot <- function(resBoot, resBoot_p){
 #' @param model_base The base model
 #' @param nCPU The number of CPU used in parallel processing
 #' @param updateProgress Function to show when used in Shiny
-#' @param var_ajust The adjustment variables of the model
+#' @param varajust The adjustment variables of the model
 #'
 #' @return An object of class boot
 #'
@@ -150,10 +150,10 @@ get_confint_p_boot <- function(resBoot, resBoot_p){
 #'
 #' @export
 #' @describeIn get_resBoot Performs bootstrap to further compute the confidence interval
-get_resBoot <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, var_ajust = NULL){
+get_resBoot <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, varajust = NULL){
   set.seed(124567)
   vec.out <- extract_from_model(model_base, "estimate")
-  nvar_mod <- get_nvar_mod(tab, var_ajust)
+  nvar_mod <- get_nvar_mod(tab, varajust)
   resBoot <- boot::boot(tab, get_boot, R, progression = updateProgress, model_base = model_base,
                   vec.out = vec.out, nvar_mod = nvar_mod, parallel = "multicore", ncpus = nCPU)
   if ("glm" %in% class(model_base)){
@@ -163,16 +163,16 @@ get_resBoot <- function(tab, R, model_base, nCPU, updateProgress = function(deta
     resBoot$t0 <- resBoot$t0[-length(resBoot$t0)]
   }
   resBoot$model_base <- model_base
-  resBoot$data <- resBoot$data[!names(resBoot$data) %in% var_ajust]
+  resBoot$data <- resBoot$data[!names(resBoot$data) %in% varajust]
   resBoot
 }
 
 #' @export
 #' @describeIn get_resBoot Permutation test for p-values
-get_resBoot_p <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, var_ajust = NULL){
+get_resBoot_p <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, varajust = NULL){
   set.seed(124567)
   vec.out <- extract_from_model(model_base, "estimate")
-  nvar_mod <- get_nvar_mod(tab, var_ajust)
+  nvar_mod <- get_nvar_mod(tab, varajust)
   resBoot_p <- boot::boot(tab, get_boot_p, R, progression = updateProgress, model_base = model_base, vec.out = vec.out, nvar_mod = nvar_mod, parallel = "multicore", ncpus = nCPU, sim = "permutation")
   if ("glm" %in% class(model_base)){
     l = dim(resBoot_p$t)[2]
@@ -185,15 +185,15 @@ get_resBoot_p <- function(tab, R, model_base, nCPU, updateProgress = function(de
 
 #' @export
 #' @describeIn get_resBoot Permutation test for anova p-values
-get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, var_ajust = NULL){
+get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = function(detail) detail, varajust = NULL){
   set.seed(124567)
   xlevels <- model_base$xlevels %>%
-    magrittr::extract(!names(model_base$xlevels) %in% var_ajust)
+    magrittr::extract(!names(model_base$xlevels) %in% varajust)
 
   if(!is.null(xlevels) && any(map_lgl(xlevels, ~ length(.) > 2))){
-    resBoot_anova <- boot::boot(tab, get_boot_anova, R, progression = updateProgress, model_base = model_base, nvar = ncol(tab) - (length(var_ajust) + 1), parallel = "multicore", ncpus = nCPU, sim = "permutation")
+    resBoot_anova <- boot::boot(tab, get_boot_anova, R, progression = updateProgress, model_base = model_base, nvar = ncol(tab) - (length(varajust) + 1), parallel = "multicore", ncpus = nCPU, sim = "permutation")
     resBoot_anova$tab_anova_base <- clean_anova(model_base) %>%
-      dplyr::filter(!variable %in% var_ajust)
+      dplyr::filter(!variable %in% varajust)
     resBoot_anova
   } else
     return(NULL)
@@ -204,7 +204,7 @@ get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = functio
 #' Computes all necessary bootstraps
 #'
 #' @param model_base The base model
-#' @param var_ajust The adjustment variables of the model
+#' @param varajust The adjustment variables of the model
 #' @param nCPU The number of CPU used in parallel processing
 #' @param R Number of replications of the bootstraps
 #'
@@ -212,13 +212,13 @@ get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = functio
 #' @export
 #'
 #' @examples
-print_all_boots <- function(model_base, var_ajust = NULL, nCPU = 2, R = NULL){
+print_all_boots <- function(model_base, varajust = NULL, nCPU = 2, R = NULL){
   tab <- model.frame(model_base)
   names(tab)[1] <- ".vardep"
   if (is.null(R)) R <- tab %>% nrow() %>% nearest_up_thousand()
-  resBoot <- get_resBoot(tab, R, model_base, nCPU, var_ajust = var_ajust)
-  resBoot_p <- get_resBoot_p(tab, R, model_base, nCPU, var_ajust = var_ajust)
-  resBoot_anova <- get_resBoot_anova(tab, R, model_base, nCPU, var_ajust = var_ajust)
+  resBoot <- get_resBoot(tab, R, model_base, nCPU, varajust = varajust)
+  resBoot_p <- get_resBoot_p(tab, R, model_base, nCPU, varajust = varajust)
+  resBoot_anova <- get_resBoot_anova(tab, R, model_base, nCPU, varajust = varajust)
   tab_ci <- get_confint_p_boot(resBoot, resBoot_p)
   if (!is.null(resBoot_anova)) {
     cbind(tab_ci$tableRet, p.global = extract_pval_glob(resBoot_anova))

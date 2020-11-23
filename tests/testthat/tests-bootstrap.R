@@ -2,30 +2,30 @@ context("bootstrap")
 library(survival)
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 
-boot_tests <- function(tab, vardep, varindep, var_ajust){
+boot_tests <- function(tab, vardep, varindep, varajust){
   set.seed(1)
-  tab <- tab[c(vardep, varindep, var_ajust)]
+  tab <- tab[c(vardep, varindep, varajust)]
   R <- 200
-  mod <- sprintf("%s ~ %s", vardep, paste(c(varindep, var_ajust), collapse = "+")) %>%
+  mod <- sprintf("%s ~ %s", vardep, paste(c(varindep, varajust), collapse = "+")) %>%
     as.formula() %>%
     lm(data = tab)
   tab <- model.frame(mod)
   names(tab)[1] <- ".vardep"
-  resBoot <- get_resBoot(tab, R, mod, nCPU = 4, updateProgress = function(detail){}, var_ajust = var_ajust)
-  resBoot_p <- get_resBoot_p(tab, R, mod, nCPU = 4, updateProgress = function(detail){}, var_ajust = var_ajust)
+  resBoot <- get_resBoot(tab, R, mod, nCPU = 4, updateProgress = function(detail){}, varajust = varajust)
+  resBoot_p <- get_resBoot_p(tab, R, mod, nCPU = 4, updateProgress = function(detail){}, varajust = varajust)
   confint_p <- get_confint_p_boot(resBoot, resBoot_p)$tableRet
   if (length(select_if(tab, function(x) is.factor(x) && nlevels(x) > 2)) > 0){
-    resBoot_anova <- get_resBoot_anova(tab, R, mod, nCPU = 4, updateProgress = function(detail){}, var_ajust = var_ajust)
+    resBoot_anova <- get_resBoot_anova(tab, R, mod, nCPU = 4, updateProgress = function(detail){}, varajust = varajust)
   } else resBoot_anova <- NULL
   test_that("get_resBoot works", {
     expect_is(resBoot, "boot")
-    expect_equal(dim(resBoot$t), c(R, get_nvar_mod(tab, var_ajust)))
-    expect_equal(resBoot$t0, coef(mod)[seq.int(2, get_nvar_mod(tab, var_ajust) + 1)])
+    expect_equal(dim(resBoot$t), c(R, get_nvar_mod(tab, varajust)))
+    expect_equal(resBoot$t0, coef(mod)[seq.int(2, get_nvar_mod(tab, varajust) + 1)])
   })
   test_that("get_resBoot_p works", {
     expect_is(resBoot_p, "boot")
-    expect_equal(dim(resBoot_p$t)[2], get_nvar_mod(tab, var_ajust))
-    expect_equivalent(resBoot_p$t0, broom::tidy(mod)$statistic[seq.int(2, get_nvar_mod(tab, var_ajust) + 1)])
+    expect_equal(dim(resBoot_p$t)[2], get_nvar_mod(tab, varajust))
+    expect_equivalent(resBoot_p$t0, broom::tidy(mod)$statistic[seq.int(2, get_nvar_mod(tab, varajust) + 1)])
   })
   if (!is.null(resBoot_anova)){
     test_that("get_resBoot_anova works", {
