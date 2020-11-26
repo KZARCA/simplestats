@@ -52,11 +52,15 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   family = dplyr::case_when(type == "logistic" ~ "binomial",
                             type == "survival" ~ "cox",
                             type == "linear" ~ "gaussian")
-  cv <- cv.glmnet(x = mat,
+
+  cv <- try(
+  cv.glmnet(x = mat,
                   y = y,
                   family = family,
-                  penalty.factor = penalties)
-
+                  penalty.factor = penalties))
+  if (inherits(cv, "try-error")){
+    return("ERROR_MODEL")
+  }
   idx_lambda <- which(cv$lambda == cv$lambda.1se)
   nzero <- cv$nzero
 
