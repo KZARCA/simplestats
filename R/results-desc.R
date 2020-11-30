@@ -211,9 +211,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
                           gettext("after", domain = "R-simplestats")),
                           .after = "variable")
   }
-
   ligne
-
 }
 
 #' @export

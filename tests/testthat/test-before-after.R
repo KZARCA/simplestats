@@ -31,6 +31,19 @@ test_that("create_ligne_desc_ba.numeric is working", {
   expect_equal(ligne[[7]], rep(t.test(x, y, paired = TRUE)$p.value, 2))
 })
 
+
+test_that("create_ligne_desc_ba.numeric is working with median", {
+  x <- tab$a
+  y <- tab$b
+  ligne <- create_ligne_desc_ba(x, y, invert = FALSE, summary = "median")[2:7]
+  qx <- quantile(x)
+  qy <- quantile(y)
+  expect_equal(ligne[[2]], sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]))
+  expect_equal(ligne[[3]], sprintf_number_table("%s [%s; %s]", qy[3], qy[2], qy[4]))
+  expect_equal(ligne[[4]], format_number(mean(y) - mean(x)))
+  expect_equal(ligne[[6]], t.test(x, y, paired = TRUE)$p.value)
+})
+
 test_that("create_ligne_desc_ba.factor is working with unequal number of categories", {
   x <- tab$c
   y <- tab$d

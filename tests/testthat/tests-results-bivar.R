@@ -95,6 +95,26 @@ test_that("create_ligne_bivar.num_fac is working", {
   expect_equal(line$test, "Kruskal-Wallis")
 })
 
+test_that("create_ligne_bivar median is working", {
+  line <- create_ligne_bivar(tab$nodes, tab$differ, noms = "nodes", summary = "median")
+  expect_equal(line$id, "nodes")
+  expect_equal(line$variable, "Nodes")
+  test_m <- function(x){
+    filter(tab, differ == x) %>%
+      summarise(m = sprintf_number_table("%s [%s; %s]", median(nodes, na.rm = TRUE),
+                                         quantile(nodes, 0.25, na.rm = TRUE),
+                                         quantile(nodes, 0.75, na.rm = TRUE))) %>%
+      extract2("m") %>%
+      expect_equal(line[[paste("Differ", x)]])
+  }
+  test_m("1")
+  test_m("2")
+  test_m("3")
+  expect_equal(line$.n, nrow(na.exclude(tab[c("nodes", "differ")])))
+  expect_equal(unname(line$p), kruskal.test(nodes ~ differ, data = tab)$p.value)
+  expect_equal(line$test, "Kruskal-Wallis")
+})
+
 test_that("create_ligne_bivar.num_num is working", {
   line <- create_ligne_bivar(tab$nodes, tab$age, noms = "nodes")
   expect_equal(line$id, "nodes")
@@ -125,4 +145,13 @@ test_that("create_ligne_surv_bivar is working", {
             pourcent(surv_i$upper[l], arrondi = 3))
   }))
   expect_equal(line$test, c("Logrank", NA, NA))
+})
+
+test_that("create_ligne_bivar median is working", {
+  line <- create_ligne_bivar(tab$nodes, tab$sex, noms = "nodes")
+  expect_equal(line$id, "nodes")
+  expect_equal(line$variable, "Nodes")
+  co <- cor.test(tab$nodes, tab$age, method = "pearson") %>% broom::tidy()
+  expect_equal(line$`correlation coefficient (95% CI)`, sprintf_number_table("%s (%s; %s)", co$estimate, co$conf.low, co$conf.high))
+  expect_equal(line$p, co$p.value)
 })
