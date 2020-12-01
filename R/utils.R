@@ -574,7 +574,8 @@ filter_glm_fit <- function(mod, tab){
   t <- tab[p < 1-eps & p > eps,]
   mod2 <- try(update(mod, data = t))
   if (inherits(mod2, "try-error")) return(NULL)
-  if (all(round(coef(mod), 2) == round(coef(mod2), 2), na.rm = TRUE)) {
+  idx <- if (inherits(mod, "coxph")) c(1,3) else 1:2
+  if (all(round(coef(summary(mod))[, idx], 2) == round(coef(summary(mod2))[, idx], 2), na.rm = TRUE)) {
     return(mod2)
   } else {
     return(NULL)
