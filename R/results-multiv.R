@@ -30,21 +30,11 @@ prepare_variables <- function(tab, varindep, varajust, pred = FALSE){
   } else {
     varindep_m <- format_precision(tab, varindep)
 
-    n <- 3
 
-    pos <- if (n == 3){
-      c(0.1, 0.5, 0.9)
-    } else if (n == 4){
-      c(0.05, 0.35, 0.65, 0.95)
-    } else if (n >= 5){
-      c(0.05, 0.275, 0.5, 0.725, 0.95)
-    }
-
-    varajust_m <- map_chr(varajust, function(x){
-      y <- tab[[x]]
-      if (is.numeric(y) && length(unique(y)) > 20){
-        q <- quantile(y, pos, na.rm = TRUE)
-        sprintf("ns(%s, knots = c(%s))", x, paste0(q, collapse = ", " ))
+   varajust_m <- map_chr(varajust, function(x){
+      knots <- attr(varajust, paste("knots", x, sep = "_"))
+      if (!is.null(knots)){
+        sprintf("ns(%s, knots = c(%s))", x, paste(knots, collapse = ", "))
       } else {
         x
       }

@@ -5,13 +5,13 @@ add_knots <- function(varindep, variable, position){
 }
 
 
-create_spline <- function(tab, vardep, varindep, varajust = NULL, type, pred = FALSE){
+create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
   vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars <- append(vars, ".time")
   tab <- na.exclude(tab[vars])
   model <- NULL
   if (type == "survival") varindep <- remove_elements(varindep, ".time")
-  varspline <- if(!pred) varindep else c(varindep, varajust)
+  varspline <- c(varindep, varajust)
   varsnum <- Filter(is.numeric, tab[varspline]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
@@ -95,13 +95,13 @@ plot_nth_spline <- function(spline_gen, n){
 #' @export
 #'
 #' @examples
-plot_all_splines <- function(tab, vardep, varindep, varajust, type, pred = FALSE){
+plot_all_splines <- function(tab, vardep, varindep, varajust, type){
   varSpline <- tab %>%
     dplyr::select(one_of(varindep)) %>%
     select_if(is.numeric) %>%
     colnames()
 
-  spline_gen <- create_spline(tab, vardep, varindep, varajust, type, pred)
+  spline_gen <- create_spline(tab, vardep, varindep, varajust, type)
   for (n in seq_along(varSpline)){
     plot_nth_spline(spline_gen, n)
   }
