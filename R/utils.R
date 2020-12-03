@@ -422,20 +422,7 @@ solve_contrast <- function(tab, vardep, x, univ = FALSE) {
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
     if (is.factor(tmp$a) & is.factor(tmp$b)){
-      ma <- model.matrix(~ a + 0, data = tmp)
-      mb <- model.matrix(~ b + 0, data = tmp)
-      m <- cbind(ma, mb)
-      l <- ncol(m)
-
-      for  (i in seq_len(l)){
-        if (i < l){
-          for (j in seq.int(i + 1, l)){
-            if (sum(m[, i] == m[, j]) == nrow(m)){
-              return(FALSE)
-            }
-          }
-        }
-      }
+      if (!is.null(compare_terms(tmp))) return(FALSE)
     }
     are_enough_cor(tmp, "a", "b", univ) &&
       are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
@@ -452,6 +439,24 @@ update_mod <- function(tab, model, vardep, vars, type, left_form = NULL){
                        data = tab)
 }
 
+compare_terms <- function(tmp){
+  f1 <- as.formula(sprintf("~ %s - 1", names(tmp)[1]))
+  f2 <- as.formula(sprintf("~ %s - 1", names(tmp)[2]))
+  ma <- model.matrix(f1, data = tmp)
+  mb <- model.matrix(f2, data = tmp)
+  m <- cbind(ma, mb)
+  l <- ncol(m)
+  map(seq_len(l), function(i){
+    if (i < l){
+      map(seq.int(i + 1, l), function(j){
+        if (sum(m[, i] == m[, j]) > 0.95 * nrow(m)){
+          names(tmp)
+        }
+      })
+    }
+  }) %>% compact()
+}
+
 identical_model_frame <- function(tab, formula, type){
   mf <- model.frame(formula, data = tab)
   if (type == "survival"){
@@ -465,10 +470,17 @@ identical_model_frame <- function(tab, formula, type){
   ide <- map(seq_len(l), function(i){
     if (i < l){
       map(seq.int(i + 1, l), function(j){
-        if (sum(as.numeric(mf[[i]]) == as.numeric(mf[[j]])) > 0.90 * nrow(mf)){
-          names(mf)[c(i, j)]
+        tmp <- mf[c(i,j)] %>%
+          na.exclude()
+        if (is.factor(tmp[[1]]) & is.factor(tmp[[2]])) {
+          compare_terms(tmp) %>%
+          unlist() %>%
+          unique()
+        } else if (sum(as.numeric(mf[[i]]) == as.numeric(mf[[j]])) > 0.95 * nrow(mf)){
+                names(mf)[c(i, j)]
         }
-      }) %>% compact()
+      }) %>%
+        compact()
     }
   }) %>%
     compact()

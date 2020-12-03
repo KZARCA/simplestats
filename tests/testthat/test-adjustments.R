@@ -5,25 +5,6 @@ test_def <- function(tab, threshold, args){
   test <- do.call(define_varajust, c(list(tab), args, list(all_vars = TRUE, by_lasso = FALSE)))
   vals <- attr(test, "value")
   expect_equal(vals[vals < threshold], attr(do.call(define_varajust, c(list(tab), args, list(by_lasso = FALSE))), "value"))
-  if(args[[3]] == 'linear') {
-    .fun <- lm
-    formule <- sprintf("%s ~ adhere", args[[1]]) %>% as.formula()
-    i <- 1
-  } else if (args[[3]] == "logistic"){
-    .fun <- glm
-    formule <- sprintf("%s ~ adhere", args[[1]]) %>% as.formula()
-    i <- 1
-  } else if (args[[3]] == "survival"){
-    .fun <- coxph
-    formule <- sprintf("Surv(.time, status) ~ adhere") %>% as.formula()
-    i <- 2
-  }
-  do.call(.fun, c(list(data = tab, formula = formule), if (args[[3]] == "logistic") list(family = "binomial")))  %>%
-    car::Anova() %>%
-    broom::tidy() %>%
-    magrittr::extract2("p.value") %>%
-    magrittr::extract(i) %>%
-    expect_equivalent(vals[1])
 }
 
 test_that("define_varajust returns variables with a univariate pvalue < 0.2", {
@@ -44,25 +25,6 @@ test_that("define_varajust removes variables with contrasts problems", {
   expect_equivalent(define_varajust(tab, "V2", "V3", "linear", by_lasso = FALSE), "V4")
   expect_equivalent(define_varajust(tab, "V2", "V3", "linear", by_lasso = TRUE), "V4")
 })
-
-test_that("define_varajust returns variables with a univariate pvalue < any threshold", {
-  tab <- colon %>% standardize_tab()
-  tab2 <- data.frame(cbind(tab, select(tab, -nodes)))
-  varindep <- "extent"
-  test_def(tab2, 5/31, args = c(list("nodes"), list(varindep), list("linear")))
-  tab2 <- data.frame(cbind(tab, select(tab, -obstruct)))
-  test_def(tab2, 5/31, args = c(list("obstruct"), list(varindep), list("logistic")))
-  tab2 <- data.frame(cbind(tab, select(tab, -status, -time))) %>% make_tab_survival("status", var_time = "time")
-  test_def(tab2, 5/30, args = c(list("status"), list(varindep), list("survival")))
-  tab3 <- data.frame(cbind(tab, select(tab, -nodes), select(tab, -nodes)))
-  test_def(tab3, 5/47, args = c(list("nodes"), list(varindep), list("linear")))
-  tab3 <- data.frame(cbind(tab, select(tab, -obstruct), select(tab, -obstruct)))
-  test_def(tab3, 5/47, args = c(list("obstruct"), list(varindep), list("logistic")))
-  tab3 <- data.frame(cbind(tab, select(tab, -status, -time), select(tab, -status, -time))) %>% make_tab_survival("status", var_time = "time")
-  test_def(tab3, 5/46, args = c(list("status"), list(varindep), list("survival")))
-
-})
-
 
 
 test_that("recherche_multicol removes 1-level factors", {

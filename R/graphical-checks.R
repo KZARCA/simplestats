@@ -18,11 +18,9 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
       if (length(table(tab[, x, drop = FALSE])) < 20){
         k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
         ifelse(type == "survival", paste0(x, ", df = ", k), paste0(x, ", k = ", k))
-
       } else
         as.character(x)
     })
-  varajust_num <- Filter(is.numeric, tab[varajust]) %>% colnames()
 
   varsfac <- Filter(is.factor, tab[varindep]) %>% colnames()
   varajust_fac <- Filter(is.factor, tab[varajust]) %>% colnames()
@@ -32,10 +30,6 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
     if (length(varsfac)) {
       right <- paste(right, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
       rightLin <- paste(rightLin, sprintf("+ %s", paste0(varsfac, collapse = " + ")))
-    }
-    if (length(varajust_num)){
-      right <- paste(right, "+", paste0("ns(", varajust_num, ")", collapse=" + "))
-      rightLin<- paste0(rightLin, sprintf("+ %s", paste0(varajust_num, collapse = " + ")))
     }
     if (length(varajust_fac)){
       right <- paste(right, sprintf("+ %s", paste0(varajust_fac, collapse = " + ")))

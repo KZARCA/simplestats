@@ -146,12 +146,3 @@ test_that("create_ligne_surv_bivar is working", {
   }))
   expect_equal(line$test, c("Logrank", NA, NA))
 })
-
-test_that("create_ligne_bivar median is working", {
-  line <- create_ligne_bivar(tab$nodes, tab$sex, noms = "nodes")
-  expect_equal(line$id, "nodes")
-  expect_equal(line$variable, "Nodes")
-  co <- cor.test(tab$nodes, tab$age, method = "pearson") %>% broom::tidy()
-  expect_equal(line$`correlation coefficient (95% CI)`, sprintf_number_table("%s (%s; %s)", co$estimate, co$conf.low, co$conf.high))
-  expect_equal(line$p, co$p.value)
-})

@@ -16,8 +16,8 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
   a <- NULL
   vars <- create_tabi(tab, "desc") %>%
     get_choix_var()
-  seuil <- min(0.2, 5/length(vars))
-  #seuil <- 0.2
+  #seuil <- min(0.2, 5/length(vars))
+  seuil <- 0.2
   varajust <- map(seq_along(vars), function(i){
     mod <- NULL
     p <- NULL
@@ -119,7 +119,7 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   }
   ide <- identical_model_frame(tab, formule, type)
   if (length(ide)){
-    elimine <- c(elimine,map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique())
+    elimine <- c(elimine, map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique())
     vars <- vars[-na.omit(match(elimine, vars))]
     if (type == "survival"){
       formule <- as.formula(sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")))

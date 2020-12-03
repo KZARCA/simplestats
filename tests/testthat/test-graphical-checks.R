@@ -70,10 +70,10 @@ test_that("create_spline surrounds with s() numerical dependant variables, ns() 
   tab <- standardize_tab(colon)
   vardep <- "extent"
   varindep <- c("sex", "nodes", "age")
-  varajust <- c("rx", "age", "time", "differ")
-  spl <- simplestats:::create_spline(tab, vardep, varindep, varajust, "logistic")
-  expect_equal(spl$graph$formula, extent ~ s(nodes) + s(age) + sex + ns(age) + ns(time) + rx + differ)
-  expect_equal(spl$mod$formula, extent ~ nodes + age + sex + age + time + rx + differ)
+  varajust <- c("rx", "time", "differ")
+  spl <- create_spline(tab, vardep, varindep, varajust, "logistic")
+  expect_equal(spl$graph$formula, extent ~ s(nodes) + s(age) + s(time) + sex + rx + differ)
+  expect_equal(spl$mod$formula, extent ~ nodes + age + time + sex + rx + differ)
 })
 
 
