@@ -422,7 +422,7 @@ solve_contrast <- function(tab, vardep, x, univ = FALSE) {
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
     if (is.factor(tmp$a) & is.factor(tmp$b)){
-      if (!is.null(compare_terms(tmp))) return(FALSE)
+      if (length(compare_terms(tmp))) return(FALSE)
     }
     are_enough_cor(tmp, "a", "b", univ) &&
       are_enough_levels(tmp, "a") && are_enough_levels(tmp, "b")
@@ -452,7 +452,7 @@ compare_terms <- function(tmp){
         if (sum(m[, i] == m[, j]) > 0.95 * nrow(m)){
           names(tmp)
         }
-      })
+      }) %>% compact()
     }
   }) %>% compact()
 }
