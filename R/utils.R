@@ -636,7 +636,7 @@ remove_missing_levels.default <- function(tab, mod){
 
   for (i in seq_along(differences)){
     if(length(differences[[i]])){
-      levels(tab[[names(differences[i])]])[levels(tab[[names(differences[i])]])==differences[[i]]] <- NA
+      levels(tab[[names(differences[i])]])[levels(tab[[names(differences[i])]]) == differences[[i]]] <- NA
     }
   }
   tab

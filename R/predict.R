@@ -151,7 +151,7 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
 
   # Calculate the optimism (step 5) : bootstrap performance - test performance
   opti <- mean(res$t[, 1] - res$t[, 2])
-  ci <- boot.ci(res, type = "perc", index = 1)$perc[4:5]
+  ci <- boot.ci(res, type = "basic", index = 1)$basic[4:5]
   lambda <- mean(res$t[, 4])
   shrunk <- get_shrunk_coef(mod, lambda)
   return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk))
@@ -196,16 +196,16 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
   results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
 
-  for(i in seq_along(results$mod$xlevels)){
-    results$mod$xlevels[[i]] <- union(results$mod$xlevels[[i]],
-                                      levels(data[[names(results$mod$xlevels)[i]]]))
-  }
+  # for(i in seq_along(results$mod$xlevels)){
+  #   results$mod$xlevels[[i]] <- union(results$mod$xlevels[[i]],
+  #                                     levels(data[[names(results$mod$xlevels)[i]]]))
+  # }
 
   # Model performance on the sample (step 3 p95 Steyerberg Clinical Prediction Models)
   pred_obs_boot <- create_pred_obs(results$mod, as_prob = FALSE) # Linear Predictor
   perf_boot <- calculate_auc(pred_obs_boot)
   # Model performance on the data (step 4)
-  pred_obs_test <- create_pred_obs(results$mod, data, vardep, as_prob = FALSE)
+  pred_obs_test <- create_pred_obs(results$mod, data[c(vardep, varindep, varajust)], vardep, as_prob = FALSE)
   perf_test <- calculate_auc(pred_obs_test)
   shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>% coef()
   c(perf_boot, perf_test, shrinkage_factor)
