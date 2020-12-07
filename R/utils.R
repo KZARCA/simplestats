@@ -614,3 +614,30 @@ qc <- function(...){
     map_chr(as_name) %>%
     unname()
 }
+
+remove_missing_levels <- function(tab, mod){
+  UseMethod("remove_missing_levels", mod)
+}
+
+remove_missing_levels.mira <- function(tab, mod){
+  remove_missing_levels.default(tab, getfit(mod, 1))
+}
+
+remove_missing_levels.default <- function(tab, mod){
+  train_lev <- mod$xlevels
+  if(!length(train_lev)) return(tab)
+  test_lev <- map(tab, function(x) levels(x))
+  all_vars <- test_lev[names(train_lev)]
+  if(identical(all_vars, train_lev)) return(tab)
+
+  differences <- map(seq_along(all_vars), function(i) {
+    setdiff(all_vars[[i]], train_lev[[i]])
+  }) %>% setNames(names(all_vars))
+
+  for (i in seq_along(differences)){
+    if(length(differences[[i]])){
+      levels(tab[[names(differences[i])]])[levels(tab[[names(differences[i])]])==differences[[i]]] <- NA
+    }
+  }
+  tab
+}
