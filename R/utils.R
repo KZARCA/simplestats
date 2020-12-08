@@ -449,7 +449,7 @@ compare_terms <- function(tmp){
   map(seq_len(l), function(i){
     if (i < l){
       map(seq.int(i + 1, l), function(j){
-        if (sum(m[, i] == m[, j]) > 0.95 * nrow(m)){
+        if (sum(m[, i] == m[, j]) == nrow(m)){
           names(tmp)
         }
       }) %>% compact()

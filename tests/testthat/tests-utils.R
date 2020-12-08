@@ -60,6 +60,16 @@ test_that("solve_contrast is working", {
   expect_true(solve_contrast(tab, "b", c, univ = TRUE))
 })
 
+test_that("identical_model_frame is working", {
+  tab <- data.frame(a = c(rep("a", 10),
+                          rep("b", 10),
+                          rep("c",10)),
+                    b = c(rep("c", 10),
+                            rep("d", 20)), stringsAsFactors = TRUE)
+  expect_equal(identical_model_frame(tab, b ~ a, "logistic")[[1]], c("b", "a"))
+})
+
+
 test_that("prepare_model is working", {
   tab <- standardize_tab(colon) %>%
     make_tab_survival("status", var_time = "time") %>%
