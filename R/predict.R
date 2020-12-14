@@ -164,8 +164,12 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
     train <- do.call(rbind, tab[-i])
     test <- tab[[i]]
     varajust <- get_lasso_variables(train, vardep, varindep, type)
-    el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
-    varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
+    if (identical(varajust, "ERROR_MODEL")){
+      varajust <- character(0)
+    } else {
+      el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
+      varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
+    }
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
     create_pred_obs(results$mod) %>%
       calculate_auc()
@@ -191,9 +195,14 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   train <- data %>%
     dplyr::slice(indices) %>%
     create_tabi("pred", keep = c(vardep, varindep))
+
   varajust <- get_lasso_variables(train, vardep, varindep, type)
-  el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
-  varajust <- if (length(el) && el == "ERROR_MODEL") character(0) else remove_elements(varajust, el)
+  if (identical(varajust, "ERROR_MODEL")){
+    varajust <- character(0)
+  } else {
+    el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
+    varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
+  }
   results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
 
   # for(i in seq_along(results$mod$xlevels)){
