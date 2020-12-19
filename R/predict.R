@@ -22,6 +22,8 @@ split_cv <- function(tab, n = 10){
 #' @return A character vector of the predictor variables
 #' @export
 get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic") {
+  if (type == "survival" & ncol(tab) == length(c(vardep, varindep)) + 1) return(character(0))
+  if (ncol(tab) == length(c(vardep, varindep))) return(character(0))
   set.seed(1234567)
   nona <- Filter(function(x) {
       solve_contrast(tab, vardep, x)
@@ -32,6 +34,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   if (nb_remaining <= 0) return(character(0))
   formule <- paste(vardep, "~ .")
   if (type == "survival"){
+    nona <- filter(nona, .time > 0)
     formule <- paste(formule, "-.time")
     y <- Surv(nona$.time, nona[[vardep]])
   } else {
