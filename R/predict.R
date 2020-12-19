@@ -142,7 +142,7 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   if (type_validation == "cv"){
     m <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress) %>%
       flatten_dbl()%>%
-      mean()
+      mean(na.rm = TRUE)
     lambda <- get_lambda(mod) #heuristic formula (see Steyenberg)
     shrunk <- get_shrunk_coef(mod, lambda)
     return(list(mean = m, shrunk = shrunk))
@@ -150,12 +150,12 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   set.seed(seed)
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
-  m <- mean(res$t[, 1])
+  m <- mean(res$t[, 1], na.rm = TRUE)
 
   # Calculate the optimism (step 5) : bootstrap performance - test performance
-  opti <- mean(res$t[, 1] - res$t[, 2])
+  opti <- mean(res$t[, 1] - res$t[, 2], na.rm = TRUE)
   ci <- boot.ci(res, type = "basic", index = 1)$basic[4:5]
-  lambda <- mean(res$t[, 4])
+  lambda <- mean(res$t[, 4], na.rm = TRUE)
   shrunk <- get_shrunk_coef(mod, lambda)
   return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk))
 }
