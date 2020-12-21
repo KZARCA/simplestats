@@ -32,7 +32,7 @@ import_csv <- function(file, enc = "") {
 #' @export
 #'
 #' @examples
-read_tab_import <- function(file, sep = "\t", dec = "."){
+read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
   ext <- tolower(tools::file_ext(file))
   tab <- NULL
   err <- NULL
@@ -59,7 +59,7 @@ read_tab_import <- function(file, sep = "\t", dec = "."){
     correspondance <- make_correspondance(tab)
 
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
-    tab <- tryCatch(readxl::read_excel(file, sheet = 1, guess_max = 10000, .name_repair = "minimal"),
+    tab <- tryCatch(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
                    error = function(e) e)
     if (is(tab, "error")) {
       if (grepl("Failed to open", tab$message)){
