@@ -140,12 +140,13 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
                           type_validation = "cv", R = 100, nCPU = 1L, mod = NULL,
                           updateProgress = function(detail) detail = "", seed = 1234567){
   if (type_validation == "cv"){
-    m <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress) %>%
-      flatten_dbl()%>%
+    cv <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress)
+    m <- map_dbl(cv, 1)  %>%
       mean(na.rm = TRUE)
+
     lambda <- get_lambda(mod) #heuristic formula (see Steyenberg)
     shrunk <- get_shrunk_coef(mod, lambda)
-    return(list(mean = m, shrunk = shrunk))
+    return(list(mean = m, shrunk = shrunk, error = sum(map_dbl(cv, 2) / length(map_dbl(cv, 2)))))
   }
   set.seed(seed)
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
@@ -155,9 +156,9 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   # Calculate the optimism (step 5) : bootstrap performance - test performance
   opti <- mean(res$t[, 1] - res$t[, 2], na.rm = TRUE)
   ci <- boot.ci(res, type = "basic", index = 1)$basic[4:5]
-  lambda <- mean(res$t[, 4], na.rm = TRUE)
+  lambda <- mean(res$t[, 3], na.rm = TRUE)
   shrunk <- get_shrunk_coef(mod, lambda)
-  return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk))
+  return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk, error = sum(res$t[, 4])/length(res$t[, 4])))
 }
 
 get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = function() cat("=")){
@@ -166,16 +167,19 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
     progression()
     train <- do.call(rbind, tab[-i])
     test <- tab[[i]]
+    error_lasso <- 0
     varajust <- get_lasso_variables(train, vardep, varindep, type)
     if (identical(varajust, "ERROR_MODEL")){
       varajust <- character(0)
+      error_lasso <- 1
     } else {
       el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
       varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
     }
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
-    create_pred_obs(results$mod) %>%
+    AUC <- create_pred_obs(results$mod) %>%
       calculate_auc()
+    list(AUC, error_lasso)
   })
 }
 
@@ -195,6 +199,7 @@ calculate_auc <- function(pred_obs){
 
 boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) {
   progression()
+  error_lasso <- 0
   train <- data %>%
     dplyr::slice(indices) %>%
     create_tabi("pred", keep = c(vardep, varindep))
@@ -202,6 +207,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   varajust <- get_lasso_variables(train, vardep, varindep, type)
   if (identical(varajust, "ERROR_MODEL")){
     varajust <- character(0)
+    error_lasso <- 1
   } else {
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
     varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
@@ -219,8 +225,10 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   # Model performance on the data (step 4)
   pred_obs_test <- create_pred_obs(results$mod, data[c(vardep, varindep, varajust)], vardep, as_prob = FALSE)
   perf_test <- calculate_auc(pred_obs_test)
-  shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>% coef()
-  c(perf_boot, perf_test, shrinkage_factor)
+  shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>%
+    coef() %>%
+    extract2(2)
+  c(perf_boot, perf_test, shrinkage_factor, error_lasso)
 }
 
 get_shrunk_coef <- function(x, ...){

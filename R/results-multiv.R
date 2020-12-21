@@ -19,14 +19,14 @@ get_fun <- function(type){
 prepare_variables <- function(tab, varindep, varajust, pred = FALSE){
   vars <- c(varindep, varajust)
     if (pred){
-    map(vars, function(x){
+    list(varindep = map_chr(vars, function(x){
       knots <- attr(varindep, paste("knots", x, sep = "_"))
       if (!is.null(knots)){
         sprintf("ns(%s, knots = c(%s))", x, paste(knots, collapse = ", "))
       } else {
         x
       }
-    })
+    }))
   } else {
     varindep_m <- format_precision(tab, varindep)
 
@@ -93,7 +93,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
 
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
   formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::flatten_chr(allVars), collapse = " + "))
-  formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(allVars$varindep, varajust), collapse = " +"))
+  formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(allVars$varindep, varajust), collapse = " + "))
   #formule2 <- formule
   if (cv && length(varindep) == 0 && length(varajust) == 0) {
     formule <- formule2 <- sprintf("%s ~ 1", vardep_m)
