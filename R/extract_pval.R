@@ -37,10 +37,10 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
     test <- "Logrank"
   } else if (is.numeric(x) & is.numeric(y)){
     if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
-      f <- try(cor.test(x, y), silent = TRUE)
+      f <- try(cor.test(x, y), silent = FALSE)
       test <- "Pearson"
     } else {
-      f <- try(cor.test(x, y, method = "spearman", exact = FALSE), silent = TRUE)
+      f <- try(cor.test(x, y, method = "spearman", exact = FALSE), silent = FALSE)
       test <- "Spearman"
     }
     if (inherits(f, "try-error")) f <- NULL
@@ -51,7 +51,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
       x <- tmp
     }
     formule <- as.formula(y ~ x)
-    mod <- try(lm(formule), silent = TRUE) # le try c'est parce que parfois, il existe une classe de x avec n = 0
+    mod <- try(lm(formule), silent = FALSE) # le try c'est parce que parfois, il existe une classe de x avec n = 0
     compte <- margin.table(table(x, y), 1)
     try({
       if (nlevels(x) == 2) {
@@ -73,7 +73,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           test <- "Kruskal-Wallis"
         }
       }
-    }, silent = TRUE)
+    }, silent = FALSE)
   }
   else if (is.factor(x) & is.factor(y)){
     cont <- table(x, y)
@@ -87,7 +87,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           try({
             f <- fisher.test(cont)
             test <- "Fisher"
-          }, silent = TRUE)
+          }, silent = FALSE)
         }
         if (is.null(f)){
            set.seed(1234567)
