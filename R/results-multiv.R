@@ -16,30 +16,44 @@ get_fun <- function(type){
   return(list(fun = .fun, args_sup = args_sup))
 }
 
-prepare_variables <- function(tab, varindep, varajust, pred = FALSE){
+prepare_variables <- function(tab, varindep, varajust, pred = 0){
+
+  n <- dplyr::case_when(nrow(tab) < 100 ~ 3,
+            nrow(tab) < 500 ~ 4,
+            TRUE ~ 5)
+
+  pos <- if (n == 3){
+    c(0.1, 0.5, 0.9)
+  } else if (n == 4){
+    c(0.05, 0.35, 0.65, 0.95)
+  } else if (n >= 5){
+    c(0.05, 0.275, 0.5, 0.725, 0.95)
+  }
+
   vars <- c(varindep, varajust)
-    if (pred){
+  if (pred > 0){
     list(varindep = map_chr(vars, function(x){
       knots <- attr(varindep, paste("knots", x, sep = "_"))
       if (!is.null(knots)){
+        if (pred == 2){
+          knots <- quantile(tab[[x]], pos, na.rm = TRUE)
+        }
         sprintf("ns(%s, knots = c(%s))", x, paste(knots, collapse = ", "))
       } else {
         x
       }
     }))
   } else {
-    varindep_m <- format_precision(tab, varindep)
-
-
-   varajust_m <- map_chr(varajust, function(x){
-      knots <- attr(varajust, paste("knots", x, sep = "_"))
-      if (!is.null(knots)){
-        sprintf("ns(%s, knots = c(%s))", x, paste(knots, collapse = ", "))
-      } else {
-        x
-      }
-    })
-    list(varindep = varindep_m, varajust = varajust_m)
+      varindep_m <- format_precision(tab, varindep)
+     varajust_m <- map_chr(varajust, function(x){
+        knots <- attr(varajust, paste("knots", x, sep = "_"))
+        if (!is.null(knots)){
+          sprintf("ns(%s, knots = c(%s))", x, paste(knots, collapse = ", "))
+        } else {
+          x
+        }
+      })
+      list(varindep = varindep_m, varajust = varajust_m)
   }
 }
 
@@ -67,13 +81,13 @@ format_precision <- function(tab, varindep){
 #' @param varindep The independant variables
 #' @param varajust The adjustment variables
 #' @param type Type: one of "linear", "logistic" or "survival"
-#' @param pred Logical: is the analysis predictive or explanatory
+#' @param pred 0 if the analysis is explanatory, 1 if the analysis is predictive, 2 if the model is computed for cross validation
 #'
 #' @return
 #' @export
 #'
 #' @examples
-compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv = FALSE){
+compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars %<>% add_elements(".time")
   tab <- tab[vars]
@@ -95,7 +109,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = FALSE, cv 
   formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::flatten_chr(allVars), collapse = " + "))
   formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(allVars$varindep, varajust), collapse = " + "))
   #formule2 <- formule
-  if (cv && length(varindep) == 0 && length(varajust) == 0) {
+  if (pred == 2 && length(varindep) == 0 && length(varajust) == 0) {
     formule <- formule2 <- sprintf("%s ~ 1", vardep_m)
   }
 

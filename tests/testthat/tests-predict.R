@@ -26,12 +26,3 @@ test_that("get_cv_auc works with any number of cv and returns a list of double",
   expect_length(perf2, 5)
   expect_error(flatten_dbl(perf), NA)
 })
-
-# test_that("get_cv_auc", {
-#   vardep <- "status"
-#   varindep <- NULL
-#   varajust <- get_lasso_variables(tab, vardep)
-#   tab <- tab[c(vardep, varindep, varajust)]
-#   results <- compute_mod(tab, vardep, varindep, varajust = varajust, type = "logistic", pred = TRUE, cv = F)
-#   v <- get_pred_perf(tab, vardep, varindep, "logistic", "boostrap", nCPU = 4, mod = results$mod)
-# })

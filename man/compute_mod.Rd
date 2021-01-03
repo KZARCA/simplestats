@@ -4,7 +4,7 @@
 \alias{compute_mod}
 \title{Compute multivariable statistical model}
 \usage{
-compute_mod(tab, vardep, varindep, varajust, type, pred = FALSE, cv = FALSE)
+compute_mod(tab, vardep, varindep, varajust, type, pred = 0)
 }
 \arguments{
 \item{tab}{The data.frame}
@@ -17,7 +17,7 @@ compute_mod(tab, vardep, varindep, varajust, type, pred = FALSE, cv = FALSE)
 
 \item{type}{Type: one of "linear", "logistic" or "survival"}
 
-\item{pred}{Logical: is the analysis predictive or explanatory}
+\item{pred}{0 if the analysis is explanatory, 1 if the analysis is predictive, 2 if the model is computed for cross validation}
 }
 \value{
 

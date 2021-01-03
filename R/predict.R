@@ -176,7 +176,7 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
       el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
       varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
     }
-    results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
+    results <- compute_mod(train, vardep, varindep, varajust, type, pred = 2)
     AUC <- create_pred_obs(results$mod) %>%
       calculate_auc()
     list(AUC, error_lasso)
@@ -212,7 +212,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
     el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
     varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
   }
-  results <- compute_mod(train, vardep, varindep, varajust, type, pred = TRUE, cv = TRUE)
+  results <- compute_mod(train, vardep, varindep, varajust, type, pred = 2)
 
   # for(i in seq_along(results$mod$xlevels)){
   #   results$mod$xlevels[[i]] <- union(results$mod$xlevels[[i]],

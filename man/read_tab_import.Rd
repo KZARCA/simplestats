@@ -4,7 +4,7 @@
 \alias{read_tab_import}
 \title{Read file}
 \usage{
-read_tab_import(file, sep = "\\t", dec = ".")
+read_tab_import(file, sep = "\\t", dec = ".", sheet = 1)
 }
 \arguments{
 \item{file}{The file to read}
