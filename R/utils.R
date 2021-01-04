@@ -579,12 +579,18 @@ keep_warning <- function(expr) {
   structure(val, warning = myWarnings)
 }
 
-filter_glm_fit <- function(mod, tab){
+filter_glm_fit <- function(mod, tab, varindep, varajust, pred = 0){
   tab %<>% na.exclude()
   eps <- .Machine$double.eps*1000
   p <- predict(mod, type = "response")
   t <- tab[p < 1-eps & p > eps,]
-  mod2 <- try(update(mod, data = t))
+  if(pred == 2){
+    allVars <- prepare_variables(t, varindep, varajust, pred)
+    formule <- sprintf(". ~ %s", paste(purrr::flatten_chr(allVars), collapse = " + "))
+    mod2 <- try(update(mod, formula = formule, data = t))
+  } else {
+    mod2 <- try(update(mod, data = t))
+  }
   if (inherits(mod2, "try-error")) return(NULL)
   idx <- if (inherits(mod, "coxph")) c(1,3) else 1:2
   if (all(round(coef(summary(mod))[, idx], 2) == round(coef(summary(mod2))[, idx], 2), na.rm = TRUE)) {

@@ -104,7 +104,6 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   # varindep_m <- prepare_varindep(tab, varindep, pred)
   # allVars <- c(varindep_m, varajust_m)
   allVars <- prepare_variables(tab, varindep, varajust, pred)
-
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
   formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::flatten_chr(allVars), collapse = " + "))
   formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(allVars$varindep, varajust), collapse = " + "))
@@ -114,10 +113,8 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   }
 
   .fun <- get_fun(type)
-
   mod <- get_mod(tab_m, .fun, formule) %>%
-    modify_mod(tab_m)
-
+    modify_mod(tab_m, varindep, varajust, pred)
   return(list(tab = tab_m, mod = mod, formule = formule, formule2 = formule2,
               imputer = resume_imputer))
 }
@@ -152,25 +149,25 @@ modify_mod <- function(x, ...){
   UseMethod("modify_mod")
 }
 
-modify_mod.default <- function(mod, tab){
+modify_mod.default <- function(mod, tab, varindep, varajust, pred){
   warned <- attr(mod, "warning")
   if (is.null(warned)) return(mod)
   if(any(grepl("fitted probabilities numerically 0 or 1 occurred", warned), na.rm = TRUE)){
-    m <- keep_warning(filter_glm_fit(mod, tab))
+    m <- keep_warning(filter_glm_fit(mod, tab, varindep, varajust, pred))
     if (!is.null(m)) mod <- m
   }
   return(mod)
 }
 
 
-modify_mod.mira <- function(mod, tabm){
+modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
   m <- tabm$m
   warned <- unique(attr(mod, "warning"))
   if (is.null(warned)) return(mod)
   mod2 <- mod
   for (i in seq_len(m)){
     attr(mod$analyses[[i]], "warning") <- warned
-    mod2$analyses[[i]] <- modify_mod(mice::getfit(mod, i), mice::complete(tabm, i))
+    mod2$analyses[[i]] <- modify_mod(mice::getfit(mod, i), mice::complete(tabm, i), varindep, varajust, pred)
     if(!is.null(attr(mod2$analyses[[i]], "warning"))){
       return(mod2$analyses[[i]])
     }
