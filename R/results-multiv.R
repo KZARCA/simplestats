@@ -106,7 +106,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   allVars <- prepare_variables(tab, varindep, varajust, pred)
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
   formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::flatten_chr(allVars), collapse = " + "))
-  formule2 <- sprintf("%s ~ %s", vardep_m, paste(c(allVars$varindep, varajust), collapse = " + "))
+  formule2 <- sprintf("%s ~ %s", vardep_m, paste(unique(allVars$varindep, varajust), collapse = " + "))
   #formule2 <- formule
   if (pred == 2 && length(varindep) == 0 && length(varajust) == 0) {
     formule <- formule2 <- sprintf("%s ~ 1", vardep_m)
@@ -167,7 +167,9 @@ modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
   mod2 <- mod
   for (i in seq_len(m)){
     attr(mod$analyses[[i]], "warning") <- warned
-    mod2$analyses[[i]] <- modify_mod(mice::getfit(mod, i), mice::complete(tabm, i), varindep, varajust, pred)
+    mod2$analyses[[i]] <- modify_mod(mice::getfit(mod, i),
+                                     mice::complete(tabm, i),
+                                     varindep, varajust, pred)
     if(!is.null(attr(mod2$analyses[[i]], "warning"))){
       return(mod2$analyses[[i]])
     }

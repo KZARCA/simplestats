@@ -13,8 +13,7 @@ get_pred_perf(
   R = 100,
   nCPU = 1L,
   mod = NULL,
-  updateProgress = function(detail) detail = "",
-  seed = 1234567
+  updateProgress = function(detail) detail = ""
 )
 }
 \arguments{

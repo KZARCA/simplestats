@@ -647,3 +647,17 @@ remove_missing_levels.default <- function(tab, mod){
   }
   tab
 }
+
+myTryCatch <- function(expr) {
+  warn <- err <- NULL
+  value <- withCallingHandlers(
+    tryCatch(expr, error=function(e) {
+      err <<- e
+      NULL
+    }), warning=function(w) {
+      warn <<- w
+      invokeRestart("muffleWarning")
+    })
+  structure(list(value=value, warning=warn, error=err),
+            class = unique(c(class(err), class(warn), class(value))))
+}

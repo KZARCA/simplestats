@@ -56,14 +56,20 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
                             type == "survival" ~ "cox",
                             type == "linear" ~ "gaussian")
 
-  cv <- try(
-  cv.glmnet(x = mat,
-                  y = y,
-                  family = family,
-                  penalty.factor = penalties))
-  if (inherits(cv, "try-error")){
+  cv <- myTryCatch(
+    cv.glmnet(x = mat,
+                    y = y,
+                    family = family,
+                    penalty.factor = penalties)
+  )
+  if (inherits(cv, "error")){
+    if (length(cv$error$message) && !grepl("Matrices must have same number of columns", cv$error$message) |
+        length(cv$warning$message) && !grepl("Convergence for", cv$warning$message)){
+      warning(paste("Error:", cv$error$message))
+      warning(cv$warning$message)
+    }
     return("ERROR_MODEL")
-  }
+  } else cv <- cv$value
   idx_lambda <- which(cv$lambda == cv$lambda.1se)
   nzero <- cv$nzero
 
@@ -138,7 +144,8 @@ predict.mira <- function(mod, ...){
 #' @export
 get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
                           type_validation = "cv", R = 100, nCPU = 1L, mod = NULL,
-                          updateProgress = function(detail) detail = "", seed = 1234567){
+                          updateProgress = function(detail) detail = ""){
+  set.seed(1234567)
   if (type_validation == "cv"){
     cv <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress)
     m <- map_dbl(cv, 1)  %>%
@@ -148,7 +155,6 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
     shrunk <- get_shrunk_coef(mod, lambda)
     return(list(mean = m, shrunk = shrunk, error = sum(map_dbl(cv, 2) / length(map_dbl(cv, 2)))))
   }
-  set.seed(seed)
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
   m <- mean(res$t[, 1], na.rm = TRUE)
@@ -253,12 +259,14 @@ get_shrunk_coef.default <- function(dataset, coefs, lambda){
   B.shrunk <- matrix(diag(as.vector(coefs)) %*% sdm %*% lambda +
                        diag(as.vector(coefs)) %*% apply(1 - sdm, 1, min), ncol = 1)
   dataset <- as.matrix(dataset)
-  X.i <-  matrix(dataset[, 1], ncol = 1)
   Y <- dataset[, nc]
+  X.i <-  matrix(dataset[, 1], ncol = 1)
+
   offs <- as.vector(as.matrix(dataset[, 2:(nc - 1)]) %*% B.shrunk[-1])
   new.int <- glm.fit(x=X.i, y=Y, family = binomial(link = "logit"),
-                    offset = offs)$coefficients
-  if (new.int > 10) new.int <- coefs[1]
+                                offset = offs)$coefficients
+
+  if(abs(new.int) > 10) return(coefs)
   c(new.int, B.shrunk[-1])
 }
 
