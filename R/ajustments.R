@@ -129,15 +129,17 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   }
   set.seed(1234567)
   left_form <- NULL
-  if (type == "logistic"){
-    mod <- glm(formule, data = tab, family = "binomial")
-  } else if (type == "linear") {
-    mod <- lm(formule, data = tab)
-  } else if (type == "survival"){
-    left_form <- sprintf("Surv(.time, %s)", vardep)
-    formule <- sprintf("%s ~ %s", left_form, paste(vars, collapse = " + ")) %>% as.formula()
-    mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
-  }
+  suppressWarnings(
+    if (type == "logistic"){
+      mod <- glm(formule, data = tab, family = "binomial")
+    } else if (type == "linear") {
+      mod <- lm(formule, data = tab)
+    } else if (type == "survival"){
+      left_form <- sprintf("Surv(.time, %s)", vardep)
+      formule <- sprintf("%s ~ %s", left_form, paste(vars, collapse = " + ")) %>% as.formula()
+      mod <- survival::coxph(formula = formule, data = tab, model = TRUE)
+    }
+  )
   if(!is_model_possible(mod)){
     var_inter <- intersect(varajust, c(vars, elimine))
     if (length(var_inter) > 0 & !pred){
@@ -165,6 +167,9 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   big_vif <- get_big_vif(tab, vardep, intersect(varindep, vars), intersect(varajust, vars), type, mod, left_form)
   if (length(big_vif)){
     elimine <- append(elimine, big_vif)
+  }
+  if (length(varindep) == 1 && varindep %in% elimine){
+      return("ERROR_MODEL2")
   }
 
   return(setdiff(elimine, varindep[1]))

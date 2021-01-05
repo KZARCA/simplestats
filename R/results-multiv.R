@@ -113,6 +113,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   }
 
   .fun <- get_fun(type)
+
   mod <- get_mod(tab_m, .fun, formule) %>%
     modify_mod(tab_m, varindep, varajust, pred)
   return(list(tab = tab_m, mod = mod, formule = formule, formule2 = formule2,
