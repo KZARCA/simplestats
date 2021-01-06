@@ -19,7 +19,7 @@ find_test_ba <- function(x, y){
       f <- mcnemar.test(x, y)
       test <- ifelse(nlevels(x) > 2, "McNemar-Bowker", "McNemar")
     } else {
-      f <- mcnemar.exact(x, y)
+      f <- structure(mcnemar.exact(x, y), class = "htest")
       test <- "McNemar"
     }
   }
