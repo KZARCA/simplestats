@@ -24,5 +24,5 @@ test_that("get_cv_auc works with any number of cv and returns a list of double",
   expect_length(perf, 10)
   perf2 <- get_cv_auc(tab, "status", n = 5)
   expect_length(perf2, 5)
-  expect_error(flatten_dbl(perf), NA)
+  expect_error(flatten_dbl(map(perf,1)), NA)
 })

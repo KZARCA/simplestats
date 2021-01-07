@@ -28,7 +28,7 @@ get_number_variables_max <- function(tab, vardep, type = "linear"){
     N <- if(type == "logistic"){
       min(table(tab[[vardep]]))
     } else {
-      sum(tab[[vardep]] == levels(tab[[vardep]])[2])
+      sum(tab[[vardep]] == 1)
     }
     N/threshold
   }

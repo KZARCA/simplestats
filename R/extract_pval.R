@@ -84,15 +84,17 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
         f <- fisher.exact(cont)
       } else {
         if (prod(dim(cont)) < 50){ # This fails (with an error message) when the entries of the table are too large
-          try({
-            f <- fisher.test(cont)
-            test <- "Fisher"
-          }, silent = FALSE)
+          f <- myTryCatch({
+            fisher.test(cont)
+          })
         }
-        if (is.null(f)){
+        if (inherits(f, "error")){
            set.seed(1234567)
-           f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
-        }
+          if (!grepl("is too small for this problem", f$error$message)){
+            warning("Error:", f$error$message)
+          }
+          f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
+        } else f <- f$value
         f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
       }
       test <- "Fisher"
