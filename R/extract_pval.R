@@ -95,7 +95,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           }
           f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
         } else f <- f$value
-        f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
+        #f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
       }
       test <- "Fisher"
     } else test <- "Chi2"
