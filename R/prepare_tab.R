@@ -73,7 +73,7 @@ replace_virgules <- function(tab){
   as.data.frame(
     lapply(tab, function(x) {
       if (all(grepl("^-?[0-9]*[,\\.]?[0-9]*$", x) | is.na(x), na.rm = TRUE)){
-        x <- as.numeric(gsub(",", ".", x))
+        x <- suppressWarnings(as.numeric(gsub(",", ".", x)))
       }
       else
         x
@@ -197,11 +197,11 @@ standardize_tab <- function(tab){
   tab %<>%
     replace_infinite() %>%
     remove_na_rows() %>%
-    replace_virgules() %>%
-    transform_date() %>%
-    lower_tab() %>%
-    factor_strings() %>%
-    remove_guillemets()
+     replace_virgules() %>%
+     transform_date() %>%
+     lower_tab() %>%
+     factor_strings() %>%
+     remove_guillemets()
 
   names(tab) <- gsub("\\.", "_", names(tab))
 

@@ -51,9 +51,8 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
       x <- tmp
     }
     formule <- as.formula(y ~ x)
-    mod <- try(lm(formule), silent = FALSE) # le try c'est parce que parfois, il existe une classe de x avec n = 0
     compte <- margin.table(table(x, y), 1)
-    try({
+    tryit <- myTryCatch({
       if (nlevels(x) == 2) {
         if (all(compte > 30, na.rm = TRUE)) {
           f <- t.test(formule)
@@ -64,6 +63,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           test <- "Mann-Whitney"
         }
       } else {
+        mod <- lm(formule)
         if (all(compte > 30, na.rm = TRUE) && is_homoscedatic(mod)) {
           f <- anova(mod)
           test <- "Anova"
@@ -73,9 +73,13 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           test <- "Kruskal-Wallis"
         }
       }
-    }, silent = FALSE)
+    })
+  if (inherits(tryit, "error")){
+    if (!grepl("grouping factor must have exactly 2 levels", tryit$error$message)){
+      warning("Error:", tryit$error$message)
+    }
   }
-  else if (is.factor(x) & is.factor(y)){
+  } else if (is.factor(x) & is.factor(y)){
     cont <- table(x, y)
     suppressWarnings(f <- chisq.test(cont, correct = FALSE))
     if (any(purrr::as_vector(f$expected, "double") < 5)){
@@ -88,13 +92,14 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
             fisher.test(cont)
           })
         }
-        if (inherits(f, "error")){
+        if (inherits(f, "error") | is.null(f)){
            set.seed(1234567)
-          if (!grepl("is too small for this problem", f$error$message)){
+          if (!is.null(f) && !grepl("is too small for this problem", f$error$message)){
             warning("Error:", f$error$message)
           }
           f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
         } else f <- f$value
+
         #f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
       }
       test <- "Fisher"
