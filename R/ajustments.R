@@ -182,10 +182,11 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
 #' @param vardep The dependant variable
 #' @param varindep The independant variables to force into the model
 #' @param type Type of analysis: linear, logistic or survival
+#' @param sparse logical: should the variable selection be parsimonious
 #'
 #' @return A character vector of the predictor variables
 #' @export
-get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic") {
+get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic", sparse = TRUE) {
   if (type == "survival" & ncol(tab) == length(c(vardep, varindep)) + 1) return(character(0))
   if (ncol(tab) == length(c(vardep, varindep))) return(character(0))
   set.seed(1234567)
@@ -234,11 +235,12 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
     }
     return("ERROR_MODEL")
   } else cv <- cv$value
-  idx_lambda <- which(cv$lambda == cv$lambda.1se)
+  lambda <- ifelse(sparse, "lambda.1se", "lambda.min")
+  idx_lambda <- which(cv$lambda == cv[[lambda]])
   nzero <- cv$nzero
 
   res <- if (nzero[idx_lambda] <= nb_max){
-    coef(cv, cv$lambda.1se)
+    coef(cv, cv[[lambda]])
   } else {
     idx <- tail(which(nzero <= nb_remaining), n = 1)
     coef(cv, cv$lambda[idx])

@@ -119,7 +119,7 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
       group_by(!!sym(y)) %>%
       mutate(group_size = n()) %>%
       group_by(!!sym(x), !!sym(y)) %>%
-      summarise(perc = n()/max(group_size))
+      summarise(perc = n()/max(group_size), n = n())
 
     ggtab2 <- if (!is.null(showGraphNA) && !showGraphNA) {
       ggplot(remove_missing(tab2, na.rm = TRUE, vars = c(x, y)))

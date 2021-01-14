@@ -94,7 +94,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
         }
         if (inherits(f, "error") | is.null(f)){
            set.seed(1234567)
-          if (!is.null(f) && !grepl("is too small for this problem", f$error$message)){
+          if (!is.null(f) && (!grepl("FEXACT error", f$error$message))){
             warning("Error:", f$error$message)
           }
           f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
