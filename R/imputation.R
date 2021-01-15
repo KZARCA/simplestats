@@ -16,30 +16,28 @@ get_propDM <- function(x){
 #' Imputation strategy
 #'
 #' @param tab A data frame
-#' @param type Can be one of "linear", "logistic", "survival"
 #' @param vardep The dependant variable
+#' @param type Can be one of "linear", "logistic", "survival"
 #' @param n_imputation Number of imputations
 #'
 #' @return Either a data frame or a S3 object of class mids
 #' @export
 #'
 #' @examples
-imputer <- function(tab, vardep, type, exclude_mice = NULL, n_imputation = 1){
-  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x)) #%>%
-    #dplyr::select(-!!rlang::sym(vardep))
+imputer <- function(tab, vardep, type, n_imputation = 1){
+  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x))
   if (type == "survival") tabm <- dplyr::select(tabm, -.time)
   if(get_propDM(tabm) < 0.05){
     return(tab)
   } else {
     for (i in 1:length(tabm)){
-      if (get_propDM(tabm[[i]]) < 0.05 | names(tabm)[i] %in% exclude_mice & nrow(tab) > 5000) {
+      if (get_propDM(tabm[[i]]) < 0.05) {
         tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
       }
     }
     if (any(is.na(tab[names(tabm)]))){
       require(mice)
       where <- data.frame(is.na(tab))
-      #where[[vardep]] <- rep(FALSE, nrow(where))
       if (type == "survival") where[[".time"]] <- FALSE
       tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation, where = where)
     } else {
@@ -78,4 +76,23 @@ get_large_missing <- function(tab){
     }
     return(elimine)
   }
+}
+
+#' Find auxillary variables, ie predictors of data missingness
+#'
+#' @param tab A data.frame
+#' @param vardep The dependant variable
+#' @param varindep A character vector of independant variables
+#' @param varajust A character vector of covariates
+#'
+#' @return
+#' @export
+#'
+find_varaux <- function(tab, vardep, varindep = character(0), varajust = character(0)){
+  tabf <- tab[c(vardep, varindep, varajust)]
+  tab$.missing <- base::rowSums(is.na(tabf)) %>%
+    as.logical() %>%
+    as.factor()
+  tab_aux <- tab[c(setdiff(names(tab), names(tabf)))]
+  get_lasso_variables(tab_aux, ".missing", sparse = FALSE)
 }
