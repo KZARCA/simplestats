@@ -87,20 +87,14 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
       if(identical(dim(cont), c(2,2))){
         f <- fisher.exact(cont)
       } else {
-        if (prod(dim(cont)) < 50){ # This fails (with an error message) when the entries of the table are too large
+        set.seed(1234567)
           f <- myTryCatch({
-            fisher.test(cont)
+            fisher.test(cont, simulate.p.value = TRUE, B = 100000)
           })
-        }
-        if (inherits(f, "error") | is.null(f)){
-           set.seed(1234567)
-          if (!is.null(f) && (!grepl("FEXACT error", f$error$message))){
-            warning("Error:", f$error$message)
-          }
-          f <- fisher.test(cont, simulate.p.value = TRUE, B = 100000)
+        if (inherits(f, "error")){
+          warning("Error:", f$error$message)
+          f <- NULL
         } else f <- f$value
-
-        #f$p.value <- ifelse(f$p.value < 0.5, f$p.value * 2, 1)
       }
       test <- "Fisher"
     } else test <- "Chi2"
