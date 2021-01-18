@@ -12,7 +12,7 @@ test_that("get_glance Fisher is working", {
   expect_error(t, NA)
   expect_warning(t, NA)
   expect_equal(names(t), c("p", "Test"))
-  expect_equal(t$Test, "Fisher's Exact Test for Count Data")
+  expect_equal(t$Test, "Fisher's Exact Test for Count Data with simulated p-value\n\t (based on 1e+05 replicates)")
 })
 test_that("get_glance Chi2 is working", {
   t <- get_glance(tab$am, tab$vs)

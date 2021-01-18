@@ -17,7 +17,7 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
     map_chr(function(x) {
       if (length(table(tab[, x, drop = FALSE])) < 20){
         k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
-        ifelse(type == "survival", paste0(x, ", df = ", k), paste0(x, ", k = ", k))
+        ifelse(type == "survival", paste0(x, ", df = 0"), paste0(x, ", k = ", k))
       } else
         as.character(x)
     })
