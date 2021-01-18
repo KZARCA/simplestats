@@ -143,7 +143,7 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   if(!is_model_possible(mod)){
     var_inter <- intersect(varajust, c(vars, elimine))
     if (length(var_inter) > 0 & !pred){
-      elimine <- var_inter
+      elimine <- c(elimine, var_inter)
       vars <- vars[-na.omit(match(elimine, vars))]
       mod <- stats::update(mod, formula = as.formula(sprintf(". ~ . -%s", paste(var_inter, collapse = " - "))))
       if (!is_model_possible(mod)) return("ERROR_MODEL")
