@@ -12,10 +12,10 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
   model <- NULL
   if (type == "survival") varindep <- remove_elements(varindep, ".time")
   varspline <- c(varindep, varajust)
-  varsnum <- Filter(is.numeric, tab[varspline]) %>% colnames()
+  varsnum <- Filter(function(x) is.numeric(x) && unique(x) > 5, tab[varspline]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
-      if (length(table(tab[, x, drop = FALSE])) < 20){
+      if (length(table(tab[[x]])) < 20){
         k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
         ifelse(type == "survival", paste0(x, ", df = 0"), paste0(x, ", k = ", k))
       } else
