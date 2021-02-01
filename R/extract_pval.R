@@ -91,7 +91,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           f <- myTryCatch({
             fisher.test(cont, simulate.p.value = TRUE, B = 100000)
           })
-        if (inherits(f, "error")){
+        if (inherits(f, "error") && f$error$message != "need 2 or more non-zero column marginals"){
           warning("Error:", f$error$message)
           f <- NULL
         } else f <- f$value
