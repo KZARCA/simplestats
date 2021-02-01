@@ -24,7 +24,7 @@ is_model_possible <- function(model){
 
 remove_alias <- function(vars, mod, correction = FALSE) {
   tab_mod <- broom::tidy(mod)
-  alias <- dplyr::filter(tab_mod, is.nan(statistic) | is.infinite(statistic)) %>%
+  alias <- dplyr::filter(tab_mod, is.nan(statistic) | is.infinite(statistic) | abs(estimate) < .Machine$double.eps) %>%
     magrittr::extract2("term")
   alias <- c(alias, names(which(is.na(coef(mod)))))
   tab <- mod$model[-1]
