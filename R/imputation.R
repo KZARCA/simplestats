@@ -84,12 +84,17 @@ get_large_missing <- function(tab){
 #' @param vardep The dependant variable
 #' @param varindep A character vector of independant variables
 #' @param varajust A character vector of covariates
+#' @param type Can be one of "linear", "logistic", "survival"
 #'
 #' @return
 #' @export
 #'
-find_varaux <- function(tab, vardep, varindep = character(0), varajust = character(0)){
-  tabf <- tab[c(vardep, varindep, varajust)]
+find_varaux <- function(tab, vardep, varindep = character(0), varajust = character(0), type){
+  tabf <- if (type == "survival") {
+    tab[c(vardep, varindep, varajust, ".time")]
+  } else {
+    tab[c(vardep, varindep, varajust)]
+  }
   tab$.missing <- base::rowSums(is.na(tabf)) %>%
     as.logical() %>%
     as.factor()
