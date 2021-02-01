@@ -4,7 +4,13 @@
 \alias{find_varaux}
 \title{Find auxillary variables, ie predictors of data missingness}
 \usage{
-find_varaux(tab, vardep, varindep = character(0), varajust = character(0))
+find_varaux(
+  tab,
+  vardep,
+  varindep = character(0),
+  varajust = character(0),
+  type
+)
 }
 \arguments{
 \item{tab}{A data.frame}
@@ -14,6 +20,8 @@ find_varaux(tab, vardep, varindep = character(0), varajust = character(0))
 \item{varindep}{A character vector of independant variables}
 
 \item{varajust}{A character vector of covariates}
+
+\item{type}{Can be one of "linear", "logistic", "survival"}
 }
 \value{
 

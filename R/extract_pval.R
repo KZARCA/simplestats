@@ -52,7 +52,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
     }
     formule <- as.formula(y ~ x)
     compte <- margin.table(table(x, y), 1)
-    tryit <- myTryCatch({
+    tryit <- try2({
       if (nlevels(x) == 2) {
         if (all(compte > 30, na.rm = TRUE)) {
           f <- t.test(formule)
@@ -73,12 +73,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           test <- "Kruskal-Wallis"
         }
       }
-    })
-  if (inherits(tryit, "error")){
-    if (!grepl("grouping factor must have exactly 2 levels", tryit$error$message)){
-      warning("Error:", tryit$error$message)
-    }
-  }
+    }, errors = "grouping factor must have exactly 2 levels")
   } else if (is.factor(x) & is.factor(y)){
     cont <- table(x, y)
     suppressWarnings(f <- chisq.test(cont, correct = FALSE))
@@ -88,13 +83,9 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
         f <- fisher.exact(cont)
       } else {
         set.seed(1234567)
-          f <- myTryCatch({
+          f <- try2({
             fisher.test(cont, simulate.p.value = TRUE, B = 100000)
-          })
-        if (inherits(f, "error") && f$error$message != "need 2 or more non-zero column marginals"){
-          warning("Error:", f$error$message)
-          f <- NULL
-        } else f <- f$value
+          }, "need 2 or more non-zero column marginals")
       }
       test <- "Fisher"
     } else test <- "Chi2"

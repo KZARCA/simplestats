@@ -648,7 +648,7 @@ remove_missing_levels.default <- function(tab, mod){
   tab
 }
 
-myTryCatch <- function(expr) {
+tryCatch_all <- function(expr) {
   warn <- err <- NULL
   value <- withCallingHandlers(
     tryCatch(expr, error=function(e) {
@@ -660,4 +660,34 @@ myTryCatch <- function(expr) {
     })
   structure(list(value=value, warning=warn, error=err),
             class = unique(c(class(err), class(warn), class(value))))
+}
+
+#' Easy tryCatch for errors and warnings
+#'
+#' @param expr expression to be evaluated.
+#' @param errors character vector containing error message to bypass
+#' @param warnings character vector containing warning message to bypass
+#'
+#' @return
+#' @export
+#'
+#' @examples
+try2 <- function(expr, errors, warnings){
+  if(missing(errors)) errors <- NULL
+  if(missing(warnings)) warnings <- NULL
+  res <- tryCatch_all(expr)
+  if (inherits(res, "error")){
+    all_cond <- map_lgl(errors, grepl, res$error$message)
+    if (all(all_cond == FALSE, na.rm = TRUE)){
+      warning(paste("Error: ", res$error$message))
+    }
+    return(NULL)
+  }
+  if (inherits(res, "warning")){
+    all_cond <- map_lgl(warnings, grepl, res$warning$message)
+    if (all(all_cond == FALSE, na.rm = TRUE)){
+      warning(paste("Error warning: ", res$warning$message))
+    }
+  }
+  res$value
 }

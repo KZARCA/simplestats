@@ -221,20 +221,17 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
                             type == "survival" ~ "cox",
                             type == "linear" ~ "gaussian")
 
-  cv <- myTryCatch(
+  cv <- try2({
     cv.glmnet(x = mat,
               y = y,
               family = family,
               penalty.factor = penalties)
-  )
-  if (inherits(cv, "error")){
-    if (length(cv$error$message) && !grepl("Matrices must have same number of columns", cv$error$message) |
-        length(cv$warning$message) && !grepl("[Cc]onvergence", cv$warning$message)){
-      warning(paste("Error:", cv$error$message))
-      warning(cv$warning$message)
-    }
+  }, errors = "Matrices must have same number of columns",
+  warnings = "[Cc]onvergence")
+  if (is.null(cv)){
     return("ERROR_MODEL")
-  } else cv <- cv$value
+  }
+
   lambda <- ifelse(sparse, "lambda.1se", "lambda.min")
   idx_lambda <- which(cv$lambda == cv[[lambda]])
   nzero <- cv$nzero
