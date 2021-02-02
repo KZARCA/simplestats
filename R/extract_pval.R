@@ -37,13 +37,13 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
     test <- "Logrank"
   } else if (is.numeric(x) & is.numeric(y)){
     if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
-      f <- try(cor.test(x, y), silent = FALSE)
+      f <- try2(cor.test(x, y))
       test <- "Pearson"
     } else {
-      f <- try(cor.test(x, y, method = "spearman", exact = FALSE), silent = FALSE)
+      f <- try2(cor.test(x, y, method = "spearman", exact = FALSE))
       test <- "Spearman"
     }
-    if (inherits(f, "try-error")) f <- NULL
+    if (is_error(f)) f <- NULL
   } else if (is.factor(x) & is.numeric(y) | is.numeric(x) & is.factor(y)){
     if (is.factor(y)){
       tmp <- y
@@ -90,7 +90,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
       test <- "Fisher"
     } else test <- "Chi2"
   }
-  if (!is.null(f)){
+  if (length(f) > 0){
     return(list(result = f, name = test))
   } else {
     return(NULL)

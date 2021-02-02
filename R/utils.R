@@ -587,11 +587,11 @@ filter_glm_fit <- function(mod, tab, varindep, varajust, pred = 0){
   if(pred == 2){
     allVars <- prepare_variables(t, varindep, varajust, pred)
     formule <- sprintf(". ~ %s", paste(purrr::flatten_chr(allVars), collapse = " + "))
-    mod2 <- try(update(mod, formula = formule, data = t))
+    mod2 <- try2(update(mod, formula = formule, data = t))
   } else {
-    mod2 <- try(update(mod, data = t))
+    mod2 <- try2(update(mod, data = t))
   }
-  if (inherits(mod2, "try-error")) return(NULL)
+  if (is_error(mod2)) return(NULL)
   idx <- if (inherits(mod, "coxph")) c(1,3) else 1:2
   if (all(round(coef(summary(mod))[, idx], 2) == round(coef(summary(mod2))[, idx], 2), na.rm = TRUE)) {
     return(mod2)
@@ -662,7 +662,7 @@ tryCatch_all <- function(expr) {
             class = unique(c(class(err), class(warn), class(value))))
 }
 
-#' Easy tryCatch for errors and warnings
+#' Simple tryCatch for errors and warnings
 #'
 #' @param expr expression to be evaluated.
 #' @param errors character vector containing error message to bypass
@@ -671,23 +671,36 @@ tryCatch_all <- function(expr) {
 #' @return
 #' @export
 #'
-#' @examples
 try2 <- function(expr, errors, warnings){
   if(missing(errors)) errors <- NULL
   if(missing(warnings)) warnings <- NULL
   res <- tryCatch_all(expr)
-  if (inherits(res, "error")){
+  if (is_error(res)){
     all_cond <- map_lgl(errors, grepl, res$error$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error: ", res$error$message))
     }
-    return(NULL)
+    return(structure(list(), message = res$error$message, class = "error"))
   }
-  if (inherits(res, "warning")){
+  if (is_warning(res)){
     all_cond <- map_lgl(warnings, grepl, res$warning$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error warning: ", res$warning$message))
     }
+    return(structure(res$value, message = res$warning$message, class = "warning"))
   }
   res$value
+}
+
+#' Helper function to get error or warning class
+#' @param x a variable
+#' @export
+is_error <- function(x){
+  inherits(x, c("error", "try-error"))
+}
+
+#' @rdname is_error
+#' @export
+is_warning <- function(x){
+  inherits(x, c("warning"))
 }

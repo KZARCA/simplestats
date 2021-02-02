@@ -40,21 +40,18 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
         mod <- lm(formula = as.formula(formule), data = tab)
       } else if (type == "survival"){
           formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varsi)
-          mod <- tryCatch(survival::coxph(formula = as.formula(formule), data = tab),
-                          warning=function(w) w, error=function(e) e)
-
-          if (is(mod, "warning") && (grepl("beta may be infinite", mod$message) |
-                                    grepl("converge", mod$message))) {
+          mod <- try2(survival::coxph(formula = as.formula(formule), data = tab))
+          if (is_warning(mod) && (grepl("beta may be infinite", attr(mod, "message")) |
+                                    grepl("converge", attr(mod, "message")))) {
             mod <- NULL
           }
-          if (is(mod, "error") && (grepl("NA/NaN/Inf", mod$message))){
+          if (is_error(mod) && (grepl("NA/NaN/Inf", attr(mod, "message")))){
             mod <- NULL
           }
       }
       if(!is.null(mod) && !is.na(coef(mod))){
-        p <- tryCatch(extract_pval_glob(mod, show_df1 = TRUE)[1],
-                      error = function(e)e)
-        if (is(p, "error") && (grepl("residual sum of squares is 0", p$message))) {
+        p <- try2(extract_pval_glob(mod, show_df1 = TRUE)[1])
+        if (is_error(p) && (grepl("residual sum of squares is 0", attr(p, "message")))) {
           return(NULL)
         } else {
           names(p) <- vars[i]
@@ -229,7 +226,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
               penalty.factor = penalties)
   }, errors = "Matrices must have same number of columns",
   warnings = "[Cc]onvergence")
-  if (is.null(cv)){
+  if (is_error(cv)){
     return("ERROR_MODEL")
   }
 

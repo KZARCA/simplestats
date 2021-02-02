@@ -40,7 +40,7 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
   if(ext %in% c("csv", "txt")){
     tab <- tryCatch(import_delim(file, sep = sep, dec = dec),
                     error = function(e) e)
-    if (is(tab, "error")) {
+    if (is_error(tab)) {
       if (grepl("type.convert", tab$call[1])){
         err <- gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
       } else {
@@ -59,10 +59,9 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     correspondance <- make_correspondance(tab)
 
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
-    tab <- tryCatch(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
-                   error = function(e) e)
-    if (is(tab, "error")) {
-      if (grepl("Failed to open", tab$message)){
+    tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"))
+    if (is_error(tab)) {
+      if (grepl("Failed to open", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
       } else if (grepl("more columns than column names", tab$message)){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")

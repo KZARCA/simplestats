@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{try2}
 \alias{try2}
-\title{Easy tryCatch for errors and warnings}
+\title{Simple tryCatch for errors and warnings}
 \usage{
 try2(expr, errors, warnings)
 }
@@ -17,5 +17,5 @@ try2(expr, errors, warnings)
 
 }
 \description{
-Easy tryCatch for errors and warnings
+Simple tryCatch for errors and warnings
 }

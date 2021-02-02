@@ -171,7 +171,7 @@ modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
     mod2$analyses[[i]] <- modify_mod(mice::getfit(mod, i),
                                      mice::complete(tabm, i),
                                      varindep, varajust, pred)
-    if(!is.null(attr(mod2$analyses[[i]], "warning"))){
+    if(is_warning(mod2$analyses[[i]])){
       return(mod2$analyses[[i]])
     }
   }
