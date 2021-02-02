@@ -121,6 +121,7 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   if (length(ide)){
     elimine <- c(elimine, map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique())
     vars <- vars[-na.omit(match(elimine, vars))]
+    if(!length(vars)) return(elimine)
     if (type == "survival"){
       formule <- as.formula(sprintf("Surv(.time, %s) ~ %s", vardep, paste(vars, collapse = " + ")))
     } else {
