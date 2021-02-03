@@ -687,7 +687,7 @@ try2 <- function(expr, errors, warnings){
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error warning: ", res$warning$message))
     }
-    return(structure(res$value, message = res$warning$message, class = "warning"))
+    return(structure(res$value, message = res$warning$message, class = unique(c(class(res$value), "warning"))))
   }
   res$value
 }
@@ -702,5 +702,5 @@ is_error <- function(x){
 #' @rdname is_error
 #' @export
 is_warning <- function(x){
-  inherits(x, c("warning"))
+  inherits(x, "warning") | !is.null(attr(x, "warning"))
 }

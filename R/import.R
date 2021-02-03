@@ -59,7 +59,8 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     correspondance <- make_correspondance(tab)
 
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
-    tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"))
+    tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
+                warnings = "Expecting")
     if (is_error(tab)) {
       if (grepl("Failed to open", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")

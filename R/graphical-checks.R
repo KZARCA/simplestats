@@ -12,7 +12,7 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
   model <- NULL
   if (type == "survival") varindep <- remove_elements(varindep, ".time")
   varspline <- c(varindep, varajust)
-  varsnum <- Filter(function(x) is.numeric(x) && unique(x) > 5, tab[varspline]) %>% colnames()
+  varsnum <- Filter(function(x) is.numeric(x) && length(unique(x)) > 5, tab[varspline]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
       if (length(table(tab[[x]])) < 20){
@@ -109,9 +109,10 @@ prepare_zph <- function(tab, vardep, varindep, varajust) {
 }
 
 plot_nth_zph <- function(model, n){
-  z <- try2(plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE))
-  if (is_error(z) && grepl("Spline fit is singular", attr(z, "message"))) {
-    plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE, df = 2)
+  z <- try2(plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE),
+            c("Spline fit is singular", "Invalid variable"))
+  if (is_error(z) && grepl("Spline fit is singular", attr(z, "message"))){
+      plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE, df = 2)
   }
   abline(h = model$coefficients[n], col = 2)
 }
