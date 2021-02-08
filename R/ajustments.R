@@ -185,8 +185,7 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
 #' @return A character vector of the predictor variables
 #' @export
 get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "logistic", sparse = TRUE) {
-  if (type == "survival" & ncol(tab) == length(c(vardep, varindep)) + 1) return(character(0))
-  if (ncol(tab) == length(c(vardep, varindep))) return(character(0))
+  if (ncol(tab) == (length(c(vardep, varindep)) + as.numeric(type == "survival"))) return(character(0))
   set.seed(1234567)
   nona <- Filter(function(x) {
     solve_contrast(tab, vardep, x)
