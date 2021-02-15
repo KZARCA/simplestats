@@ -143,7 +143,19 @@ get_glance <- function(x, ...){
 #' @export
 #' @rdname get_glance
 get_glance.default <- function(x, y, survival = FALSE, censure = NULL){
-  find_test(x, y, survival, censure) %>% get_pertinent_params() %>% rename_glance()
+  if  (!survival){
+    no_na <- remove_na(x, y)
+    x <- no_na$x
+    y <- no_na$y
+  } else {
+    no_na <- create_tab_cens(x, y, censure)
+    x <- no_na$x
+    y <- no_na$.time
+    censure <- no_na$censure
+  }
+    find_test(x, y, survival, censure) %>%
+    get_pertinent_params() %>%
+    rename_glance()
 }
 
 #' @export

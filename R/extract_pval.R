@@ -40,7 +40,8 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
       f <- try2(cor.test(x, y))
       test <- "Pearson"
     } else {
-      f <- try2(cor.test(x, y, method = "spearman", exact = FALSE))
+      f <- try2(cor.test(x, y, method = "spearman", exact = FALSE),
+                warnings = c(gettext("NaNs produced")))
       test <- "Spearman"
     }
     if (is_error(f)) f <- NULL

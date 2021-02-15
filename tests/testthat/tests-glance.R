@@ -39,8 +39,8 @@ test_that("get_glance Pearson is working", {
   t <- get_glance(a, b)
   expect_error(t, NA)
   expect_warning(t, NA)
-  expect_equal(names(t), c("Correlation Coefficient", "Degrees of Freedom", "Test statistic", "p", "Test"))
-  expect_equal(t$Test, "Pearson's product-moment correlation")
+  expect_equal(names(t), c("Correlation Coefficient", "Test statistic", "p", "Test"))
+  expect_equal(t$Test, "Spearman's rank correlation rho")
 
 })
 test_that("get_glance Kruskall-Wallis is working", {

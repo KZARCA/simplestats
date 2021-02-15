@@ -212,6 +212,9 @@ create_ligne_cor <- function(x, y, compute_p = TRUE) {
   name_title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(95% CI)", domain = "R-simplestats")
   if  (compute_p) {
+    no_na <- remove_na(x, y)
+    x <- no_na$x
+    y <- no_na$y
     test <- find_test(x, y)
     if (is.null(test)) return(NULL)
     res <- test$result %>%
