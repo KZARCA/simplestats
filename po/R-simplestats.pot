@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: simplestats 0.12.0\n"
-"POT-Creation-Date: 2020-09-17 13:46\n"
+"Project-Id-Version: simplestats 0.15.1\n"
+"POT-Creation-Date: 2021-02-15 13:09\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,9 @@ msgid "Global p-value computation..."
 msgstr ""
 
 msgid "Confidence Intervals Computation"
+msgstr ""
+
+msgid "NaNs produced"
 msgstr ""
 
 msgid "the default string cannot be of length greater then one"
@@ -211,5 +214,8 @@ msgstr ""
 msgid "after"
 msgstr ""
 
-msgid "Can't find"
+msgid "Error:"
+msgstr ""
+
+msgid "Error warning:"
 msgstr ""

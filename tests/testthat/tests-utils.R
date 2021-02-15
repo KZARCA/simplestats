@@ -52,7 +52,7 @@ test_that("extract_from_model is working",{
 test_that("solve_contrast is working", {
   a <- 1:20
   b <- 41:60
-  c <- c(1:2, rep(NA, 18))
+  c <- c(1:3, rep(NA, 17))
   tab <- data.frame(a = a, b = b, c = c)
   expect_true(solve_contrast(tab, "a", b))
   expect_true(solve_contrast(tab, "a", a))
