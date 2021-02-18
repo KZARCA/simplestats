@@ -166,11 +166,17 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   if (length(big_vif)){
     elimine <- append(elimine, big_vif)
   }
-  if (length(varindep) == 1 && varindep %in% elimine){
-      return("ERROR_MODEL2")
+  if(pred){
+    if (length(varindep) == 1 && varindep %in% elimine){
+        return("ERROR_MODEL2")
+    }
+    return(setdiff(elimine, varindep[1]))
+  } else {
+    if (varindep[1] %in% elimine){
+      return("ERROR_MODEL")
+    }
+    return(elimine)
   }
-
-  return(setdiff(elimine, varindep[1]))
 }
 
 
