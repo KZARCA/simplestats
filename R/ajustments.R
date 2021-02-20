@@ -230,7 +230,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
               family = family,
               penalty.factor = penalties)
   }, errors = "Matrices must have same number of columns",
-  warnings = c("[Cc]onvergence", "Option grouped=FALSE enforced"))
+  warnings = c("[Cc]onvergence", "Option grouped=FALSE enforced", "solutions for larger values of lambda returned"))
   if (is_error(cv)){
     return("ERROR_MODEL")
   }
