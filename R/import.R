@@ -64,7 +64,7 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     if (is_error(tab)) {
       if (grepl("Failed to open", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
-      } else if (grepl("more columns than column names", tab$message)){
+      } else if (grepl("more columns than column names", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
       }  else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
