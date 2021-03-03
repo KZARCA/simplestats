@@ -227,6 +227,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
   cv <- try2({
     cv.glmnet(x = mat,
               y = y,
+              foldid = sample(rep(seq(10), length.out = nrow(nona))),
               family = family,
               penalty.factor = penalties)
   }, errors = "Matrices must have same number of columns",
