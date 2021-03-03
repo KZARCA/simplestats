@@ -36,11 +36,11 @@ factor_strings <- function(tab){
         if (nlevels(b) >= 10L) return(as.character(x))
         x <- reorder(b, b, function(y)-length(y))
         levels(x) %<>% str_trunc(20)
-      } else if (length(table(x)) < 5){
+      } else if (length(unique(x)) < 5){
         x <- factor(x)
         levels(x) %<>% str_trunc(20)
       }
-      if (is.factor(x) & nlevels(x) < 2 | is.numeric(x) & length(table(x)) < 2){
+      if (is.factor(x) & nlevels(x) < 2 | is.numeric(x) & length(unique(x)) < 2){
         return(as.character(x))
       }
       # if (nlevels(x) > 2L & any(table(as.factor(x)) <= 3L)){
@@ -260,7 +260,7 @@ make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInc
 #' @return a curated data frame
 #' @export
 create_tabi <- function(tab, type, keep = NULL){
-  tf <- Filter(function(x) length(table(x)) > 1 & !inherits(x, "Date") & !is.character(x), tab)
+  tf <- Filter(function(x) length(unique(x)) > 1 & !inherits(x, "Date") & !is.character(x), tab)
   if (type == "desc"){
     return(tf)
   }
