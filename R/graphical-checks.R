@@ -15,7 +15,7 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
   varsnum <- Filter(function(x) is.numeric(x), tab[varspline]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
-      if (length(unique(tab[[x]])) > 10){
+      if (count_items(tab[[x]]) > 10){
         ifelse(type == "survival", glue::glue("pspline({x})"), glue::glue("s({x}, k = 4)"))
         #k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
         #ifelse(type == "survival", paste0(x, ", df = 0"), paste0(x, ", k = ", k))

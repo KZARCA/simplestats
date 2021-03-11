@@ -110,7 +110,7 @@ drop_levels <- function(tab, remove = FALSE){
   if (remove){
     enleve <- map(seq_len(ncol(tab)), function(i){
       x <- tab[[i]]
-      if (length(unique(x)) < 2) i
+      if (count_items(x) < 2) i
     }) %>% compact() %>% flatten_dbl()
     if(length(enleve)) tab <- tab[-enleve]
   }
@@ -419,6 +419,7 @@ remove_multibyte_if_any <- function(x){
 solve_contrast <- function(tab, vardep, x, univ = FALSE) {
   if(!is.null(x)){
     if (identical(class(x), class(tab[[vardep]])) && isTRUE(all.equal(x, tab[[vardep]], check.attributes = FALSE))) return(TRUE)
+    if(count_items(x) < 2) return(FALSE)
     tmp <- data.frame(a = x, b = tab[[vardep]]) %>%
       na.exclude()
     if (is.factor(tmp$a) & is.factor(tmp$b)){
@@ -703,4 +704,9 @@ is_error <- function(x){
 #' @export
 is_warning <- function(x){
   inherits(x, "warning") | !is.null(attr(x, "warning"))
+}
+
+#' @export
+count_items <- function(x){
+  length(unique(na.exclude(x)))
 }

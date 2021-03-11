@@ -101,7 +101,7 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   tab %<>% prepare_model()
   analysables <- map_lgl(tab, function(x){
     if (is.factor(x)){
-      if (length(unique(droplevels(x))) > 1) TRUE else FALSE
+      if (count_items(droplevels(x)) > 1) TRUE else FALSE
     } else TRUE
   })
   elimine <- names(tab)[!analysables]
