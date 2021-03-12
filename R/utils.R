@@ -337,8 +337,7 @@ remove_big_vif <- function(tab, vardep, varindep, varajust, type, infl, only_var
   selected_vars <- (if(only_varajust) varajust else vars)
   ajust <- infl[which(names(infl) %in% selected_vars)]
   elimine <- character(0)
-
-  while (length(ajust) > 0 && max(ajust) > 5 & length(vars) > 1){
+  while (length(ajust) > 0 && max(ajust, na.rm = TRUE) > 5 & length(vars) > 1){
     big_vif <- which(ajust > 5)
     if (varindep[1] %in% names(big_vif)) ajust[varindep[1]] <- 0
 
