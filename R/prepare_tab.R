@@ -267,10 +267,12 @@ create_tabi <- function(tab, type, keep = NULL){
   if (type == "expl"){
     Filter(function(x) get_propDM(x) <= 0.2, tf)
   } else if (type == "pred"){
+    if (ncol(tf) > 1){
     elimine <- get_large_missing(tf)
     filtered <- tf[setdiff(names(tf), elimine)]
     filtered <- Filter(function(x) get_propDM(x) <= 0.2, filtered)
     if (!is.null(keep)) tf[union(keep, names(filtered))] else filtered
+    } else tf
   }
 }
 
