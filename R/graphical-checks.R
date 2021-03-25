@@ -55,7 +55,11 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
         lin <- termplot(mLin, plot = FALSE)
       }
       else if (type == "survival"){
-        graph <- coxph(as.formula(formule), data = tab)
+        graph <- try2(coxph(as.formula(formule), data = tab))
+        if  (is_error(graph)){
+          formule <- gsub("pspline", "ns", formule)
+          graph <- coxph(as.formula(formule), data = tab)
+        }
         mLin <- coxph(as.formula(formuleLin), data = tab)
         lin <- termplot(mLin,  rug = TRUE, se = TRUE, plot = FALSE)
       }
