@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2021-02-15 13:09\n"
-"PO-Revision-Date: 2021-02-15 13:10+0100\n"
+"POT-Creation-Date: 2021-04-07 16:06\n"
+"PO-Revision-Date: 2021-04-07 16:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -145,6 +145,12 @@ msgid "Proportion attributable to the missingness"
 msgstr ""
 
 msgid "Fraction of missing information"
+msgstr ""
+
+msgid "Spline fit is singular"
+msgstr "le système est numériquement singulier"
+
+msgid "Invalid variable"
 msgstr ""
 
 msgid "Proportion"

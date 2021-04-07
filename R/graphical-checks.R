@@ -115,9 +115,12 @@ prepare_zph <- function(tab, vardep, varindep, varajust) {
 
 plot_nth_zph <- function(model, n){
   z <- try2(plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE),
-            c("Spline fit is singular", "Invalid variable"))
-  if (is_error(z) && grepl("Spline fit is singular", attr(z, "message"))){
-      plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE, df = 2)
+            c(gettext("Spline fit is singular", domain="R-simplestats"), gettext("Invalid variable")))
+  if (is_error(z) && grepl(gettext("Spline fit is singular", domain="R-simplestats"), attr(z, "message"))){
+    z <- try2(plot(cox.zph(model, terms = FALSE), var = n, resid = FALSE, df = 2))
+    if(is_error(z)){
+      stop(attr(z, "message"))
+    }
   }
   abline(h = model$coefficients[n], col = 2)
 }
