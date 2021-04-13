@@ -1,11 +1,11 @@
 find_test_ba <- function(x, y){
   f <- NULL
   if (is.numeric(x)){
-    if (length(!is.na(x)) > 30 & length(!is.na(y)) > 30) {
+    n <- nrow(na.exclude(data.frame(x,y)))
+    if (n > 30) {
       f <- t.test(x, y, paired = TRUE)
       test <- "Paired Welch"
-    }
-    else {
+    } else if (n > 3) {
       f <- suppressWarnings(wilcox.test(x, y, paired = TRUE))
       test <- "Paired Mann-Whitney"
     }

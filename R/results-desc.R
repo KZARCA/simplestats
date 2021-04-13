@@ -148,6 +148,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
   qy <- quantile(y, na.rm = TRUE)
   nx <- sum(!is.na(x))
   ny <- sum(!is.na(y))
+  n <- nrow(na.exclude(data.frame(x,y)))
   before <- tibble(
     sprintf_number_table("%s (±%s)", meanx, sdx),
     sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]),
@@ -186,9 +187,9 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
                                      !is.null(pval_test) && grepl("Mann-Whitney", pval_test$test[1]) ~ "median",
                                      TRUE ~ "mean")
     ligne <- if (show_summary == "mean") {
-      tibble(before[[1]], after[[1]], delta, min(before$n, after$n))
+      tibble(before[[1]], after[[1]], delta, n)
     } else {
-      tibble(before[[2]], after[[2]], delta, min(before$n, after$n))
+      tibble(before[[2]], after[[2]], delta, n)
     }
     names(ligne) <- c(gettext("before", domain = "R-simplestats"),
                       gettext("after", domain = "R-simplestats"),

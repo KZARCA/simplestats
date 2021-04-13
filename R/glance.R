@@ -180,6 +180,11 @@ get_glance.mira <- function(x){
 #' @export
 #' @rdname get_glance
 get_glance_ba <- function(x, y){
-  find_test_ba(x, y) %>% get_pertinent_params() %>% rename_glance()
+  test <- find_test_ba(x, y)
+
+  if (!is.null(test))
+    test %>%
+    get_pertinent_params() %>%
+    rename_glance()
 }
 
