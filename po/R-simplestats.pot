@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.15.1\n"
-"POT-Creation-Date: 2021-04-07 16:06\n"
+"POT-Creation-Date: 2021-04-26 12:23\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -151,6 +151,9 @@ msgstr ""
 msgid "Invalid variable"
 msgstr ""
 
+msgid "message"
+msgstr ""
+
 msgid "Proportion"
 msgstr ""
 
@@ -170,6 +173,12 @@ msgid "Predicted Probability According to the Model"
 msgstr ""
 
 msgid "Observed Proportion"
+msgstr ""
+
+msgid "embedded nul(s) found in input"
+msgstr ""
+
+msgid "appears to contain embedded nulls"
 msgstr ""
 
 msgid "Unable to load this file because of unreadable characters."

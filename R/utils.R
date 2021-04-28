@@ -670,18 +670,21 @@ tryCatch_all <- function(expr) {
 #' @export
 #'
 try2 <- function(expr, errors, warnings){
+  grepf <- function(pattern, x){
+    grepl(pattern, x, fixed = TRUE)
+  }
   if(missing(errors)) errors <- NULL
   if(missing(warnings)) warnings <- NULL
   res <- tryCatch_all(expr)
-  if (is_error(res)){
-    all_cond <- map_lgl(errors, grepl, res$error$message)
+  if (is.null(res) || is_error(res)){
+    all_cond <- map_lgl(errors, grepf, res$error$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error: ", res$error$message))
     }
     return(structure(list(), message = res$error$message, class = "error"))
   }
   if (is_warning(res)){
-    all_cond <- map_lgl(warnings, grepl, res$warning$message)
+    all_cond <- map_lgl(warnings, grepf, res$warning$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error warning: ", res$warning$message))
     }

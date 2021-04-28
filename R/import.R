@@ -38,10 +38,11 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
   err <- NULL
 
   if(ext %in% c("csv", "txt")){
-    tab <- tryCatch(import_delim(file, sep = sep, dec = dec),
-                    error = function(e) e)
+    tab <- try2(import_delim(file, sep = sep, dec = dec),
+                warnings = c(gettext("embedded nul(s) found in input", domain = "R-simplestats"),
+                           gettext("appears to contain embedded nulls", domain = "R-simplestats")))
     if (is_error(tab)) {
-      if (grepl("type.convert", tab$call[1])){
+      if (grepl("type.convert", attr(tab, "message"))){
         err <- gettext("Unable to load this file because of unreadable characters.", domain = "R-simplestats")
       } else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")

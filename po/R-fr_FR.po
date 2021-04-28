@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2021-04-07 16:06\n"
-"PO-Revision-Date: 2021-04-07 16:08+0200\n"
+"POT-Creation-Date: 2021-04-26 12:23\n"
+"PO-Revision-Date: 2021-04-26 12:38+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -153,6 +153,9 @@ msgstr "le système est numériquement singulier"
 msgid "Invalid variable"
 msgstr ""
 
+msgid "message"
+msgstr ""
+
 msgid "Proportion"
 msgstr "Proportion"
 
@@ -173,6 +176,12 @@ msgstr ""
 
 msgid "Observed Proportion"
 msgstr ""
+
+msgid "embedded nul(s) found in input"
+msgstr "caractère(s) 'nul' au milieu de l'entrée"
+
+msgid "appears to contain embedded nulls"
+msgstr "caractère(s) 'nul' au milieu de l'entrée"
 
 msgid "Unable to load this file because of unreadable characters."
 msgstr "Ce fichier ne peut être chargé en raison de caractères illisibles."
