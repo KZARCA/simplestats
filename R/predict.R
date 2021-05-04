@@ -139,14 +139,14 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
     varajust <- character(0)
     error_lasso <- 1
   } else {
-    el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
+    el <- recherche_multicol(train, vardep, intersect(names(train), varindep), varajust, type, pred = TRUE)
     varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
   }
 
   results <- if (identical(el, "ERROR_MODEL2")){
     compute_mod(train, vardep, character(0), varajust, type, pred = 2)
   } else {
-    compute_mod(train, vardep, varindep, varajust, type, pred = 2)
+    compute_mod(train, vardep, intersect(names(train), varindep), varajust, type, pred = 2)
   }
   # for(i in seq_along(results$mod$xlevels)){
   #   results$mod$xlevels[[i]] <- union(results$mod$xlevels[[i]],
