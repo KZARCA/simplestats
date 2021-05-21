@@ -326,7 +326,7 @@ are_enough_cor <- function(tab, x, y, univ){
   if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) {
     nrow(tab) > min_rows
   } else if (is.factor(tab[[x]])) {
-    all(table(tab[[x]]) > min_rows)
+    all(table(tab) > min_rows)
   } else {
     TRUE
   }
@@ -676,7 +676,7 @@ try2 <- function(expr, errors, warnings){
   if(missing(errors)) errors <- NULL
   if(missing(warnings)) warnings <- NULL
   res <- tryCatch_all(expr)
-  if (is.null(res) || is_error(res)){
+  if (is_error(res)){
     all_cond <- map_lgl(errors, grepf, res$error$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error: ", res$error$message))
@@ -688,6 +688,7 @@ try2 <- function(expr, errors, warnings){
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste("Error warning: ", res$warning$message))
     }
+    if(is.null(res$value)) res$value <- list()
     return(structure(res$value, message = res$warning$message, class = unique(c(class(res$value), "warning"))))
   }
   res$value
@@ -710,3 +711,12 @@ is_warning <- function(x){
 count_items <- function(x){
   length(unique(na.exclude(x)))
 }
+
+gettext <- function(..., domain = "R-simplestats"){
+  base::gettext(..., domain = domain)
+}
+
+gettextf <- function(fmt, ..., domain = "R-simplestats"){
+  base::gettextf(fmt, ..., domain = domain)
+}
+
