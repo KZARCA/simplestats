@@ -326,7 +326,7 @@ are_enough_cor <- function(tab, x, y, univ){
   if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) {
     nrow(tab) > min_rows
   } else if (is.factor(tab[[x]])) {
-    all(table(tab) > min_rows)
+    all(table(tab) >= min_rows)
   } else {
     TRUE
   }
