@@ -232,7 +232,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
               penalty.factor = penalties)
   }, errors = c("Matrices must have same number of columns", "y is constant", "need at least two non-NA values to interpolate"),
   warnings = c("Convergence", "Option grouped=FALSE enforced", "solutions for larger values of lambda returned",
-               "binomial class has fewer than 8  observations"))
+               "binomial class has fewer than 8  observations", "empty model"))
   if (is_error(cv)){
     return("ERROR_MODEL")
   }
