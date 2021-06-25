@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2021-04-26 12:23\n"
+"POT-Creation-Date: 2021-06-25 15:37\n"
 "PO-Revision-Date: 2018-02-25 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -180,6 +180,15 @@ msgstr ""
 #, fuzzy
 msgid "Observed Proportion"
 msgstr "Proportion"
+
+msgid "invalid multibyte"
+msgstr ""
+
+msgid "more columns"
+msgstr ""
+
+msgid "incpmplete final line"
+msgstr ""
 
 msgid "embedded nul(s) found in input"
 msgstr ""

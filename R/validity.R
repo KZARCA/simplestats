@@ -26,7 +26,7 @@ get_number_variables_max <- function(tab, vardep, type = "linear"){
     nrow(tab)/threshold
   } else if (type == "logistic" | type == "survival") {
     N <- if(type == "logistic"){
-      min(table(tab[[vardep]]))
+      get_min_class(tab, vardep)
     } else {
       sum(tab[[vardep]] == 1)
     }
