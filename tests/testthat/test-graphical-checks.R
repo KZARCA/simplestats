@@ -72,7 +72,7 @@ test_that("create_spline surrounds with s() numerical dependant variables, ns() 
   varindep <- c("sex", "nodes", "age")
   varajust <- c("rx", "time", "differ")
   spl <- create_spline(tab, vardep, varindep, varajust, "logistic")
-  expect_equal(spl$graph$formula, extent ~ s(nodes) + s(age) + s(time) + sex + rx + differ)
+  expect_equal(spl$graph$formula, extent ~ s(nodes, k = 4) + s(age, k = 4) + s(time, k = 4) + sex + rx + differ)
   expect_equal(spl$mod$formula, extent ~ nodes + age + time + sex + rx + differ)
 })
 

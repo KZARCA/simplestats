@@ -11,12 +11,30 @@ split_cv <- function(tab, n = 10){
   split(tab, cv)
 }
 
+
+modify_mod_shrunk <- function(mod, shrunk = NULL){
+  if (!is.null(shrunk)){
+    if (inherits(mod, "mira")){
+      mod$analyses <- map(mod$analyses, function(x){
+        x$coefficients <- shrunk
+        x$linear.predictors <- model.matrix(x) %*% shrunk
+        x
+      })
+    } else {
+      mod$coefficients <- shrunk
+      mod$linear.predictors <- model.matrix(mod) %*% shrunk
+    }
+  }
+  mod
+}
+
 #' Creates a contingency table with predicted probabilities and actual classification
 #' @param mod a glm or mira object
 #'
 #' @return data.frame
 #' @export
-create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE){
+create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shrunk = NULL){
+  modify_mod_shrunk(mod, shrunk)
   if (is.null(tab)){
     label <- if (inherits(mod, "mira")) {
       getfit(mod, 1)$model[[1]]

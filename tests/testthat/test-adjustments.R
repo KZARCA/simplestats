@@ -21,7 +21,7 @@ test_that("define_varajust returns variables with a univariate pvalue < 0.2", {
 })
 
 test_that("define_varajust removes variables with contrasts problems", {
-  tab <- data.frame(V1 = c(rep("non", 49), "oui"), V2 = c((1:49)^2, NA), V3 = rnorm(50), V4 = 1:50)
+  tab <- data.frame(V1 = c(rep("non", 49), "oui"), V2 = c((1:49)^2, NA), V3 = rnorm(50), V4 = 1:50, stringsAsFactors = TRUE)
   expect_equivalent(define_varajust(tab, "V2", "V3", "linear", by_lasso = FALSE), "V4")
   expect_equivalent(define_varajust(tab, "V2", "V3", "linear", by_lasso = TRUE), "V4")
 })
