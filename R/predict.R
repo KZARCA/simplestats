@@ -12,8 +12,8 @@ split_cv <- function(tab, n = 10){
 }
 
 
-modify_mod_shrunk <- function(mod, shrunk = NULL){
-  if (!is.null(shrunk)){
+modify_mod_shrunk <- function(mod, shrunk = numeric(0)){
+  if (length(shrunk)){
     if (inherits(mod, "mira")){
       mod$analyses <- map(mod$analyses, function(x){
         x$coefficients <- shrunk
@@ -33,7 +33,7 @@ modify_mod_shrunk <- function(mod, shrunk = NULL){
 #'
 #' @return data.frame
 #' @export
-create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shrunk = NULL){
+create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shrunk = numeric(0)){
   modify_mod_shrunk(mod, shrunk)
   if (is.null(tab)){
     label <- if (inherits(mod, "mira")) {
