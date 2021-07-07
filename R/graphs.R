@@ -19,7 +19,7 @@ print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"
     ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
     if (nlevels(tab[[varindep]]) < 5){
-      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + guides(fill=FALSE) + labs(y = "Proportion")
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + guides(fill="none") + labs(y = "Proportion")
     } else {
       ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(y = "Proportion", fill=label(tab[[varindep]])) + scale_x_discrete(breaks = NULL)
     }
@@ -89,7 +89,7 @@ plot_reglin <- function(tab, x, y, method = "lm"){
 #' @examples
 boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
-  graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill=FALSE)
+  graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill="none")
   if (violin){
     graph <- graph + geom_violin(trim = FALSE) + geom_boxplot(width=0.1, fill = "white", outlier.shape = NA)
   } else {
