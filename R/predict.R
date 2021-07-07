@@ -126,8 +126,13 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
       varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
     }
     results <- compute_mod(train, vardep, varindep, varajust, type, pred = 2)
+    if (!is_warning(results$mod)) {
     AUC <- create_pred_obs(results$mod) %>%
       calculate_auc()
+    } else {
+      AUC <- NULL
+      error_lasso <- 1
+    }
     list(AUC, error_lasso)
   })
 }
@@ -167,20 +172,20 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   } else {
     compute_mod(train, vardep, intersect(names(train), varindep), varajust, type, pred = 2)
   }
-  # for(i in seq_along(results$mod$xlevels)){
-  #   results$mod$xlevels[[i]] <- union(results$mod$xlevels[[i]],
-  #                                     levels(data[[names(results$mod$xlevels)[i]]]))
-  # }
-
+  perf_boot <-  perf_test <- shrinkage_factor <- NULL
+  if (!is_warning(results$mod)){
   # Model performance on the sample (step 3 p95 Steyerberg Clinical Prediction Models)
-  pred_obs_boot <- create_pred_obs(results$mod, as_prob = FALSE) # Linear Predictor
-  perf_boot <- calculate_auc(pred_obs_boot)
-  # Model performance on the data (step 4)
-  pred_obs_test <- create_pred_obs(results$mod, data[c(vardep, varindep, varajust)], vardep, as_prob = FALSE)
-  perf_test <- calculate_auc(pred_obs_test)
-  shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>%
-    coef() %>%
-    extract2(2)
+    pred_obs_boot <- create_pred_obs(results$mod, as_prob = FALSE) # Linear Predictor
+    perf_boot <- calculate_auc(pred_obs_boot)
+    # Model performance on the data (step 4)
+    pred_obs_test <- create_pred_obs(results$mod, data[c(vardep, varindep, varajust)], vardep, as_prob = FALSE)
+    perf_test <- calculate_auc(pred_obs_test)
+    shrinkage_factor <- glm(D ~ M, data = pred_obs_test, family="binomial") %>%
+      coef() %>%
+      extract2(2)
+  } else {
+    error_lasso <- 1
+  }
   c(perf_boot, perf_test, shrinkage_factor, error_lasso)
 }
 
