@@ -99,7 +99,8 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   }
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
-  m <- mean(res$t[, 1], na.rm = TRUE)
+  m <- res$t0[1]
+
 
   # Calculate the optimism (step 5) : bootstrap performance - test performance
   opti <- mean(res$t[, 1] - res$t[, 2], na.rm = TRUE)
