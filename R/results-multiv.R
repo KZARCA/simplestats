@@ -177,3 +177,19 @@ modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
   }
   mod2
 }
+
+#' @export
+calculate_brier <- function(x){
+  UseMethod("calculate_brier")
+}
+
+#' @export
+calculate_brier.mira <- function(mod){
+  map_dbl(getfit(mod), calculate_brier.default) %>%
+    mean()
+}
+
+#' @export
+calculate_brier.default <- function(mod){
+  mean((predict(mod, type = "response")-(as.numeric(mod$model[[1]])-1))^2)
+}

@@ -41,9 +41,10 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     tab <- try2(import_delim(file, sep = sep, dec = dec),
                 errors = c(gettext("invalid multibyte"),
                            gettext("more columns"),
-                           gettext("incomplete final line")),
+                           ),
                 warnings = c(gettext("embedded nul(s) found in input", domain = "R-simplestats"),
-                           gettext("appears to contain embedded nulls", domain = "R-simplestats")
+                           gettext("appears to contain embedded nulls", domain = "R-simplestats"),
+                           gettext("incomplete final line")
                            ))
     if (is_error(tab)) {
       if (grepl("type.convert", attr(tab, "message"))){
