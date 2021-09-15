@@ -90,7 +90,9 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   set.seed(1234567)
   if (type_validation == "cv"){
     cv <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress)
-    m <- map_dbl(cv, 1)  %>%
+    m <- map(cv, 1)  %>%
+      compact() %>%
+      flatten_dbl() %>%
       mean(na.rm = TRUE)
 
     lambda <- get_lambda(mod) #heuristic formula (see Steyenberg)

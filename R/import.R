@@ -40,7 +40,7 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
   if(ext %in% c("csv", "txt")){
     tab <- try2(import_delim(file, sep = sep, dec = dec),
                 errors = c(gettext("invalid multibyte"),
-                           gettext("more columns")
+                           gettext("more columns"),
                            ),
                 warnings = c(gettext("embedded nul(s) found in input", domain = "R-simplestats"),
                            gettext("appears to contain embedded nulls", domain = "R-simplestats"),
@@ -66,7 +66,8 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
 
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
     tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
-                errors = c("Evaluation error", "Unable to open file", "rId1"), warnings = c("Expecting", "NA inserted for impossible", "Coercing"))
+                errors = c("Evaluation error", "Unable to open file", "rId1", "Unable to allocate memory"),
+                warnings = c("Expecting", "NA inserted for impossible", "Coercing"))
     if (is_error(tab)) {
       if (grepl("Failed to open", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
