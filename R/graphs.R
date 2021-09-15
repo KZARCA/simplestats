@@ -368,13 +368,17 @@ ggsurv <- function(sfit,
 }
 
 #' @export
-plot_ROC <- function(x, showThreshold = TRUE){
-  cut <- c(.2,.4, .5, .6, .8)
+plot_ROC <- function(x, thresholds = c(.2,.4, .5, .6, .8), as_percent = TRUE){
   p <- ggplot(x) + aes(d = D, m = M)
-  if(showThreshold) {
-    p <- p + geom_roc(cutoffs.at = cut, cutoff.labels = pourcent(cut))
-  } else p <- p + geom_roc(n.cuts = 0)
-  p + style_roc(xlab = "1 - Specificity", ylab = "Sensitivity")
+  p <- if(is.null(thresholds)) {
+     p + geom_roc()
+  } else if (is.na(thresholds)){
+    p + geom_roc(n.cuts = 0)
+  } else {
+    p + geom_roc(cutoffs.at = thresholds, cutoff.labels = if(as_percent) pourcent(thresholds) else thresholds)
+  }
+  p + style_roc(xlab = "1 - Specificity", ylab = "Sensitivity",guide = F) +
+    geom_abline(slope = 1, intercept = 0, linetype = 3)
 }
 
 #' @export
