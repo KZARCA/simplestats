@@ -396,5 +396,6 @@ plot_calibration <- function(tab_pred_obs, quantiles){
     scale_y_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0,1)) +
     xlab(gettext("Predicted Probability According to the Model", domain = "R-simplestats")) +
     ylab(gettext("Observed Proportion", domain = "R-simplestats")) +
+    geom_histogram(data = tab_pred_obs, aes(M, y = stat(count / sum(count))), inherit.aes = FALSE, bins = 100) +
     theme_bw()
 }
