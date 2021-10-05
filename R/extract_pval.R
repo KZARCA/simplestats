@@ -3,7 +3,10 @@ find_test_ba <- function(x, y){
   if (is.numeric(x)){
     n <- nrow(na.exclude(data.frame(x,y)))
     if (n > 30) {
-      f <- t.test(x, y, paired = TRUE)
+      f <- try2(t.test(x, y, paired = TRUE), errors = "data are essentially constant")
+      if(grepl(attr(f, "message"), "data are essentially constant")){
+        f <- NULL
+      }
       test <- "Paired Welch"
     } else if (n > 3) {
       f <- suppressWarnings(wilcox.test(x, y, paired = TRUE))
