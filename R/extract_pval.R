@@ -4,7 +4,7 @@ find_test_ba <- function(x, y){
     n <- nrow(na.exclude(data.frame(x,y)))
     if (n > 30) {
       f <- try2(t.test(x, y, paired = TRUE), errors = "data are essentially constant")
-      if(grepl("data are essentially constant", attr(f, "message"))){
+      if (isTRUE(grepl("data are essentially constant", attr(f, "message")))){
         f <- NULL
       }
       test <- "Paired Welch"
