@@ -113,11 +113,10 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
 }
 
 get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = function() cat("=")){
-  tab <- split_cv(tab, n)
-  map(seq_along(tab), function(i){
+  tabs <- split_cv(tab, n)
+  map(seq_along(tabs), function(i){
     progression()
-    train <- do.call(rbind, tab[-i])
-    test <- tab[[i]]
+    train <- do.call(rbind, tabs[-i])
     error_lasso <- 0
     varajust <- get_lasso_variables(train, vardep, varindep, type)
     if (identical(varajust, "ERROR_MODEL")){
