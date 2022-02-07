@@ -74,16 +74,22 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
 
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
     tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
-                errors = c("Evaluation error", "Unable to open file", "rId1", "Unable to allocate memory"),
+                errors = c("Evaluation error", "Unable to open file", "rId", "Unable to allocate memory"),
                 warnings = c("Expecting", "NA inserted for impossible", "Coercing"))
     if (is_error(tab)) {
       if (grepl("Failed to open", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
       } else if (grepl("more columns than column names", attr(tab, "message"))){
         err <- gettext("Unable to load this file. Try to convert it into xlsx.", domain = "R-simplestats")
-      }  else {
+      } else if (grepl("rId", attr(tab, "message"))){
+        err <- gettext("Unable to read this sheet.", domain = "R-simplestats")
+      }
+      else {
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
       }
+    }
+    if(!is.null(err)){
+      return(err)
     }
 
     correspondance <- make_correspondance(tab)
