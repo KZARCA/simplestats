@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.15.1\n"
-"POT-Creation-Date: 2021-06-25 15:37\n"
+"POT-Creation-Date: 2022-02-07 11:51\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -181,19 +181,25 @@ msgstr ""
 msgid "more columns"
 msgstr ""
 
-msgid "incpmplete final line"
-msgstr ""
-
 msgid "embedded nul(s) found in input"
 msgstr ""
 
 msgid "appears to contain embedded nulls"
 msgstr ""
 
+msgid "incomplete final line"
+msgstr ""
+
 msgid "Unable to load this file because of unreadable characters."
 msgstr ""
 
 msgid "Unable to load this file."
+msgstr ""
+
+msgid "Unable to load this file. Try changing the delimiter and/or the extension of the file"
+msgstr ""
+
+msgid "(extension .csv if the delimiter is a comma or a semicolon, extension .txt if the delimiter is a tabulation)"
 msgstr ""
 
 msgid "Unable to load this file. Try to convert it into xlsx."
