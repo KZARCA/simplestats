@@ -62,7 +62,15 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     ## names(tab) : colnames, with make.names
     ## label(tab) : correspondance with standardize_tab
     ## correspondance : noms = names(tab), correspondance = standardize_names_basic(noms)
-    correspondance <- make_correspondance(tab)
+    correspondance <- try2(make_correspondance(tab), errors = "10000")
+
+    if (is_error(correspondance) & grepl("10000", attr(correspondance, "message"))){
+      err <- paste(
+        gettext("Unable to load this file. Try changing the delimiter and/or the extension of the file", domain = "R-simplestats"),
+        gettext("(extension .csv if the delimiter is a comma or a semicolon, extension .txt if the delimiter is a tabulation)", domain = "R-simplestats")
+      )
+      return(err)
+    }
 
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
     tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
@@ -77,9 +85,7 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
         err <- gettext("Unable to load this file.", domain = "R-simplestats")
       }
     }
-    if(!is.null(err)){
-      return(err)
-    }
+
     correspondance <- make_correspondance(tab)
   }
   tab <- standardize_tab(tab)

@@ -406,7 +406,8 @@ remove_multibyte <- function(x){
 remove_multibyte.data.frame <- function(x){
   modify_if(x, Negate(no_multibyte.default), function(y) {
     remove_multibyte.default(y)
-  })
+  }) %>%
+    setNames(remove_multibyte.default(names(x)))
 }
 
 remove_multibyte.default <- function(x){
