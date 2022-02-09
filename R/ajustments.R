@@ -245,6 +245,7 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
     coef(cv, cv[[lambda]])
   } else {
     idx <- tail(which(nzero <= nb_remaining), n = 1)
+    if (!length(idx)) idx <- 1
     coef(cv, cv$lambda[idx])
   }
 
