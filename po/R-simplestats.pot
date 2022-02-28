@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.15.1\n"
-"POT-Creation-Date: 2022-02-07 12:34\n"
+"POT-Creation-Date: 2022-02-28 09:09\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -179,6 +179,9 @@ msgid "invalid multibyte"
 msgstr ""
 
 msgid "more columns"
+msgstr ""
+
+msgid "missing value"
 msgstr ""
 
 msgid "embedded nul(s) found in input"
