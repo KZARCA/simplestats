@@ -95,7 +95,7 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
       flatten_dbl() %>%
       mean(na.rm = TRUE)
 
-    lambda <- get_lambda(mod, tab) #heuristic formula (see Steyenberg)
+    lambda <- get_lambda(mod) #heuristic formula (see Steyenberg)
     shrunk <- get_shrunk_coef(mod, lambda)
     return(list(mean = m, shrunk = shrunk, error = sum(map_dbl(cv, 2) / length(map_dbl(cv, 2)))))
   }
@@ -227,9 +227,9 @@ get_lambda <- function(x, ...){
   UseMethod("get_lambda")
 }
 
-get_lambda.default <- function(mod, tab){
+get_lambda.default <- function(mod){
   LL1 <- logLik(mod)
-  LL0 <- update(mod, ". ~ 1", data= tab) %>%
+  LL0 <- update(mod, ". ~ 1", data = mod$data) %>%
     logLik()
   LR <- -2 * (LL0 - LL1)
   df <- mod$df.null - mod$df.residual
