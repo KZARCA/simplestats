@@ -128,7 +128,9 @@ compute_mod_base_bootstrap <- function(tab, type, miss, exLabel, formule){
   }
   else tabBoot <- tab
   .fun <- get_fun(type)
-  do.call(.fun$fun, c(list(formula = formule, data = as.name("tabBoot")), .fun$args_sup))
+  mod <- do.call(.fun$fun, c(list(formula = formule, data = as.name("tabBoot")), .fun$args_sup))
+  if (is.null(mod$data)) mod$data <- tabBoot
+  mod
 }
 
 get_mod <- function(tab, .fun, formule){
@@ -152,11 +154,13 @@ modify_mod <- function(x, ...){
 
 modify_mod.default <- function(mod, tab, varindep, varajust, pred){
   warned <- attr(mod, "warning")
+  if(is.null(mod$data)) mod$data <- tab
   if (is.null(warned)) return(mod)
   if(any(grepl("fitted probabilities numerically 0 or 1 occurred", warned), na.rm = TRUE)){
     m <- keep_warning(filter_glm_fit(mod, tab, varindep, varajust, pred))
     if (!is.null(m)) mod <- m
   }
+  if(is.null(mod$data)) mod$data <- tab
   return(mod)
 }
 
