@@ -220,55 +220,27 @@ remove_na <- function(x, y, ..., drop_factor = FALSE){
   no_na
 }
 
-
 #' @export
-add_varname <- function(x, y, ...){
-  UseMethod("add_varname", y)
-}
-
-#' @export
-add_varname.default <- function(tab, x, noms, ...){
-  add_column(tab, id = noms, variable = label(x), .before = 1)
-}
-
-#' @export
-add_varname.factor <- function(tab, x, noms, one_line = FALSE, add_niveau = TRUE){
-  if (one_line) add_varname.default(tab, x, noms)
-  else {
-    id <- c(rep(noms, nlevels(x)))
-    variable <- c(rep(label(x), nlevels(x)))
-    niveau <- levels(x)
-    if (add_niveau) add_column(tab, id, variable, niveau, .before = 1)
-    else add_column(tab, id, variable, .before = 1)
-  }
-}
-
-#' @export
-add_varname.boot <- function(tableRet, resBoot){
-  map2_df(resBoot$data[-1], names(resBoot$data[-1]), function(x,y){
-    if(is.numeric(x)) {
-      variable <- label(x)
-      if(grepl("^I\\(", y)){
-        rec <- stringr::str_match(y, "^I\\((.*?)/([0-9]\\.?[0-9]*)\\)")
-        multiple <- as.numeric(rec[[3]])
-        id <- rec[[2]]
-      } else {
-        multiple <- 1
-        id <- y
-      }
-      niveau <- ""
+label_cutOff <- function (breaks, included) {
+  l <- length(breaks)
+  map(seq_len(l-1), function(i){
+    if (i == 1){
+      if (!is.null(included) && !included)
+        paste0("<", breaks[i+1])
+      else
+        paste0("≤", breaks[i+1])
     }
-    else {
-      id <- rep(y, nlevels(x) - 1)
-      variable <- rep(label(x), nlevels(x) - 1)
-      niveau <- sprintf("%s vs %s", levels(x)[-1], rep(levels(x)[1], nlevels(x) - 1))
-      multiple <- NA
+    else if (i < l-1)
+      paste(breaks[i], "-", breaks[i+1])
+    else if (i == l-1){
+      if (!is.null(included) && !included)
+        paste0("≥", breaks[i])
+      else
+        paste0(">", breaks[i])
     }
-    tibble(id = id, variable = variable, niveau = niveau, multiple = multiple)
-  }) %>%
-    bind_cols(as_tibble(tableRet)) %>%
-    add_class("tabboot")
+  }) %>% compact() %>% flatten_chr()
 }
+
 
 #' Get the number(s) formatted in percentage
 #'
@@ -380,7 +352,7 @@ remove_big_vif <- function(tab, vardep, varindep, varajust, type, infl, only_var
 
 #' @export
 add_class <- function(x, classe){
-  structure(x, class = c(classe, class(x)))
+  structure(x, class = unique(c(classe, class(x))))
 }
 
 

@@ -1,7 +1,7 @@
 #' @export
-add_knots <- function(varindep, variable, position){
-  attr(varindep, paste("knots", variable, sep = "_")) <- position
-  varindep
+add_knots <- function(allVars, variable, position){
+  attr(allVars, paste("knots", variable, sep = "_")) <- position
+  allVars
 }
 
 

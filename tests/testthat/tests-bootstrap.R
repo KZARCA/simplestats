@@ -97,3 +97,18 @@ test_that("print_all_boots works", {
   expect_equal(booted$term, c("nodes", "sex1"))
 })
 
+
+test_that("get_all_boots is working", {
+  set.seed(1)
+  varajust <- NULL
+  mod <- compute_mod(tab, "age", c("sex", "nodes", "rx"), varajust, "linear")$mod
+  all_boots <- get_all_boots(mod, varajust, 4, 200)
+  expect_equal(names(all_boots), c("resBoot", "resBoot_anova", "tab_ci"))
+  expect_type(all_boots$resBoot_anova, "list")
+
+  varajust <- "rx"
+  mod <- compute_mod(tab, "age", c("sex", "nodes"), varajust, "linear")$mod
+  all_boots <- get_all_boots(mod, varajust, 4, 200)
+  expect_equal(names(all_boots), c("resBoot", "resBoot_anova", "tab_ci"))
+  expect_null(all_boots$resBoot_anova)
+})

@@ -32,8 +32,7 @@ Imports:
   readr(>= 1.1.1),
   plotROC(>= 2.2.1),
   glmnet(>= 3.0),
-  exact2x2(>= 1.6.5)
-Remotes: 
-  KZARCA/broom
+  exact2x2(>= 1.6.5),
+  broom(>= 0.7.0)
 RoxygenNote: 7.1.1
 Suggests: testthat
