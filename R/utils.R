@@ -148,14 +148,18 @@ nearest_up_thousand <- function(x){
 #' @export
 #'
 #' @examples
-get_nvar_mod <- function(tab, varajust){
+get_nvar_mod <- function(tab, varajust = NULL, remove1 = TRUE){
   if(!is.null(varajust)) {
     tab %<>%
       dplyr::select(-dplyr::one_of(varajust))
   }
   map_dbl(tab, function(x){
     if(is.numeric(x)) 1
-    else if (is.factor(x)) nlevels(x) - 1
+    else if (is.factor(x)) {
+      n <- nlevels(x)
+      if (remove1) n-1
+      n
+    }
   }) %>%
     sum() %>%
     magrittr::subtract(1)
@@ -202,6 +206,22 @@ sprintf_number_table <- function(string, ...){
     map_if(is.numeric, format_number)
   do.call(sprintf, c(list(fmt = string), .dots))
 }
+
+#' @export
+format_pval <- function(number, keepNA = FALSE){
+  map_chr(number, function(x){
+    if (is.nan(x)) return("NaN")
+    if (is.na(x) && keepNA) return(NA)
+    if(is.na(x) | is.character(x)) return("-")
+    f <- if (x < 0.001) f <- "<0.001"
+    else if(x < 0.01) f <- "<0.01"
+    else  {
+      digits <- if (x < .051 & x > 0.049) 3 else 2
+      base::format.pval(x, eps = 0.001, digits = digits)
+    }
+  })
+}
+
 
 remove_na <- function(x, y, ..., drop_factor = FALSE){
   dots <- list(...)

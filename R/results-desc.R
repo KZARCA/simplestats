@@ -35,11 +35,16 @@ create_ligne_desc.numeric <- function(x, noms, ...){ #si la variable est numéri
 
 #' @export
 #' @rdname create_ligne_desc
-create_ligne_desc.factor <- function(x, noms, ...){
+create_ligne_desc.factor <- function(x, noms, show_prop = TRUE){
   cont <- table(x)
   prop <- prop.table(cont) %>%  pourcent()
   map2(cont, prop, function(x, y) {
-    sprintf_number_table("%s (%s)", x, y)
+    if (show_prop){
+      sprintf_number_table("%s (%s)", x, y)
+    } else {
+      sprintf_number_table("%s", x)
+    }
+
   }) %>%
     as_tibble() %>%
     add_varname(x, noms, one_line = TRUE)
@@ -95,21 +100,30 @@ create_ligne_desc_export <- function(x, ...){
 
 #' @export
 #' @rdname create_ligne_desc
-create_ligne_desc_export.factor <- function(x, noms, ...){
+create_ligne_desc_export.factor <- function(x, noms, show_prop = TRUE){
   cont <- table(x) %>% unname()
   prop <- prop.table(cont) %>%  pourcent() %>% unname()
   d <- map2_chr(cont, prop, function(x, y) {
-    sprintf_number_table("%s (%s)", x, y)
+    if (show_prop){
+      sprintf_number_table("%s (%s)", x, y)
+    } else {
+      sprintf_number_table("%s", x)
+    }
   }) %>% tibble()
   d %<>% add_varname(x, noms, add_niveau = TRUE)
-  colnames(d) <- c("id", "variable", "niveau", "n (%)")
+  column_names <- c("id", "variable", "niveau")
+  if (show_prop) {
+    colnames(d) <- c(column_names, "n (%)")
+  } else {
+    colnames(d) <- c(column_names, "n")
+  }
   d$niveau <- as.character(d$niveau)
   d
 }
 
 #' @export
 #' @rdname create_ligne_desc
-create_ligne_desc_export.default <- create_ligne_desc
+create_ligne_desc_export.numeric <- create_ligne_desc.numeric
 
 #' Displays the descriptive analysis in markdown
 #'

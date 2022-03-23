@@ -116,6 +116,12 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
 
   mod <- get_mod(tab_m, .fun, formule) %>%
     modify_mod(tab_m, varindep, varajust, pred)
+
+  if(!"data" %in% names(mod)){
+      mod <- structure(c(mod, list(data = tab)),
+                       class = class(mod))
+    }
+
   return(list(tab = tab_m, mod = mod, formule = formule, formule2 = formule2,
               imputer = resume_imputer))
 }

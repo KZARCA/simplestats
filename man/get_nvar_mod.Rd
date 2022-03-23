@@ -4,7 +4,7 @@
 \alias{get_nvar_mod}
 \title{Get the predicted number of terms in a statistical model}
 \usage{
-get_nvar_mod(tab, varajust)
+get_nvar_mod(tab, varajust = NULL, remove1 = TRUE)
 }
 \arguments{
 \item{tab}{The data frame}
