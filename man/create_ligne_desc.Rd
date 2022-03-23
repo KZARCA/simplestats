@@ -6,20 +6,20 @@
 \alias{create_ligne_desc.factor}
 \alias{create_ligne_desc_export}
 \alias{create_ligne_desc_export.factor}
-\alias{create_ligne_desc_export.default}
+\alias{create_ligne_desc_export.numeric}
 \title{Descriptive analysis}
 \usage{
 create_ligne_desc(x, ...)
 
 \method{create_ligne_desc}{numeric}(x, noms, ...)
 
-\method{create_ligne_desc}{factor}(x, noms, ...)
+\method{create_ligne_desc}{factor}(x, noms, show_prop = TRUE)
 
 create_ligne_desc_export(x, ...)
 
-\method{create_ligne_desc_export}{factor}(x, noms, ...)
+\method{create_ligne_desc_export}{factor}(x, noms, show_prop = TRUE)
 
-create_ligne_desc_export.default(x, ...)
+\method{create_ligne_desc_export}{numeric}(x, noms, ...)
 }
 \arguments{
 \item{x}{A vector to describe}

@@ -36,7 +36,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom stats relevel
 #' @importFrom stats termplot
 #' @importFrom stats line
-#' @importFrom dplyr group_by
+#' @importFrom dplyr group_by case_when pull
 #' @importFrom dplyr select
 #' @importFrom dplyr filter
 #' @importFrom dplyr mutate
@@ -91,7 +91,7 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom stringr str_trunc
 #' @importFrom tibble tibble
 #' @importFrom tibble as_tibble
-#' @importFrom tibble add_column
+#' @importFrom tibble add_column add_row
 #' @importFrom readr guess_encoding
 #' @importFrom rlang sym
 #' @importFrom rlang ":="

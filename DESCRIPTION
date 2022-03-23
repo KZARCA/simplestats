@@ -33,6 +33,7 @@ Imports:
   plotROC(>= 2.2.1),
   glmnet(>= 3.0),
   exact2x2(>= 1.6.5),
-  broom(>= 0.7.0)
+  broom(>= 0.7.0),
+  forestplot(>= 2.0.1)
 RoxygenNote: 7.1.1
 Suggests: testthat
