@@ -67,32 +67,55 @@ plot_forest <- function(mod, varajust = NULL, ...){
     prepare_forestplot()
   show_estimate <- .dots$show_estimate %||% TRUE
   title_n <- .dots$title_n %||% "N (%)"
-  min_ci <- .dots$min_ci %||% min(tab_mod$conf.low, na.rm = TRUE)
-  max_ci <- .dots$max_ci %||% max(tab_mod$conf.high, na.rm = TRUE)
   show_ticks <- .dots$show_ticks %||% TRUE
   style_box <- .dots$style_box %||% "normal"
   style_box <- getFromNamespace(sprintf("fpDraw%sCI", capitalize(style_box)), "forestplot")
 
   gpar <- grid::gpar
+  lower <- min(tab_mod$conf.low, na.rm = TRUE)
+  upper <- max(tab_mod$conf.high, na.rm = TRUE)
+
   if (inherits(tab_mod, "tabglm") | inherits(tab_mod, "tabcoxph")){
     fun <- exp
-    breaks <- exp(seq(-2,2, by = 0.2))
-    breaks <- round(breaks, ifelse(breaks < 0.8, 2,1))
+    # breaks <- exp(seq(-2,2, by = 0.2))
+    # breaks <- round(breaks, ifelse(breaks < 0.8, 2,1))
     xlog <- TRUE
     if(inherits(tab_mod, "tabglm")){
       estimate_name <- "Odds Ratio"
     } else {
       estimate_name <- "Hazard Ratio"
     }
+    breaks <- exp(seq(log(lower), log(upper), by = 0.2))
+    min_ci <- .dots$min_ci %||% min(breaks)
+    max_ci <- .dots$max_ci %||% max(breaks)
+    min_ci <- max(min_ci, 1E-3)
+
+
   } else {
     fun <- function(x) x
     estimate_name <- "Coefficients"
     xlog <- FALSE
-    breaks <- seq(-2.5, 2.5, 0.25)
+    step <- case_when(
+      upper-lower > 5 ~ 1,
+      upper-lower > 2 ~ 0.5,
+      upper-lower > .5 ~ 0.25,
+      TRUE ~ 0.1)
+    breaks <- seq(lower %/% step * step, (upper %/% step + 1) * step, step)
+    min_ci <- .dots$min_ci %||% min(breaks)
+    max_ci <- .dots$max_ci %||% max(breaks)
+    if (length(breaks) > 10){
+      breaks <- breaks[-c(1, length(breaks))]
+    }
   }
+  breaks <- round(breaks, ifelse(breaks < 0.8, 2,1))
+
 
   clip <- c(min_ci, max_ci)
-  breaks <- breaks[breaks > min_ci & breaks < max_ci]
+  breaks <- breaks[breaks >= min_ci & breaks <= max_ci]
+  breaks <- unique(c(breaks, fun(0)))
+  # breaks <- if(length(breaks) < 2) {
+  #   if(xlog) c(0.8,1,1.2) else c(-.2,0,.2)
+  # } else breaks
 
   headers <- c(NA, title_n, if(show_estimate) estimate_name, "p")
 
@@ -123,6 +146,7 @@ plot_forest <- function(mod, varajust = NULL, ...){
                          ),
             class = "gforge_forestplot",
             nvars = nvars)
+
 #cairo_pdf("/tmp/yo.pdf", width = 12, height = 0.6*(get_nvar_mod(mod$model, remove1 = FALSE)+1))
 #png("/tmp/yo2.png", width = 4000, height = 180*(get_nvar_mod(mod$model, remove1 = FALSE)+1), res = 300)
 
