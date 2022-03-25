@@ -10,7 +10,7 @@ test_that("format_forestplot gets the correct number of rows", {
   t_mod <- create_table_forestplot(mod, "nodes") %>%
     prepare_forestplot()
   map_dbl(varindep, function(x){
-   if (is.factor(tab[[x]])) nlevels(tab[[x]]) + 1 else 2
+   if (is.factor(tab[[x]])) nlevels(tab[[x]]) + 2 else 2
   }) %>%
     sum() %>%
   expect_equal(nrow(t_mod))

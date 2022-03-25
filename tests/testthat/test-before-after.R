@@ -52,11 +52,11 @@ test_that("create_ligne_desc_ba.factor is working with unequal number of categor
   expect_equal(names(ligne), c("id", "variable", "niveau", gettext("before", domain = "R-simplestats"),
                                gettext("after", domain = "R-simplestats"), "n", "p", "test"))
   expect_equal(ligne$niveau, as.character(1:4))
-  expect_equivalent(ligne$after[4], "0 (0%)")
+  expect_equivalent(ligne[[gettext("after")]][4], "0 (0%)")
   expect_equal(ligne$test, c("McNemar-Bowker", rep(NA, 3)))
   ligne <- create_ligne_desc_ba(y, z)
-  expect_equivalent(ligne$after[1:2], rep("0 (0%)", 2))
-  expect_equivalent(ligne$before[4:6], rep("0 (0%)", 3))
+  expect_equivalent(ligne[[gettext("after")]][1:2], rep("0 (0%)", 2))
+  expect_equivalent(ligne[[gettext("before")]][4:6], rep("0 (0%)", 3))
   expect_equal(ligne$test, c("McNemar-Bowker", rep(NA, 5)))
 })
 

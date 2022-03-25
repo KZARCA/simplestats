@@ -157,8 +157,7 @@ get_nvar_mod <- function(tab, varajust = NULL, remove1 = TRUE){
     if(is.numeric(x)) 1
     else if (is.factor(x)) {
       n <- nlevels(x)
-      if (remove1) n-1
-      n
+      if (remove1) n-1 else n
     }
   }) %>%
     sum() %>%
