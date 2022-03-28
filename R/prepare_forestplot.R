@@ -126,7 +126,7 @@ plot_forest <- function(mod, varajust = NULL, ...){
     as.matrix()
 
   text[1, ] <- headers
-  nvars <- get_nvar_mod(if(inherits("mira", mod)) getfit(mod,1)$model else mod$model,
+  nvars <- get_nvar_mod(if(inherits(mod, "mira")) getfit(mod,1)$model else mod$model,
                         remove1 = FALSE)
 
   structure(forestplot::forestplot(tab_mod, mean = estimate, lower = conf.low, xlog = xlog,
