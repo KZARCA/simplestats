@@ -126,8 +126,8 @@ plot_forest <- function(mod, varajust = NULL, ...){
     as.matrix()
 
   text[1, ] <- headers
-
-  nvars <- get_nvar_mod(mod$model, remove1 = FALSE)
+  nvars <- get_nvar_mod(if(inherits("mira", mod)) getfit(mod,1)$model else mod$model,
+                        remove1 = FALSE)
 
   structure(forestplot::forestplot(tab_mod, mean = estimate, lower = conf.low, xlog = xlog,
                          upper = conf.high, labeltext = text, boxsize = 0.3,
@@ -146,25 +146,4 @@ plot_forest <- function(mod, varajust = NULL, ...){
                          ),
             class = "gforge_forestplot",
             nvars = nvars)
-
-#cairo_pdf("/tmp/yo.pdf", width = 12, height = 0.6*(get_nvar_mod(mod$model, remove1 = FALSE)+1))
-#png("/tmp/yo2.png", width = 4000, height = 180*(get_nvar_mod(mod$model, remove1 = FALSE)+1), res = 300)
-
-
-  # forestplot::forestplot(tab_mod, mean = estimate, lower = conf.low, xlog = xlog,
-  #                        upper = conf.high, labeltext = text, boxsize = 0.3,
-  #                        is.summary = c(TRUE, rep(FALSE, nrow(tab_mod) -1)),
-  #                        graph.pos = 3, hrzl_line = TRUE, ci.vertices = show_ticks,
-  #                        lwd.ci=1, ci.vertices.height = 0.2,
-  #                        clip = clip,
-  #                        graphwidth = unit(0.5, "npc"),
-  #                        align="l",
-  #                        txt_gp = forestplot::fpTxtGp(cex = 1.1, summary= gpar(cex = 1.1), ticks = gpar(cex = .9)),
-  #                        col=forestplot::fpColors(box="black", lines="black", zero = "gray70"),
-  #                        xticks = breaks,
-  #                        colgap = unit(0.02, "npc"),
-  #                        fn.ci_norm = style_box,
-  #                        #lineheight = unit(2, "cm")
-  #                        lineheight = unit(8, "mm")
-  #)
 }
