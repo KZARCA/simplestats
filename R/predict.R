@@ -253,27 +253,25 @@ compute_sens_spe <- function(pred_obs, thresholds = seq(0.1, 1, by=0.1), format 
     sen <- binom.test(t, nrow(m)) %>% broom::tidy()
     spe <- binom.test(nt, nrow(nm)) %>% broom::tidy()
 
-    if (format){
-      tibble(cutoff = x,
+    res <- if (format){
+      tibble(threshold = x,
              sensitivity = sprintf_number_table("%s [%s - %s]", pourcent(sen$estimate),
                                               pourcent(sen$conf.low), pourcent(sen$conf.high)),
              specificity = sprintf_number_table("%s [%s - %s]", pourcent(spe$estimate),
                                               pourcent(spe$conf.low), pourcent(spe$conf.high)))
-    } else tibble(cutoff = x,
+    } else tibble(threshold = x,
                   sensitivity = sen$estimate,
                   specificity = spe$estimate)
   })
 }
 
+
+
 #' @export
-prepare_pred <- function(x, y){
-  tab_pred <- tibble(M = x, D = as.numeric(y)-1)
-  range <- c(min(x, na.rm = TRUE), max(x, na.rm = TRUE))
-  thresholds <- seq(range[1], range[2], by = (range[2]-range[1])/10)
-  sens_spe <- compute_sens_spe(tab_pred, thresholds = thresholds, format = FALSE) %>%
-    mutate(r = sensitivity/(1-specificity))
-  if (max(sens_spe$r, na.rm = TRUE) < 1.2) {
-    tab_pred <- mutate(D = 1-D)
+prepare_pred <- function(y, x, boot = TRUE){
+  tab_pred <- structure(tibble(M = x, D = as.numeric(y)-1), rev = FALSE)
+  if (calculate_auc(tab_pred) < 0.5) {
+    tab_pred <- structure(mutate(tab_pred, D = 1-D), rev = TRUE)
   }
   tab_pred
 }
