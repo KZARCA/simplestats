@@ -81,6 +81,7 @@ is_homoscedatic.default <- function(x, y, ...){
 #' Can it be considered as normal?
 #'
 #' @param x Object to verify
+#' @param df data.frame with 2 columns, x being numeric and y being a factor
 #' @param model The result of the lm function
 #'
 #' @return
@@ -92,11 +93,24 @@ is_normal <- function(x){
 }
 
 #' @export
-#' @rdname is_normal
+#' @rdname is_normalrb
 is_normal.lm <- function(x){
   rstudent(x) %>%
     is_normal.default()
 }
+
+#' @export
+#' @rdname is_normal
+is_normal.data.frame <- function(df){
+  lev <- unique(df$y)
+  map_lgl(seq_along(lev), function(i){
+    filter(df, y == lev[i]) %>%
+      pull(x) %>%
+      is_normal.default()
+  }) %>%
+    all()
+}
+
 
 #' @export
 #' @rdname is_normal

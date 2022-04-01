@@ -1,8 +1,9 @@
 find_test_ba <- function(x, y){
   f <- NULL
   if (is.numeric(x)){
-    n <- nrow(na.exclude(data.frame(x,y)))
-    if (n > 30) {
+    df <- na.exclude(data.frame(x,y))
+    n <- nrow(df)
+    if (is_normal(df)) {
       f <- try2(t.test(x, y, paired = TRUE), errors = "data are essentially constant")
       if (isTRUE(grepl("data are essentially constant", attr(f, "message")))){
         f <- NULL
@@ -39,7 +40,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
     f <- survdiff(Surv(y, censure) ~ x)
     test <- "Logrank"
   } else if (is.numeric(x) & is.numeric(y)){
-    if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+    if (is_normal(x) & is_normal(y) && is_homoscedatic(lm(y ~ x))){
       f <- try2(cor.test(x, y))
       test <- "Pearson"
     } else {
@@ -55,10 +56,10 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
       x <- tmp
     }
     formule <- as.formula(y ~ x)
-    compte <- margin.table(table(x, y), 1)
+    df <- data.frame(x=y, y=x)
     tryit <- try2({
       if (nlevels(x) == 2) {
-        if (all(compte > 30, na.rm = TRUE)) {
+        if (is_normal(df)) {
           f <- t.test(formule)
           test <- "Welch"
         }
@@ -68,7 +69,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
         }
       } else {
         mod <- lm(formule)
-        if (all(compte > 30, na.rm = TRUE) && is_homoscedatic(mod)) {
+        if (is_normal(df) && is_homoscedatic(mod)) {
           f <- anova(mod)
           test <- "Anova"
         }

@@ -3,6 +3,7 @@
 \name{is_normal}
 \alias{is_normal}
 \alias{is_normal.lm}
+\alias{is_normal.data.frame}
 \alias{is_normal.default}
 \title{Can it be considered as normal?}
 \usage{
@@ -10,10 +11,14 @@ is_normal(x)
 
 \method{is_normal}{lm}(x)
 
+\method{is_normal}{data.frame}(df)
+
 \method{is_normal}{default}(x)
 }
 \arguments{
 \item{x}{Object to verify}
+
+\item{df}{data.frame with 2 columns, x being numeric and y being a factor}
 
 \item{model}{The result of the lm function}
 }
