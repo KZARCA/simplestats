@@ -62,7 +62,7 @@ is_homoscedatic.lm <- function(x, ...){
     breaks[length(breaks)] <- Inf
     y <- cut(model$fitted.values,
              breaks = breaks, right = FALSE)
-    is_homoscedatic.default(y, x)
+    is_homoscedatic.default(x = y, y = x)
   } else {
     is_homoscedatic.default(model$model[[2]], model$model[[1]])
   }
@@ -71,7 +71,7 @@ is_homoscedatic.lm <- function(x, ...){
 #' @export
 #' @rdname is_homoscedatic
 is_homoscedatic.default <- function(x, y, ...){
-  vari <- tibble::tibble(y, x) %>%
+  vari <- tibble::tibble(x, y) %>%
     dplyr::group_by(x) %>%
     dplyr::summarise(variance = var(y, na.rm = TRUE)) %>%
     magrittr::extract2("variance")
