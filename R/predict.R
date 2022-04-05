@@ -242,8 +242,8 @@ get_lambda.mira <- function(mod){
 }
 
 #' @export
-compute_sens_spe <- function(pred_obs, range = seq(0.1, 1, by=0.1)){
-  purrr::map_dfr(range, function(x){
+compute_sens_spe <- function(pred_obs, thresholds = seq(0.1, 1, by=0.1), format = TRUE){
+  purrr::map_dfr(thresholds, function(x){
     m <- filter(pred_obs, D == 1)
     nm <- filter(pred_obs, D == 0)
     t <- filter(m, M >= x) %>%
@@ -252,10 +252,26 @@ compute_sens_spe <- function(pred_obs, range = seq(0.1, 1, by=0.1)){
       nrow()
     sen <- binom.test(t, nrow(m)) %>% broom::tidy()
     spe <- binom.test(nt, nrow(nm)) %>% broom::tidy()
-    tibble(cutoff = x,
-           sensitivity = sprintf_number_table("%s [%s - %s]", pourcent(sen$estimate),
+
+    res <- if (format){
+      tibble(threshold = x,
+             sensitivity = sprintf_number_table("%s [%s - %s]", pourcent(sen$estimate),
                                               pourcent(sen$conf.low), pourcent(sen$conf.high)),
-           specificity = sprintf_number_table("%s [%s - %s]", pourcent(spe$estimate),
+             specificity = sprintf_number_table("%s [%s - %s]", pourcent(spe$estimate),
                                               pourcent(spe$conf.low), pourcent(spe$conf.high)))
+    } else tibble(threshold = x,
+                  sensitivity = sen$estimate,
+                  specificity = spe$estimate)
   })
+}
+
+
+
+#' @export
+prepare_pred <- function(y, x, boot = TRUE){
+  tab_pred <- structure(tibble(M = x, D = as.numeric(y)-1), rev = FALSE)
+  if (calculate_auc(tab_pred) < 0.5) {
+    tab_pred <- structure(mutate(tab_pred, D = 1-D), rev = TRUE)
+  }
+  tab_pred
 }
