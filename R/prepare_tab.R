@@ -256,16 +256,15 @@ create_tabi <- function(tab, type, keep = NULL){
   tf <- Filter(function(x) count_items(x) > 1 & !inherits(x, "Date") & !is.character(x), tab)
   if (type == "desc"){
     return(tf)
-  }
-  if (type == "expl"){
-    Filter(function(x) get_propDM(x) <= 0.2, tf)
-  } else if (type == "pred"){
+  } else {
     if (ncol(tf) > 1){
-    elimine <- get_large_missing(tf)
-    filtered <- tf[setdiff(names(tf), elimine)]
-    filtered <- Filter(function(x) get_propDM(x) <= 0.2, filtered)
-    if (!is.null(keep)) tf[union(intersect(names(tf), keep), names(filtered))] else filtered
-    } else tf
+      elimine <- get_large_missing(tf)
+      filtered <- tf[setdiff(names(tf), elimine)]
+      filtered <- Filter(function(x) get_propDM(x) <= 0.2, filtered)
+      if (type == "pred" && !is.null(keep)) tf[union(intersect(names(tf), keep), names(filtered))] else filtered
+    } else {
+      tf
+    }
   }
 }
 
