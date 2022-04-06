@@ -2,14 +2,11 @@
 % Please edit documentation in R/validity.R
 \name{is_normal}
 \alias{is_normal}
-\alias{is_normal.lm}
 \alias{is_normal.data.frame}
 \alias{is_normal.default}
 \title{Can it be considered as normal?}
 \usage{
 is_normal(x)
-
-\method{is_normal}{lm}(x)
 
 \method{is_normal}{data.frame}(df)
 
