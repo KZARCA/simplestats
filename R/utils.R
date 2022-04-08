@@ -668,7 +668,7 @@ tryCatch_all <- function(expr) {
 #'
 try2 <- function(expr, errors, warnings){
   grepf <- function(pattern, x){
-    grepl(pattern, x, fixed = TRUE)
+    if (identical(pattern, ".*")) TRUE else grepl(pattern, x, fixed = TRUE)
   }
   if(missing(errors)) errors <- NULL
   if(missing(warnings)) warnings <- NULL

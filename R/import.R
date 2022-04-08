@@ -58,7 +58,7 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     }
 
     if(!is.null(err)){
-      return(err)
+      stop(err)
     }
     ## names(tab) : colnames, with make.names
     ## label(tab) : name_matching with standardize_tab
@@ -70,7 +70,8 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
         gettext("Unable to load this file. Try changing the delimiter and/or the extension of the file", domain = "R-simplestats"),
         gettext("(extension .csv if the delimiter is a comma or a semicolon, extension .txt if the delimiter is a tabulation)", domain = "R-simplestats")
       )
-      return(err)
+    } else if (is_error(name_matching)){
+      stop(gettext("Unable to load this file"))
     }
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
     tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
@@ -89,7 +90,7 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
       }
     }
     if(!is.null(err)){
-      return(err)
+      stop(err)
     }
 
     name_matching <- make_name_matching(tab)
