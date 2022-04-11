@@ -92,7 +92,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   if (type == "survival") vars %<>% add_elements(".time")
   tab <- tab[vars]
   if (any(is.na(tab))){
-    n_imputation <- ifelse(type == "survival" && any(map(tab, nlevels) > 2), 20, 5)
+    n_imputation <- ifelse(pred == 0, round(get_propDM(tab) * 100, 0), 5)
     tab_m <- imputer(tab, vardep, type = type, n_imputation = n_imputation)
     resume_imputer <- TRUE
   } else {
