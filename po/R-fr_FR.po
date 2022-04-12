@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.1.0\n"
-"POT-Creation-Date: 2022-02-28 09:09\n"
-"PO-Revision-Date: 2022-02-28 09:48+0100\n"
+"POT-Creation-Date: 2022-04-11 15:01\n"
+"PO-Revision-Date: 2022-04-11 15:05+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -215,11 +215,20 @@ msgstr ""
 "(extension .csv si le délimiteur est une virgule ou un point-virgule, "
 "extension .txt si le délimiteur est une tabulation)"
 
+msgid "Unable to load this file"
+msgstr "Ce fichier ne peut être chargé"
+
 msgid "Unable to load this file. Try to convert it into xlsx."
 msgstr "Ce fichier ne peut être chargé. Essayez de le convertir en xlsx."
 
 msgid "Unable to read this sheet."
 msgstr "Cette feuille ne peut être chargée."
+
+msgid "non missing"
+msgstr "non manquant"
+
+msgid "missing"
+msgstr "manquant"
 
 msgid "mean (sd)"
 msgstr "moyenne (écart-type)"

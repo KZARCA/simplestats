@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.15.1\n"
-"POT-Creation-Date: 2022-03-25 12:27\n"
+"POT-Creation-Date: 2022-04-11 15:01\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -205,10 +205,19 @@ msgstr ""
 msgid "(extension .csv if the delimiter is a comma or a semicolon, extension .txt if the delimiter is a tabulation)"
 msgstr ""
 
+msgid "Unable to load this file"
+msgstr ""
+
 msgid "Unable to load this file. Try to convert it into xlsx."
 msgstr ""
 
 msgid "Unable to read this sheet."
+msgstr ""
+
+msgid "non missing"
+msgstr ""
+
+msgid "missing"
 msgstr ""
 
 msgid "mean (sd)"

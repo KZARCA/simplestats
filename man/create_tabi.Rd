@@ -4,7 +4,7 @@
 \alias{create_tabi}
 \title{Create intermediate table}
 \usage{
-create_tabi(tab, type, keep = NULL)
+create_tabi(tab, type, keep = NULL, remove = NULL)
 }
 \arguments{
 \item{tab}{a data frame}

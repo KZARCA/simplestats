@@ -101,3 +101,91 @@ find_varaux <- function(tab, vardep, varindep = character(0), varajust = charact
   tab_aux <- tab[c(setdiff(names(tab), names(tabf)))]
   get_lasso_variables(tab_aux, ".missing", sparse = FALSE)
 }
+
+#' This code is a modification of the ggmice package - https://github.com/amices/ggmice)
+#' @export
+display_missing <- function(data, square = TRUE, rotate = TRUE) {
+  vrb <- names(data)
+  # get missing data pattern and extract info
+  m <- mice::md.pattern(data, plot = FALSE)
+  pat <- m[, m[nrow(m), , drop = FALSE] != 0, drop = FALSE]
+  rws <- nrow(pat)
+  cls <- ncol(pat)
+  vrb <- colnames(pat)[-cls]
+  frq <- row.names(pat)[-rws]
+  n_tot <- sum(as.numeric(frq))
+  frq <- sprintf("%s (%s)", frq, pourcent(as.numeric(frq)/n_tot))
+  na_row <- pat[-rws, cls, drop = FALSE]
+  na_col <- pat[rws, -cls, drop = FALSE]
+  na_col <- sprintf("%s (%s)", na_col, pourcent(na_col/n_tot))
+  # na_tot <- pat[rws, cls]
+
+  pat_clean <- cbind(.opacity = 1, pat[-rws, vrb, drop = FALSE])
+
+  # tidy the pattern
+  long <- data.frame(.y = 1:(rws - 1), pat_clean, row.names = NULL) %>%
+    tidyr::pivot_longer(cols = vrb, names_to = "x", values_to = ".where") %>%
+    dplyr::mutate(
+      .x = as.numeric(factor(.data$x, levels = vrb, ordered = TRUE)),
+      .where = factor(.data$.where, levels = c(0, 1), labels = c("missing", "observed")),
+      .opacity = as.numeric(.data$.opacity)
+    )
+
+  # create the plot
+  gg <- ggplot2::ggplot(long, ggplot2::aes(.data$.x, .data$.y, fill = .data$.where, alpha = 0.1 + .data$.opacity / 2)) +
+    ggplot2::geom_tile(color = "black") +
+    ggplot2::scale_fill_manual(values = c("observed" = "#006CC2B3", "missing" = "#B61A51B3"),
+                               labels = c(gettext("non missing"), gettext("missing"))) +
+    ggplot2::scale_alpha_continuous(limits = c(0, 1), guide = "none") +
+    ggplot2::scale_x_continuous(
+      breaks = 1:(cls - 1),
+      labels = na_col,
+      sec.axis = ggplot2::dup_axis(
+        labels = label(data[vrb]),
+        name = NULL#gettext("Données manquantes pour chaque variable\nayant au moins une donnée manquante")
+      )
+    ) +
+    ggplot2::scale_y_reverse(
+      breaks = 1:(rws - 1),
+      labels = frq,
+      sec.axis = ggplot2::dup_axis(
+        labels = na_row,
+        name = NULL
+      )
+    ) +
+    ggplot2::labs(
+      x = NULL,
+    #  y = "Pattern\n(frequency)",
+      #x = NULL,
+      y = NULL,
+      fill = "",
+      alpha = "" # ,
+      # caption = paste("*total number of missing entries =", na_tot)
+    ) +
+    theme_custom()
+  if (square) {
+    gg <- gg + ggplot2::coord_fixed(expand = FALSE)
+  } else {
+    gg <- gg + ggplot2::coord_cartesian(expand = FALSE)
+  }
+  if (rotate | length(vrb) > 5) {
+    gg <- gg + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
+  }
+
+  return(gg)
+}
+
+theme_custom <- function(vrb) {
+  ggplot2::theme_minimal() +
+    ggplot2::theme(
+      # text = ggplot2::element_text(family="sans"),
+      #legend.position = "bottom",
+      #legend.justification = "right",
+      #strip.placement = "outside",
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      #axis.ticks = ggplot2::element_line(colour = "black"),
+      axis.title.y.right = ggplot2::element_text(margin = ggplot2::margin(l = 6))
+    )
+}
+
