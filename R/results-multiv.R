@@ -117,6 +117,11 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   mod <- get_mod(tab_m, .fun, formule) %>%
     modify_mod(tab_m, varindep, varajust, pred)
 
+  if (pred == 1){
+    mod <- structure(c(mod, list(beta_std = standardize_beta(mod))),
+                     class = class(mod))
+  }
+
   if(!"data" %in% names(mod)){
       mod <- structure(c(mod, list(data = tab)),
                        class = class(mod))

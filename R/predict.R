@@ -275,3 +275,13 @@ prepare_pred <- function(y, x, boot = TRUE){
   }
   tab_pred
 }
+
+standardize_beta <- function(mod){
+  y <- mod$y
+  x <- model.matrix(mod)[,-1, drop=FALSE]
+  x <- cbind(1,apply(x, 2, scale))
+  std <- do.call(paste(class(mod)[1], "fit", sep = "."),
+          c(list(x = x, y = y),
+            if(!is.null(mod$family)) list(family = mod$family)))
+  return(coef(std)[-1])
+}
