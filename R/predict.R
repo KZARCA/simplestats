@@ -277,6 +277,9 @@ prepare_pred <- function(y, x, boot = TRUE){
 }
 
 standardize_beta <- function(mod){
+  if (inherits(mod, "mira")){
+    mod <- getfit(mod, 1)
+  }
   y <- mod$y
   x <- model.matrix(mod)[,-1, drop=FALSE]
   x <- cbind(1,apply(x, 2, scale))
