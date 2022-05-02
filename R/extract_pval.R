@@ -3,7 +3,7 @@ find_test_ba <- function(x, y){
   if (is.numeric(x)){
     df <- na.exclude(data.frame(x,y))
     n <- nrow(df)
-    if (is_normal(df)) {
+    if (is_normal(df$x - df$y)) {
       f <- try2(t.test(x, y, paired = TRUE), errors = "data are essentially constant")
       if (isTRUE(grepl("data are essentially constant", attr(f, "message")))){
         f <- NULL
