@@ -164,7 +164,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
   ny <- sum(!is.na(y))
   n <- nrow(na.exclude(data.frame(x,y)))
   before <- tibble(
-    sprintf_number_table("%s (±%s)", meanx, sdx),
+    sprintf_number_table("%s (%s)", meanx, sdx),
     sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]),
     sprintf_number_table("%s", qx[1]),
     sprintf_number_table("%s", qx[5]),
@@ -176,7 +176,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
                      gettext("max", domain = "R-simplestats"),
                      "n")
   after <- tibble(
-    sprintf_number_table("%s (±%s)", meany, sdy),
+    sprintf_number_table("%s (%s)", meany, sdy),
     sprintf_number_table("%s [%s; %s]", qy[3], qy[2], qy[4]),
     sprintf_number_table("%s", qy[1]),
     sprintf_number_table("%s", qy[5]),

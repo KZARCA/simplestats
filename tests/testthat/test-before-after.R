@@ -21,8 +21,8 @@ test_that("create_ligne_desc_ba.numeric is working", {
                               "p"))
   qx <- quantile(x)
   qy <- quantile(y)
-  expect_equal(ligne[[1]],  c(sprintf_number_table("%s (±%s)", mean(x), sd(x)),
-                            sprintf_number_table("%s (±%s)", mean(y), sd(y))))
+  expect_equal(ligne[[1]],  c(sprintf_number_table("%s (%s)", mean(x), sd(x)),
+                            sprintf_number_table("%s (%s)", mean(y), sd(y))))
   expect_equal(ligne[[2]],  c(sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]),
                               sprintf_number_table("%s [%s; %s]", qy[3], qy[2], qy[4])))
   expect_equivalent(ligne[[3]], format_number(c(qx[1], qy[1])))

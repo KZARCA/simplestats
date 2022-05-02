@@ -10,7 +10,7 @@ test_that("create_ligne_bivar.factor_num is working", {
   expect_equal(line$niveau, as.character(seq_len(3)))
   filter(tab, !is.na(differ)) %>%
     group_by(differ) %>%
-    summarise(m = sprintf_number_table("%s (±%s)", mean(age), sd(age))) %>%
+    summarise(m = sprintf_number_table("%s (%s)", mean(age), sd(age))) %>%
     extract2("m") %>%
     expect_equal(line[[gettext("mean (sd)", domain = "R-simplestats")]])
   filter(tab, !is.na(differ)) %>%
@@ -83,7 +83,7 @@ test_that("create_ligne_bivar.num_fac is working", {
   expect_equal(line$variable, "Nodes")
   test_m <- function(x){
     filter(tab, differ == x) %>%
-      summarise(m = sprintf_number_table("%s (±%s)", mean(nodes, na.rm = TRUE), sd(nodes, na.rm = TRUE))) %>%
+      summarise(m = sprintf_number_table("%s (%s)", mean(nodes, na.rm = TRUE), sd(nodes, na.rm = TRUE))) %>%
       extract2("m") %>%
       expect_equal(line[[paste("Differ", x)]])
   }

@@ -51,7 +51,7 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, comp
       y <- no_na$y
       d <- no_na %>%
         group_by(x, .drop = .drop) %>%
-        summarise(moyenne = sprintf_number_table("%s (±%s)", base::mean(y, na.rm=TRUE), sd(y, na.rm=TRUE)),
+        summarise(moyenne = sprintf_number_table("%s (%s)", base::mean(y, na.rm=TRUE), sd(y, na.rm=TRUE)),
                   mediane = sprintf_number_table("%s [%s - %s]", median(y, na.rm=TRUE), quantile(y, na.rm=TRUE)[2], quantile(y, na.rm=TRUE)[4]),
                   min = sprintf_number_table("%s", min(y, na.rm=TRUE)),
                   max = sprintf_number_table("%s", max(y, na.rm=TRUE)),
@@ -109,7 +109,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
                                                   quantile(x, na.rm=TRUE)[2], quantile(x, na.rm=TRUE)[4]))%>%
           t()
       } else {
-        summarise(d, sprintf_number_table("%s (±%s)", mean(x, na.rm=TRUE), sd(x, na.rm=TRUE)))%>%
+        summarise(d, sprintf_number_table("%s (%s)", mean(x, na.rm=TRUE), sd(x, na.rm=TRUE)))%>%
           t()
       }
       colnames(d) <- paste(label(y), d[1,])#column_names
