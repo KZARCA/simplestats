@@ -47,7 +47,7 @@ test_that("create_tabi works", {
   tab %<>% select(-test)
   tab$dm <- c(rep(NA, 1000), seq_len(nrow(tab)-1000))
   expect_equivalent(create_tabi(tab, "desc"),  select(colon, -study) %>% mutate(dm = tab$dm))
-  expect_equal(create_tabi(tab, "expl"),  select(colon, -study))
+  expect_equivalent(create_tabi(tab, "expl"),  select(colon, -study))
 })
 
 test_that("create tabi with pred keeps less than 20% of missing", {

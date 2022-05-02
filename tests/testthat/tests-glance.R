@@ -1,5 +1,11 @@
 context("glance")
 tab <- standardize_tab(mtcars)
+
+local_reproducible_output(
+  lang = "en",
+  .env = parent.frame()
+)
+
 test_that("get_glance Mann Whitney is working", {
   t <- get_glance(tab$vs, tab$wt)
   expect_error(t, NA)

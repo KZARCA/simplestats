@@ -116,11 +116,12 @@ test_that("create_ligne_bivar median is working", {
 })
 
 test_that("create_ligne_bivar.num_num is working", {
+  local_reproducible_output(lang = "en")
   line <- create_ligne_bivar(tab$nodes, tab$age, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$variable, "Nodes")
-  co <- cor.test(tab$nodes, tab$age, method = "pearson") %>% broom::tidy()
-  expect_equal(line$`correlation coefficient (95% CI)`, sprintf_number_table("%s (%s; %s)", co$estimate, co$conf.low, co$conf.high))
+  co <- cor.test(tab$nodes, tab$age, method = "spearman", exact = FALSE) %>% broom::tidy()
+  expect_equal(line$`correlation coefficient`, sprintf_number_table("%s", co$estimate))
   expect_equal(line$p, co$p.value)
 })
 
@@ -138,7 +139,7 @@ test_that("create_ligne_surv_bivar is working", {
   expect_equal(line$n %>% unname(), table_surv[, "n.max"] %>% unname())
   expect_equal(line[[gettext("n events", domain = "R-simplestats")]] %>% unname(), table_surv[, "events"] %>% unname())
   expect_equal(round(line$p, 10), c(3.39E-7, NA, NA))
-  expect_equal(line[["survival rate (95% CI)"]], map_chr(seq_along(surv$strata), function(i) {
+  expect_equal(line[[gettext("survival rate (95% CI)")]], map_chr(seq_along(surv$strata), function(i) {
     surv_i <- surv[i]
     l <- length(surv_i$surv)
     sprintf("%s (%s; %s)", pourcent(surv_i$surv[l], arrondi = 3), pourcent(surv_i$lower[l], arrondi = 3),
