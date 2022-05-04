@@ -1,3 +1,48 @@
+#' Easy histogram
+#'
+#' @param tab a data frame
+#' @param x the variable to display
+#'
+#' @return a ggplot histogram
+#' @export
+histogram <- function(tab, x, barlength, ylab){
+  noms <- label(tab)[x]
+ggplot(remove_missing(tab, na.rm = TRUE, vars = x)) +
+  aes_string(x = x) + geom_histogram(binwidth = barlength) + geom_density(aes(y=barlength * ..count..)) +
+  theme_bw() + labs(x=noms, y = ylab["number"])
+}
+
+#' Easy barplot
+#'
+#' @param tab a data frame
+#' @param x the variable to display
+#'
+#' @return a ggplot barplot
+#' @export
+barplot_desc <- function(tab, x, ylab = gettext("proportion"), showGraphNA = NULL, palette = "hue"){
+  ggtab <- if (!is.null(showGraphNA) && !showGraphNA) {
+    ggplot(remove_missing(tab, na.rm = TRUE, vars = var_n))
+  } else  ggplot(tab)
+  noms <- label(tab)[x]
+  if (nlevels(tab[[x]]) < 5){
+    graph <- ggtab + aes_string(x = x, fill=x) +
+      geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) +
+      theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+      labs(x=noms, y=ylab["proportion"]) + guides(fill="none")
+  } else {
+    graph <- ggtab + aes_string(x = x, fill=x) +
+      geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+      labs(x=noms, y=ylab["proportion"], fill=label(tab[[x]])) + scale_x_discrete(breaks = NULL)
+  }
+  if (palette == "grey"){
+    graph <- graph + scale_fill_grey()
+  }  else if (palette != "hue"){
+    graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
+  }
+}
+
+
 #' Plot descriptive graphs
 #'
 #' @param tab The data frame
@@ -95,10 +140,10 @@ boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
   } else {
     graph <- graph + geom_boxplot()
   }
-  if (palette == "Set1"){
-    graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
-  } else if (palette == "grey"){
+  if (palette == "grey"){
     graph <- graph + scale_fill_grey()
+  }  else if (palette != "hue"){
+    graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
   }
   graph + stat_summary(fun=mean, geom="point", shape=23, fill = "black")
 }
@@ -277,7 +322,7 @@ ggsurv <- function(sfit,
     if(CI == TRUE & nstrata > 0) {
       if (!BW) {
         p <- p + geom_ribbon(data=df, alpha=0.25, colour = NA, show.legend = FALSE) + aes(ymin = lower, ymax = upper, fill = strata)
-        if(palette == "Set1"){
+        if(palette != "hue"){
           p <- p + scale_fill_brewer(palette = palette, na.value = "grey")
         }
       } else {
@@ -308,7 +353,7 @@ ggsurv <- function(sfit,
 
     if (BW | nstrata == 0){
       p <- p + scale_colour_grey()
-    } else if (palette == "Set1"){
+    } else if (palette != "hue"){
       p <- p + scale_colour_brewer(palette = palette, na.value = "grey")
     }
 
