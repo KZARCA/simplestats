@@ -88,7 +88,7 @@ create_ligne_surv_desc <- function(time, censure){
                   gettext("n events", domain = "R-simplestats"),
                   gettext("survival rate (95% CI)", domain = "R-simplestats"))
 
-    d %<>% add_column(id = "survival", variable = gettext("max follow-up", domain = "R-simplestats"), .before = 1)
+    d %<>% add_column(id = "survival", variable = gettext("follow-up", domain = "R-simplestats"), .before = 1)
   }
 }
 

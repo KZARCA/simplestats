@@ -89,15 +89,19 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
                           updateProgress = function(detail) detail = ""){
   set.seed(1234567)
   if (type_validation == "cv"){
-    cv <- get_cv_auc(tab, vardep, varindep, type, n = min(10, get_min_class(tab, vardep, type)/12), progression = updateProgress)
+    cv <- get_cv_auc(tab, vardep, varindep, type, n = min(10, floor(get_min_class(tab, vardep, type)/12)), progression = updateProgress)
     m <- map(cv, 1)  %>%
       compact() %>%
       flatten_dbl() %>%
       mean(na.rm = TRUE)
+    auc_tot <- calculate_auc(create_pred_obs(mod))
 
     lambda <- get_lambda(mod) #heuristic formula (see Steyenberg)
     shrunk <- get_shrunk_coef(mod, lambda)
-    return(list(mean = m, shrunk = shrunk, error = sum(map_dbl(cv, 2) / length(map_dbl(cv, 2)))))
+    return(
+      structure(list(auc=auc_tot, mean = m, shrunk = shrunk, error = sum(map_dbl(cv, 2) / length(map_dbl(cv, 2)))),
+                type_validation = "cv")
+    )
   }
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
@@ -109,7 +113,12 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   ci <- boot.ci(res, type = "basic", index = 1)$basic[4:5]
   lambda <- mean(res$t[, 3], na.rm = TRUE)
   shrunk <- get_shrunk_coef(mod, lambda)
-  return(list(mean = m, ci = ci, optimism = opti, shrunk = shrunk, error = sum(res$t[, 4])/length(res$t[, 4])))
+  return(
+    structure(
+      list(mean = m, ci = ci, optimism = opti, shrunk = shrunk, error = sum(res$t[, 4])/length(res$t[, 4])),
+      type_validation = "boot"
+    )
+  )
 }
 
 get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = function() cat("=")){
