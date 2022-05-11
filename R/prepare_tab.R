@@ -282,5 +282,11 @@ homogeneise_tab <- function(tab, before, after){
       label(tab[[y]]) <<- exlab
     }
   })
-  tab[c(before, after)]
+  all_vars <- purrr::map2(before, after, function(x, y){
+    if (solve_contrast(tab, x, tab[[y]], univ = TRUE)) {
+      c(x, y)
+    }
+  }) %>% compact() %>%
+    purrr::flatten_chr()
+  tab[all_vars]
 }
