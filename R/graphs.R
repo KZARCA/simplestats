@@ -21,7 +21,7 @@ ggplot(remove_missing(tab, na.rm = TRUE, vars = x)) +
 #' @export
 barplot_desc <- function(tab, x, ylab = gettext("proportion"), showGraphNA = NULL, palette = "hue"){
   ggtab <- if (!is.null(showGraphNA) && !showGraphNA) {
-    ggplot(remove_missing(tab, na.rm = TRUE, vars = var_n))
+    ggplot(remove_missing(tab, na.rm = TRUE, vars = x))
   } else  ggplot(tab)
   noms <- label(tab)[x]
   if (nlevels(tab[[x]]) < 5){
