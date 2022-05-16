@@ -19,21 +19,23 @@ ggplot(remove_missing(tab, na.rm = TRUE, vars = x)) +
 #'
 #' @return a ggplot barplot
 #' @export
-barplot_desc <- function(tab, x, ylab = gettext("proportion"), showGraphNA = NULL, palette = "hue"){
+barplot_desc <- function(tab, x, ylab = gettext("proportion"), showGraphNA = NULL,
+                         palette = "hue", graphPercent = NULL){
   ggtab <- if (!is.null(showGraphNA) && !showGraphNA) {
     ggplot(remove_missing(tab, na.rm = TRUE, vars = x))
   } else  ggplot(tab)
   noms <- label(tab)[x]
   if (nlevels(tab[[x]]) < 5){
     graph <- ggtab + aes_string(x = x, fill=x) +
-      geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) +
-      theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-      labs(x=noms, y=ylab["proportion"]) + guides(fill="none")
+      #do_call(geom_bar, list())
+      geom_bar(if(!isTRUE(graphPercent)) aes(y=(..count..)/sum(..count..)), na.rm = TRUE) +
+      theme_bw() + (if(!isTRUE(graphPercent)) scale_y_continuous(labels =  scales::percent_format(accuracy = 1))) +
+      labs(x=noms, y="ylab") + guides(fill="none")
   } else {
     graph <- ggtab + aes_string(x = x, fill=x) +
-      geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() +
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-      labs(x=noms, y=ylab["proportion"], fill=label(tab[[x]])) + scale_x_discrete(breaks = NULL)
+      geom_bar(if(!isTRUE(graphPercent)) aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() +
+      (if(!isTRUE(graphPercent))scale_y_continuous( labels = scales::percent_format(accuracy = 1))) +
+      labs(x=noms, y="ylab", fill=label(tab[[x]])) + scale_x_discrete(breaks = NULL)
   }
   if (palette == "grey"){
     graph <- graph + scale_fill_grey()
