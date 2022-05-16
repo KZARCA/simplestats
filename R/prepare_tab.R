@@ -260,7 +260,10 @@ create_tabi <- function(tab, type, keep = NULL){
     if (ncol(tf) > 1){
       filtered <- Filter(function(x) get_propDM(x) <= 0.2, tf)
       removed <- get_large_missing(filtered)
-      all_removed <- c(removed, setdiff(names(tf), names(filtered)))
+      all_removed <- intersect(
+        c(removed, setdiff(names(tf), names(filtered))),
+        names(tab))
+
       final <- tf[setdiff(names(tf), all_removed)]
       if (type == "pred" && !is.null(keep)) final <- tf[union(intersect(names(tf), keep), names(final))]
       structure(final, removed = all_removed)
