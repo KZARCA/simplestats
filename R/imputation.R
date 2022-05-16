@@ -30,11 +30,11 @@ imputer <- function(tab, vardep, type, n_imputation = 1){
   if(get_propDM(tabm) < 0.05){
     return(tab)
   } else {
-    for (i in 1:length(tabm)){
-      if (get_propDM(tabm[[i]]) < 0.05) {
-        tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
-      }
-    }
+    # for (i in 1:length(tabm)){
+    #   if (get_propDM(tabm[[i]]) < 0.05) {
+    #     tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
+    #   }
+    # }
     if (any(is.na(tab[names(tabm)]))){
       require(mice)
       where <- data.frame(is.na(tab))
