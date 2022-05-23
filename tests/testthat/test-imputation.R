@@ -24,37 +24,21 @@ test_that("imputer does not impute when less than 5% of missing data", {
   expect_null(attr(tab2$d, "imputed"))
 })
 
-test_that("imputer uses impute for variables with less than 5% of missing data", {
-  tab <- data.frame(
-    a = c(rep(NA, 3), seq_len(97)),
-    b = c(as.character(seq_len(96)), rep(NA, 4)),
-    c = rep_len(1:2, 100) %>% as.factor(),
-    .time = c(rep(NA, 3), runif(97, 1, 1000)),
-    stringsAsFactors = TRUE
-  )
-  tab2 <- imputer(tab, "a", type = 'linear')
-  expect_length(attr(tab2$b, "imputed"), 4)
-  expect_null(attr(tab2$c, "imputed"))
-  expect_length(attr(tab2$.time, "imputed"), 3)
-  tab3 <- imputer(tab, "c", type = "survival")
-  expect_length(attr(tab3$a, "imputed"), 3)
-  expect_length(attr(tab3$b, "imputed"), 4)
-  expect_null(attr(tab3$c, "imputed"))
-  expect_null(attr(tab3$.time, "imputed"))
-})
-
 test_that("imputer uses mice for variables with more than 5% of missing data", {
   tab <- data.frame(
     a = c(rep(NA, 3), seq_len(97)) %>% sample(),
     b = c(rep(NA, 15), rep_len(1:2, 85)) %>% sample(),
-    .time = c(NA, runif(99, 1, 1000))
+    .time = floor(c(NA, runif(99, 1, 1000))),
+    event = rbinom(100,1,0.2)
   )
   tab2 <- imputer(tab, "a", type = 'linear')
   expect_is(tab2, "mids")
-  expect_length(tab2$imp$a[[1]], 0)
   expect_length(tab2$imp$b[[1]], 15)
-  expect_length(tab2$imp$.time[[1]], 0)
-  expect_length(attr(tab2$data$.time, "imputed"), 1)
+  tab3 <- imputer(tab, "event", type = 'survival')
+  expect_is(tab3, "mids")
+  expect_length(tab3$imp$b[[1]], 15)
+  expect_length(tab3$imp$a[[1]], 15)
+  expect_equivalent(as_vector(tab3$imp$b[1,]), rep(NA_integer_, 5))
 })
 
 
@@ -66,9 +50,10 @@ test_that("imputer uses impute for variables with more than 5% of missing data w
     d = c(rep(NA, 600), rep_len(LETTERS[1:9], 5400)) %>% sample(),
     stringsAsFactors = TRUE
   )
-  expect_equivalent(imputer(tab, "a", type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))
+
+  expect_equivalent(imputer(tab, "a", type = "linear")$method, c("pmm", "pmm", "polyreg", "polyreg"))
   tab2 <- dplyr::sample_frac(tab, 0.2)
-  expect_equivalent(imputer(tab2, "a", type = "linear")$method, c("", "pmm", "polyreg", "polyreg"))
+  expect_equivalent(imputer(tab2, "a", type = "linear")$method, c("pmm", "pmm", "polyreg", "polyreg"))
 })
 
 # test_that("imputer does not remove labels", {

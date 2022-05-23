@@ -676,14 +676,14 @@ try2 <- function(expr, errors, warnings){
   if (is_error(res)){
     all_cond <- map_lgl(errors, grepf, res$error$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
-      warning(paste("Error: ", res$error$message))
+      warning(paste(Sys.time(), "-", "Error: ", res$error$message))
     }
     return(structure(list(), message = res$error$message, class = "error"))
   }
   if (is_warning(res)){
     all_cond <- map_lgl(warnings, grepf, res$warning$message)
     if (all(all_cond == FALSE, na.rm = TRUE)){
-      warning(paste("Error warning: ", res$warning$message))
+      warning(paste(Sys.time(), "-", "Error warning: ", res$warning$message))
     }
     if(is.null(res$value)) res$value <- list()
     return(structure(res$value, message = res$warning$message, class = unique(c(class(res$value), "warning"))))

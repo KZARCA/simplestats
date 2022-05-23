@@ -24,10 +24,12 @@ get_propDM <- function(x){
 #' @export
 #'
 #' @examples
-imputer <- function(tab, vardep, type, n_imputation = 1){
-  tabm <- dplyr::select_if(tab, function(x) is.numeric(x) | is.factor(x))
-  if (type == "survival") tabm <- dplyr::select(tabm, -.time)
-  if(get_propDM(tabm) < 0.05){
+imputer <- function(tab, vardep, type, n_imputation = 1, maxit = 5){
+  # if (type == "survival") {
+  #   tabm$cumhaz_EFS <- mice::nelsonaalen(data = tabm, timevar = ".time", statusvar = vardep)
+  #   tabm <- dplyr::select(tabm, -.time, -vardep)
+  # }
+  if(get_propDM(tab) < 0.05){
     return(tab)
   } else {
     # for (i in 1:length(tabm)){
@@ -35,11 +37,21 @@ imputer <- function(tab, vardep, type, n_imputation = 1){
     #     tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
     #   }
     # }
-    if (any(is.na(tab[names(tabm)]))){
+    if (any(is.na(tab[names(tab)]))){
       require(mice)
-      where <- data.frame(is.na(tab))
-      if (type == "survival") where[[".time"]] <- FALSE
-      tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation, where = where)
+      if (type == "survival") {
+        tmp <- data.frame(.time = tab$.time, status = tab[[vardep]]) # because nelsonaalen uses NSE
+        tab$cumhaz_EFS <- mice::nelsonaalen(data = tmp, timevar = .time, statusvar = status)
+        predmat_mice <- mice::make.predictorMatrix(tab)
+        predmat_mice[, c(".time", vardep)] <- 0
+        method <- mice::make.method(tab)
+        method[c(".time", vardep, "cumhaz_EFS")] <- ""
+      } else {
+        predmat_mice <- mice::make.predictorMatrix(tab)
+        method <- make.method(tab)
+      }
+      tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation,
+                           predictorMatrix = predmat_mice, maxit = maxit, method = method)
     } else {
       tabimp <- tab
     }
