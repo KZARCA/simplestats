@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: simplestats 0.15.1\n"
-"POT-Creation-Date: 2022-05-04 09:47\n"
+"POT-Creation-Date: 2022-06-24 06:48\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -154,6 +154,9 @@ msgstr ""
 msgid "message"
 msgstr ""
 
+msgid "proportion"
+msgstr ""
+
 msgid "Proportion"
 msgstr ""
 
@@ -208,6 +211,9 @@ msgstr ""
 msgid "Unable to load this file"
 msgstr ""
 
+msgid "cannot be opened"
+msgstr ""
+
 msgid "Unable to load this file. Try to convert it into xlsx."
 msgstr ""
 
@@ -260,6 +266,9 @@ msgid "before"
 msgstr ""
 
 msgid "after"
+msgstr ""
+
+msgid "-"
 msgstr ""
 
 msgid "Error:"

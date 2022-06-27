@@ -75,7 +75,8 @@ read_tab_import <- function(file, sep = "\t", dec = ".", sheet = 1){
     }
   } else if (ext %in% c("xls", "xlsx", "xlsm")){
     tab <- try2(readxl::read_excel(file, sheet = sheet, guess_max = 10000, .name_repair = "minimal"),
-                errors = c("Evaluation error", "Unable to open file", "rId", "Unable to allocate memory"),
+                errors = c("Evaluation error", "Unable to open file",
+                           "rId", "Unable to allocate memory", gettext("cannot be opened")),
                 warnings = c("Expecting", "NA inserted", "Coercing"))
     if (is_error(tab)) {
       if (grepl("Failed to open", attr(tab, "message"))){
