@@ -16,7 +16,7 @@ create_table_forestplot <- function(mod, varajust = NULL){
 
   dplyr::left_join(tab_n, tab_model, by = c("id", "niveau", "variable")) %>%
     filter(!id %in% varajust) %>%
-    add_class(paste0("tab", class(mod)[1]))
+    structure(class = class(tab_model))
 }
 
 
@@ -85,11 +85,11 @@ plot_forest <- function(mod, varajust = NULL, ...){
     } else {
       estimate_name <- "Hazard Ratio"
     }
-    breaks <- exp(seq(log(lower), log(upper), by = 0.2))
-    min_ci <- .dots$min_ci %||% min(breaks)
-    max_ci <- .dots$max_ci %||% max(breaks)
+    breaks <- seq(log(lower), log(upper), by = 0.2)
+    min_ci <- fun(.dots$min_ci %||% min(breaks))
+    max_ci <- fun(.dots$max_ci %||% max(breaks))
     min_ci <- max(min_ci, 1E-3)
-
+    breaks <- fun(breaks)
 
   } else {
     fun <- function(x) x
