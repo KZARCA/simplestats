@@ -1,8 +1,15 @@
-create_table_forestplot <- function(mod, varajust = NULL){
+create_table_forestplot <- function(mod, varajust = NULL, inv = FALSE){
 
   tab_model <- create_table_model(mod, varajust = varajust) %>%
     mutate(niveau = gsub(" vs.*$", "", niveau)) %>%
     select(id:p.value)
+
+  if (inv){
+    tab_model$estimate <- -tab_model$estimate
+    tmp_conf.low <- tab_model$conf.low
+    tab_model$conf.low <- -tab_model$conf.high
+    tab_model$conf.high <- -tmp_conf.low
+  }
 
   tab_n <- purrr::map_dfr(unique(tab_model$id), function(x){
     create_ligne_desc_export(mod$data[[x]], x, show_prop = FALSE) %>%
@@ -63,7 +70,8 @@ prepare_forestplot <- function(tab_mod, ...){
 #' @export
 plot_forest <- function(mod, varajust = NULL, ...){
   .dots <- list(...)
-  tab_mod <- create_table_forestplot(mod, varajust = varajust) %>%
+  inv = .dots$inv %||% FALSE
+  tab_mod <- create_table_forestplot(mod, varajust = varajust, inv) %>%
     prepare_forestplot()
   show_estimate <- .dots$show_estimate %||% TRUE
   title_n <- .dots$title_n %||% "N (%)"

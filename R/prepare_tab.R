@@ -30,6 +30,7 @@ factor_strings <- function(tab){
       if(inherits(x, "POSIXct")) {
         return(as.character(x))
       }
+      if(all(is.na(x))) return(NA)
       if (is.numeric(x) && (min(x, na.rm = TRUE) > 1E5 || max(x, na.rm = TRUE) >= 2^30)) x <- as.character(x)
       if(is.character(x) | is.factor(x)) {
         b <- factor(x)
