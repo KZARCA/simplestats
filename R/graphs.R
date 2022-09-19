@@ -103,7 +103,7 @@ print_plot_bivar <- function(tab, vardep, varindep, type = "linear"){
     if (is.factor(tvarn)){
       formule <- sprintf("Surv(.time, %s) ~ %s", vardep, varindep)
       r <- survfit(as.formula(formule), data = tab)
-      names(r$strata) <- gsub(varindep, label(tvarn), names(r$strata))
+      names(r$strata) <- sub(paste0("^", varindep), label(tvarn), names(r$strata))
       ggsurv(r, ylab=label(tab[[vardep]]), table = TRUE, ylims = c(0,1))
     }
   }
@@ -383,7 +383,6 @@ ggsurv <- function(sfit,
       )
 
       risk.data$strata <- factor(risk.data$strata, levels=rev(levels(risk.data$strata)))
-
 
       data.table <- ggplot(risk.data,aes(x = time, y = strata, label = format(n.risk, nsmall = 0))) +
         geom_text(size = 3.5) + theme_bw() +

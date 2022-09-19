@@ -145,7 +145,7 @@ plot_forest <- function(mod, varajust = NULL, ...){
                          clip = clip,
                          graphwidth = unit(ifelse(nvars < 6, 0.3, 0.5), "npc"),
                          align="l",
-                         txt_gp = forestplot::fpTxtGp(label = gpar(fontfamily = "verdana"),
+                         txt_gp = forestplot::fpTxtGp(label = gpar(fontfamily = "Helvetica-Narrow"),
                                                       cex = 1.1,
                                                       summary= gpar(cex = 1.1),
                                                       ticks = gpar(cex = .9)),
