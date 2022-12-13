@@ -236,7 +236,7 @@ make_tab_survival <- function(tab, vardep, passage = 1, typeCensure = 2, dateInc
   tab[[vardep]] %<>%
     as.numeric %>%
     subtract(1)
-  if(!is.null(limit) && !is.na(limit)){
+  if(!is.null(limit) && !is.na(limit) && limit != 0){
     time2 <- pmin(limit, tab$.time)
     tab[[vardep]] <- ifelse(tab[[vardep]] == 1 & tab$.time > time2 | tab[[vardep]] == 0, 0, 1)
     tab$.time <- time2
