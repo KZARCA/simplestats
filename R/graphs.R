@@ -8,7 +8,7 @@
 histogram <- function(tab, x, barlength, ylab){
   noms <- label(tab)[x]
 ggplot(remove_missing(tab, na.rm = TRUE, vars = x)) +
-  aes_string(x = x) + geom_histogram(binwidth = barlength) + geom_density(aes(y=barlength * ..count..)) +
+  aes_string(x = x) + geom_histogram(binwidth = barlength) + geom_density(aes(y=barlength * after_stat(count))) +
   theme_bw() + labs(x=noms, y = ylab["number"])
 }
 
@@ -28,12 +28,12 @@ barplot_desc <- function(tab, x, ylab = gettext("proportion"), showGraphNA = NUL
   if (nlevels(tab[[x]]) < 5){
     graph <- ggtab + aes_string(x = x, fill=x) +
       #do_call(geom_bar, list())
-      geom_bar(if(!isTRUE(graphPercent)) aes(y=(..count..)/sum(..count..)), na.rm = TRUE) +
+      geom_bar(if(!isTRUE(graphPercent)) aes(y=(after_stat(count))/sum(after_stat(count))), na.rm = TRUE) +
       theme_bw() + (if(!isTRUE(graphPercent)) scale_y_continuous(labels =  scales::percent_format(accuracy = 1))) +
       labs(x=noms, y=ylab) + guides(fill="none")
   } else {
     graph <- ggtab + aes_string(x = x, fill=x) +
-      geom_bar(if(!isTRUE(graphPercent)) aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() +
+      geom_bar(if(!isTRUE(graphPercent)) aes(y=(after_stat(count))/sum(after_stat(count))), na.rm = TRUE) + theme_bw() +
       (if(!isTRUE(graphPercent))scale_y_continuous( labels = scales::percent_format(accuracy = 1))) +
       labs(x=noms, y=ylab, fill=label(tab[[x]])) + scale_x_discrete(breaks = NULL)
   }
@@ -66,9 +66,9 @@ print_plot_desc <- function(tab, vardep = NULL, varindep = NULL, type = "linear"
     ggplot(remove_missing(tab, na.rm = TRUE, vars = varindep)) + aes_string(x = varindep) + geom_histogram() + theme_bw() + labs(y = "Number")
   } else {
     if (nlevels(tab[[varindep]]) < 5){
-      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + guides(fill="none") + labs(y = "Proportion")
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(after_stat(count))/sum(after_stat(count))), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + guides(fill="none") + labs(y = "Proportion")
     } else {
-      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(..count..)/sum(..count..)), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(y = "Proportion", fill=label(tab[[varindep]])) + scale_x_discrete(breaks = NULL)
+      ggplot(tab) + aes_string(x = varindep, fill=varindep) + geom_bar(aes(y=(after_stat(count))/sum(after_stat(count))), na.rm = TRUE) + theme_bw() + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(y = "Proportion", fill=label(tab[[varindep]])) + scale_x_discrete(breaks = NULL)
     }
   }
 }
@@ -168,12 +168,15 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
       group_by(!!sym(x), !!sym(y)) %>%
       summarise(perc = n()/max(group_size), n = n())
 
+    for (i in seq_len(ncol(tab2))){
+      class(tab2[[i]]) <- setdiff(class(tab2[[i]]), "labelled_simplestat")
+    }
+
     ggtab2 <- if (!is.null(showGraphNA) && !showGraphNA) {
       ggplot(remove_missing(tab2, na.rm = TRUE, vars = c(x, y)))
     } else
       ggplot(remove_missing(tab2, na.rm = TRUE, vars = y))
-
-    graph <- ggtab2 + aes_string(x = x, fill = x, y = "perc") + geom_bar(stat = "identity")  +
+    graph <- ggtab2 + aes(x = !!sym(x), fill = !!sym(x), y = perc) + geom_bar(stat = "identity")  +
       facet_grid(reformulate(paste(". ~ ", y))) + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Proportion", domain = "R-simplestats"))
   } else {
     ggtab <- if (!is.null(showGraphNA) && !showGraphNA) {
@@ -192,7 +195,6 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
     graph <- graph + facet_wrap(reformulate(paste("~ ", y)), ncol=4)
 
   graph <- graph + theme_bw()  + scale_x_discrete(breaks = NULL)
-
   return(graph)
 }
 
