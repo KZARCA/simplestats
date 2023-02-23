@@ -93,14 +93,13 @@ plot_forest <- function(mod, varajust = NULL, ...){
     } else {
       estimate_name <- "Hazard Ratio"
     }
-    breaks <- seq(log(lower), log(upper), by = 0.2)
-    min_ci <- fun(.dots$min_ci %||% min(breaks))
-    max_ci <- fun(.dots$max_ci %||% max(breaks))
-    min_ci <- max(min_ci, 1E-3)
-    breaks <- fun(breaks)
-
+    breaks <- (seq(log(lower), log(upper), by = 0.2))
+    min_ci <- (.dots$min_ci %||% min(breaks))
+    max_ci <- (.dots$max_ci %||% max(breaks))
+    min_ci <- max(min_ci, log(1E-3))
+clip = c(fun(min_ci), fun(max_ci))
   } else {
-    fun <- function(x) x
+    fun <- identity
     estimate_name <- "Coefficients"
     xlog <- FALSE
     step <- case_when(
@@ -114,11 +113,9 @@ plot_forest <- function(mod, varajust = NULL, ...){
     if (length(breaks) > 10){
       breaks <- breaks[-c(1, length(breaks))]
     }
+    clip <- c(min_ci, max_ci)
   }
   breaks <- round(breaks, ifelse(breaks < 0.8, 2,1))
-
-
-  clip <- c(min_ci, max_ci)
   breaks <- breaks[breaks >= min_ci & breaks <= max_ci]
   breaks <- unique(c(breaks, fun(0)))
   # breaks <- if(length(breaks) < 2) {
@@ -136,12 +133,11 @@ plot_forest <- function(mod, varajust = NULL, ...){
   text[1, ] <- headers
   nvars <- get_nvar_mod(if(inherits(mod, "mira")) getfit(mod,1)$model else mod$model,
                         remove1 = FALSE)
-
   structure(forestplot::forestplot(tab_mod, mean = estimate, lower = conf.low, xlog = xlog,
-                         upper = conf.high, labeltext = text, boxsize = 0.3,
+                         upper = conf.high, labeltext = text, boxsize = 0.2,
                          is.summary = c(TRUE, rep(FALSE, nrow(tab_mod) -1)),
                          graph.pos = 3, hrzl_line = TRUE, ci.vertices = show_ticks,
-                         lwd.ci=1, ci.vertices.height = 0.2,
+                         lwd.ci=1, ci.vertices.height = 0.1,
                          clip = clip,
                          graphwidth = unit(ifelse(nvars < 6, 0.3, 0.5), "npc"),
                          align="l",
@@ -150,7 +146,7 @@ plot_forest <- function(mod, varajust = NULL, ...){
                                                       summary= gpar(cex = 1.1),
                                                       ticks = gpar(cex = .9)),
                          col=forestplot::fpColors(box="black", lines="black", zero = "gray70"),
-                         xticks = breaks,
+                         xticks = (breaks),
                          colgap = unit(0.02, "npc"),
                          fn.ci_norm = style_box,
                          lineheight = unit(8, "mm")
