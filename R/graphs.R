@@ -136,12 +136,21 @@ plot_reglin <- function(tab, x, y, method = "lm"){
 #' @examples
 boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
-  graph <- ggplot(tab) + aes_string(y, x, y, fill = y) + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill="none")
+  tt <- table(tab[[y]])
+  if (any(tt < 2, na.rm = TRUE)){
+    t_few <- tt[tt < 2]
+    tab2 <- tab %>%
+      filter(!!sym(y) == names(t_few))
+    tab <- tab %>%
+      filter(!!sym(y) != names(t_few))
+  }
+  graph <- ggplot(tab) + aes(!!sym(y), !!sym(x), !!sym(y), fill = !!sym(y)) + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill="none")
   if (violin){
     graph <- graph + geom_violin(trim = FALSE) + geom_boxplot(width=0.1, fill = "white", outlier.shape = NA)
   } else {
     graph <- graph + geom_boxplot()
   }
+  if (any(tt < 2, na.rm = TRUE)) graph <- graph + geom_point(data = tab2, aes(!!sym(y), !!sym(x)),shape=23, fill = "black")
   if (palette == "grey"){
     graph <- graph + scale_fill_grey()
   }  else if (palette != "hue"){
