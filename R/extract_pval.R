@@ -78,7 +78,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
           test <- "Kruskal-Wallis"
         }
       }
-    }, errors = "grouping factor must have exactly 2 levels")
+    }, errors = gettext("grouping factor must have exactly 2 levels"))
   } else if (is.factor(x) & is.factor(y)){
     cont <- table(x, y)
     suppressWarnings(f <- chisq.test(cont, correct = FALSE))
