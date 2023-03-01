@@ -140,9 +140,9 @@ boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
   if (any(tt < 2, na.rm = TRUE)){
     t_few <- tt[tt < 2]
     tab2 <- tab %>%
-      filter(!!sym(y) == names(t_few))
+      filter(!!sym(y) %in% names(t_few))
     tab <- tab %>%
-      filter(!!sym(y) != names(t_few))
+      filter(!(!!sym(y) %in% names(t_few)))
   }
   graph <- ggplot(tab) + aes(!!sym(y), !!sym(x), !!sym(y), fill = !!sym(y)) + theme_bw() + labs(x = label(tab[[y]]), y = label(tab[[x]])) + guides(fill="none")
   if (violin){
