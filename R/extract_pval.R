@@ -90,7 +90,7 @@ find_test <- function(x, y, survival = FALSE, censure = NULL){
         set.seed(1234567)
           f <- try2({
             fisher.test(cont, simulate.p.value = TRUE, B = 100000)
-          }, "need 2 or more non-zero column marginals")
+          }, gettext("need 2 or more non-zero column marginals"))
       }
       test <- "Fisher"
     } else test <- "Chi2"
