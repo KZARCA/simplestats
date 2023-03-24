@@ -172,6 +172,9 @@ boxplot_bivar <- function(tab, x, y, palette = "hue", violin = FALSE) {
 barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
   if (is.null(graphPercent) || !graphPercent){
     tab2 <- dplyr::select(tab, !!sym(x), !!sym(y)) %>%
+      {if (!is.null(showGraphNA) && !showGraphNA)
+        remove_missing(., na.rm = TRUE, vars = c(x, y)) else
+          remove_missing(., na.rm = TRUE, vars = y)} %>%
       group_by(!!sym(y)) %>%
       mutate(group_size = n()) %>%
       group_by(!!sym(x), !!sym(y)) %>%
@@ -180,11 +183,7 @@ barplot_bivar <- function(tab, x, y, graphPercent = NULL, showGraphNA = NULL){
     for (i in seq_len(ncol(tab2))){
       class(tab2[[i]]) <- setdiff(class(tab2[[i]]), "labelled_simplestat")
     }
-
-    ggtab2 <- if (!is.null(showGraphNA) && !showGraphNA) {
-      ggplot(remove_missing(tab2, na.rm = TRUE, vars = c(x, y)))
-    } else
-      ggplot(remove_missing(tab2, na.rm = TRUE, vars = y))
+    ggtab2 <- ggplot(tab2)
     graph <- ggtab2 + aes(x = !!sym(x), fill = !!sym(x), y = perc) + geom_bar(stat = "identity")  +
       facet_grid(reformulate(paste(". ~ ", y))) + scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + labs(x = label(tab[[y]]), fill = label(tab[[x]]), y = gettext("Proportion", domain = "R-simplestats"))
   } else {
