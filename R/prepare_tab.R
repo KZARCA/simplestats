@@ -37,7 +37,7 @@ factor_strings <- function(tab){
         if (nlevels(b) >= 10L) return(as.character(x))
         x <- reorder(b, b, function(y)-length(y))
         levels(x) %<>% str_trunc(20)
-      } else if (count_items(x) < 5){
+      } else if (count_items(x) < 5 & is_entier(x)){
         x <- factor(x)
         levels(x) %<>% str_trunc(20)
       }
