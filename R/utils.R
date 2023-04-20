@@ -183,9 +183,9 @@ format_number <- function(numbers, digits = 3){
     puiss <- floor(log10(abs(x)) + 1)
     nsmall <- ifelse (puiss >= 3, 0, digits - puiss)
     if (nsmall < 0) nsmall <- 0
-    if (digits < 0) {
+    if (digits < 1) {
       x <- round(x, digits)
-      digits <- 0
+      digits <- 1
     }
     base::format(x, digits = digits, nsmall = nsmall)
   })
