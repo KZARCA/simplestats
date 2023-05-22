@@ -43,8 +43,8 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shru
     }
     pred <- predict(mod)
   } else {
-    label <- tab[[vardep]]
     tab <- remove_missing_levels(tab, mod)
+    label <- tab[[vardep]]
     pred <- predict(mod, newdata = tab)
   }
   label %<>%
