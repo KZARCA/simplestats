@@ -17,9 +17,6 @@ define_varajust(tab, vardep, varindep, type, by_lasso = TRUE, all_vars = FALSE)
 
 \item{by_lasso}{a logical: is the adjustment variable computed with lasso?}
 }
-\value{
-
-}
 \description{
 Detect adjustment variables
 }

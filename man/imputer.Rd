@@ -4,7 +4,7 @@
 \alias{imputer}
 \title{Imputation strategy}
 \usage{
-imputer(tab, vardep, type, n_imputation = 1)
+imputer(tab, vardep, type, n_imputation = 1, maxit = 5)
 }
 \arguments{
 \item{tab}{A data frame}

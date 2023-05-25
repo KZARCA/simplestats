@@ -111,7 +111,7 @@ drop_levels <- function(tab, remove = FALSE){
     enleve <- map(seq_len(ncol(tab)), function(i){
       x <- tab[[i]]
       if (count_items(x) < 2) i
-    }) %>% compact() %>% flatten_dbl()
+    }) %>% compact() %>% list_c()
     if(length(enleve)) tab <- tab[-enleve]
   }
 
@@ -257,7 +257,7 @@ label_cutOff <- function (breaks, included) {
       else
         paste0(">", breaks[i])
     }
-  }) %>% compact() %>% flatten_chr()
+  }) %>% compact() %>% list_c()
 }
 
 
@@ -582,7 +582,7 @@ filter_glm_fit <- function(mod, tab, varindep, varajust, pred = 0){
   t <- tab[p < 1-eps & p > eps,]
   if(pred == 2){
     allVars <- prepare_variables(t, varindep, varajust, pred)
-    formule <- sprintf(". ~ %s", paste(purrr::flatten_chr(allVars), collapse = " + "))
+    formule <- sprintf(". ~ %s", paste(purrr::list_c(allVars), collapse = " + "))
     mod2 <- try2(update(mod, formula = formule, data = t))
   } else {
     mod2 <- try2(update(mod, data = t))

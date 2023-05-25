@@ -13,9 +13,6 @@ try2(expr, errors, warnings)
 
 \item{warnings}{character vector containing warning message to bypass}
 }
-\value{
-
-}
 \description{
 Simple tryCatch for errors and warnings
 }

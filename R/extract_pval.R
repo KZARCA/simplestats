@@ -174,7 +174,7 @@ put_pval_glob <- function(x, ...){
       else NA
     } else c(m, rep(NA, max(0, n - 1)))
   }) %>%
-    purrr::flatten_dbl()
+    purrr::list_c()
 }
 
 clean_anova <- function(x, ...){

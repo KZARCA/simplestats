@@ -53,8 +53,8 @@ globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", "
 #' @importFrom purrr map_dbl
 #' @importFrom purrr map_lgl
 #' @importFrom purrr compact
-#' @importFrom purrr flatten_chr
-#' @importFrom purrr flatten_dbl
+#' @importFrom purrr list_c
+#' @importFrom purrr list_c
 #' @importFrom purrr as_vector
 #' @importFrom purrr map_if
 #' @importFrom purrr map2_chr

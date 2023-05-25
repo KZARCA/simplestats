@@ -291,6 +291,6 @@ homogeneise_tab <- function(tab, before, after){
       c(x, y)
     }
   }) %>% compact() %>%
-    purrr::flatten_chr()
+    purrr::list_c()
   tab[all_vars]
 }

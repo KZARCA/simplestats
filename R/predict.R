@@ -92,7 +92,7 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
     cv <- get_cv_auc(tab, vardep, varindep, type, n = min(10, floor(get_min_class(tab, vardep, type)/12)), progression = updateProgress)
     m <- map(cv, 1)  %>%
       compact() %>%
-      flatten_dbl() %>%
+      list_c() %>%
       mean(na.rm = TRUE)
     auc_tot <- calculate_auc(create_pred_obs(mod))
 

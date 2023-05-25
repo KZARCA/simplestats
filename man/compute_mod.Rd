@@ -19,9 +19,6 @@ compute_mod(tab, vardep, varindep, varajust, type, pred = 0)
 
 \item{pred}{0 if the analysis is explanatory, 1 if the analysis is predictive, 2 if the model is computed for cross validation}
 }
-\value{
-
-}
 \description{
 Compute multivariable statistical model
 }

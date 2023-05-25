@@ -63,7 +63,7 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
     return(p)
   }) %>%
     purrr::compact() %>%
-    purrr::flatten_dbl()
+    purrr::list_c()
   if(length(varajust)) structure(names(varajust), value = varajust)
 }
 
@@ -116,7 +116,7 @@ recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FAL
   }
   ide <- identical_model_frame(tab, formule, type)
   if (length(ide)){
-    elimine <- c(elimine, map(ide, function(x) x[-1]) %>% flatten_chr() %>% unique())
+    elimine <- c(elimine, map(ide, function(x) x[-1]) %>% list_c() %>% unique())
     vars <- vars[-na.omit(match(elimine, vars))]
     if(!length(vars)) return(elimine)
     if (type == "survival"){

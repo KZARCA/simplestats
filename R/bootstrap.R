@@ -6,7 +6,7 @@ modify_boot_formula <- function(tab, model_base){
         y
     }) %>%
       purrr::compact() %>%
-      purrr::flatten_chr()
+      purrr::list_c()
     escaped <- escaped[!escaped %in% zz]
   }
   if (length(escaped) > 0){

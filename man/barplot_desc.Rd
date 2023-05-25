@@ -9,7 +9,8 @@ barplot_desc(
   x,
   ylab = gettext("proportion"),
   showGraphNA = NULL,
-  palette = "hue"
+  palette = "hue",
+  graphPercent = NULL
 )
 }
 \arguments{

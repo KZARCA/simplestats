@@ -54,14 +54,10 @@ Perform bootstraps
 }
 \section{Functions}{
 \itemize{
-\item \code{get_resBoot}: Performs bootstrap to further compute the confidence interval
+\item \code{get_resBoot()}: Performs bootstrap to further compute the confidence interval
 
-\item \code{get_resBoot_p}: Permutation test for p-values
+\item \code{get_resBoot_p()}: Permutation test for p-values
 
-\item \code{get_resBoot_anova}: Permutation test for anova p-values
+\item \code{get_resBoot_anova()}: Permutation test for anova p-values
+
 }}
-
-\examples{
-
-
-}

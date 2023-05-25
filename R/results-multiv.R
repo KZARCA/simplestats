@@ -105,7 +105,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   # allVars <- c(varindep_m, varajust_m)
   allVars <- prepare_variables(tab, varindep, varajust, pred)
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
-  formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::flatten_chr(allVars), collapse = " + "))
+  formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::list_c(allVars), collapse = " + "))
   formule2 <- sprintf("%s ~ %s", vardep_m, paste(unique(c(allVars$varindep, varajust)), collapse = " + "))
   #formule2 <- formule
   if (pred == 2 && length(varindep) == 0 && length(varajust) == 0) {

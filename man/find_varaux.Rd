@@ -23,9 +23,6 @@ find_varaux(
 
 \item{type}{Can be one of "linear", "logistic", "survival"}
 }
-\value{
-
-}
 \description{
 Find auxillary variables, ie predictors of data missingness
 }

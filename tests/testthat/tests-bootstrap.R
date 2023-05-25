@@ -50,17 +50,17 @@ boot_tests <- function(tab, vardep, varindep, varajust){
       } else {
         ""
       }
-    }) %>% flatten_chr()
+    }) %>% list_c()
     multiple <- map(varindep, function(x){
       tabx <- tab[[x]]
       if(is.numeric(tabx)) 1 else rep(NA, nlevels(tabx) - 1)
-    }) %>% flatten_dbl
+    }) %>% list_c
     term <- map(varindep, function(x){
       tabx <- tab[[x]]
       if (is.factor(tabx)) paste0(x, levels(tabx)[seq.int(2, nlevels(tabx))]) else x
-    }) %>% flatten_chr()
-    expect_equal(added$id, map2(varindep, nrep, function(x, y) rep(x, y)) %>% flatten_chr())
-    expect_equal(added$variable, map2(varindep, nrep, function(x, y) rep(label(tab[[x]]), y)) %>% flatten_chr())
+    }) %>% list_c()
+    expect_equal(added$id, map2(varindep, nrep, function(x, y) rep(x, y)) %>% list_c())
+    expect_equal(added$variable, map2(varindep, nrep, function(x, y) rep(label(tab[[x]]), y)) %>% list_c())
     expect_equal(added$niveau, niveau)
     expect_true(all(is.na(added$multiple) == is.na(multiple)))
     expect_equal(added$term, term)
@@ -76,7 +76,7 @@ boot_tests <- function(tab, vardep, varindep, varajust){
         } else {
           NA
         }
-      }) %>% flatten_dbl()
+      }) %>% list_c()
       expect_true(all(is.na(ano) == is.na(pglob)))
     })
 

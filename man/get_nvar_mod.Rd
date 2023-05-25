@@ -11,9 +11,6 @@ get_nvar_mod(tab, varajust = NULL, remove1 = TRUE)
 
 \item{varajust}{A character vector of adjustment variables}
 }
-\value{
-
-}
 \description{
 Get the predicted number of terms in a statistical model
 }
