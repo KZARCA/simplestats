@@ -171,7 +171,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   varajust <- get_lasso_variables(train, vardep, varindep, type)
   if (identical(varajust, "ERROR_MODEL")){
     varajust <- character(0)
-    return(NA, NA, NA, 1)
+    return(c(NA, NA, NA, 1))
   } else {
     el <- recherche_multicol(train, vardep, intersect(names(train), varindep), varajust, type, pred = TRUE)
     varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
