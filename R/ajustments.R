@@ -230,7 +230,8 @@ get_lasso_variables <- function(tab, vardep, varindep = character(0), type = "lo
               foldid = sample(rep(seq(10), length.out = nrow(nona))),
               family = family,
               penalty.factor = penalties)
-  }, errors = c("Matrices must have same number of columns", "y is constant", "need at least two non-NA values to interpolate"),
+  }, errors = c("Matrices must have same number of columns", "y is constant", "need at least two non-NA values to interpolate",
+                "dimnames"),
   warnings = c("Convergence", "Option grouped=FALSE enforced", "solutions for larger values of lambda returned",
                "binomial class has fewer than 8  observations", "empty model"))
   if (is_error(cv)){
