@@ -3,17 +3,17 @@
 \name{is_normal}
 \alias{is_normal}
 \alias{is_normal.data.frame}
-\alias{is_normal.default}
+\alias{is_normal.double}
 \title{Can it be considered as normal?}
 \usage{
 is_normal(x)
 
 \method{is_normal}{data.frame}(df)
 
-\method{is_normal}{default}(x)
+\method{is_normal}{double}(x)
 }
 \arguments{
-\item{x}{Object to verify}
+\item{x}{Object to check}
 
 \item{df}{data.frame with 2 columns, x being numeric and y being a factor}
 
@@ -21,4 +21,10 @@ is_normal(x)
 }
 \description{
 Can it be considered as normal?
+}
+\details{
+is_normal.double first bootstraps the results and then pass the result to
+is_normal.default
+is_normal.default returns TRUE if the mean is between the 40th and 60th percentile
+and the skewness is lower than 0.6
 }

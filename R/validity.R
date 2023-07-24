@@ -80,11 +80,18 @@ is_homoscedatic.default <- function(x, y, ...){
 
 #' Can it be considered as normal?
 #'
-#' @param x Object to verify
+#' @param x Object to check
 #' @param df data.frame with 2 columns, x being numeric and y being a factor
 #' @param model The result of the lm function
 #'
 #' @return
+#'
+#' @details
+#' is_normal.double first bootstraps the results and then pass the result to
+#' is_normal.default
+#' is_normal.default returns TRUE if the mean is between the 40th and 60th percentile
+#' and the skewness is lower than 0.6
+#'
 #' @export
 #'
 #' @examples
@@ -116,21 +123,32 @@ is_normal.data.frame <- function(df){
 #' @rdname is_normal
 is_normal.double <- function(x){
   l <- length(x)
-  replicate(1000, mean(sample(x, l, replace = TRUE) ))%>%
+  res <- replicate(1000, mean(sample(x, l, replace = TRUE) ))
+  res %>%
     is_normal.default()
 }
 
-
-#' @export
-#' @rdname is_normal
 is_normal.default <- function(x){
   f <- ecdf(x)
   percentile <- f(mean(x, na.rm=TRUE))
-  med <- median(x, na.rm=TRUE)
-  q25 <- f((med - abs(med - min(x, na.rm=TRUE))/2))
-  q75 <- f((med + abs(max(x, na.rm=TRUE) - med)/2))
-  if (percentile < 0.6 & percentile > 0.4 & q75-q25 > 0.5)
+  skewness <- sum((x - mean(x))^3) / (length(x) * sd(x)^3)
+  if (percentile < 0.6 & percentile > 0.4 & abs(skewness) < 0.6)
     TRUE
   else
     FALSE
 }
+
+
+#' #' @export
+#' #' @rdname is_normal
+#' is_normal.default <- function(x){
+#'   f <- ecdf(x)
+#'   percentile <- f(mean(x, na.rm=TRUE))
+#'   med <- median(x, na.rm=TRUE)
+#'   q25 <- f((med - abs(med - min(x, na.rm=TRUE))/2))
+#'   q75 <- f((med + abs(max(x, na.rm=TRUE) - med)/2))
+#'   if (percentile < 0.6 & percentile > 0.4 & q75-q25 > 0.5)
+#'     TRUE
+#'   else
+#'     FALSE
+#' }
