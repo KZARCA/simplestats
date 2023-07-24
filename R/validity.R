@@ -103,12 +103,21 @@ is_normal.lm <- function(x){
 #' @rdname is_normal
 is_normal.data.frame <- function(df){
   lev <- unique(df$y)
-  map_lgl(seq_along(lev), function(i){
-    filter(df, y == lev[i]) %>%
-      pull(x) %>%
-      is_normal.default()
-  }) %>%
-    all()
+    map_lgl(seq_along(lev), function(i){
+      filter(df, y == lev[i]) %>%
+        pull(x) %>%
+        is_normal.double(x)
+    }) %>%
+      all()
+  #} else TRUE
+}
+
+#' @export
+#' @rdname is_normal
+is_normal.double <- function(x){
+  l <- length(x)
+  replicate(1000, mean(sample(x, l, replace = TRUE) ))%>%
+    is_normal.default()
 }
 
 
