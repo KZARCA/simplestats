@@ -113,7 +113,7 @@ is_normal.data.frame <- function(df){
     map_lgl(seq_along(lev), function(i){
       filter(df, y == lev[i]) %>%
         pull(x) %>%
-        is_normal.double(x)
+        is_normal.double()
     }) %>%
       all()
   #} else TRUE
@@ -131,7 +131,7 @@ is_normal.double <- function(x){
 is_normal.default <- function(x){
   f <- ecdf(x)
   percentile <- f(mean(x, na.rm=TRUE))
-  skewness <- sum((x - mean(x))^3) / (length(x) * sd(x)^3)
+  skewness <- sum((x - mean(x, na.rm = TRUE))^3, na.rm = TRUE) / (length(x) * sd(x, na.rm = TRUE)^3)
   if (percentile < 0.6 & percentile > 0.4 & abs(skewness) < 0.6)
     TRUE
   else
