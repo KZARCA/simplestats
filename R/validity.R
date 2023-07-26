@@ -123,7 +123,7 @@ is_normal.data.frame <- function(df){
 #' @rdname is_normal
 is_normal.double <- function(x){
   l <- length(x)
-  res <- replicate(1000, mean(sample(x, l, replace = TRUE) ))
+  res <- replicate(1000, mean(resample(x, l, replace = TRUE) ))
   res %>%
     is_normal.default()
 }

@@ -716,4 +716,4 @@ gettext <- function(..., domain = "R-simplestats"){
 gettextf <- function(fmt, ..., domain = "R-simplestats"){
   base::gettextf(fmt, ..., domain = domain)
 }
-
+resample <- function(x, ...) x[sample.int(length(x), ...)]
