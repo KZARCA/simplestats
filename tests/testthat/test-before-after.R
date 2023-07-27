@@ -49,7 +49,7 @@ test_that("create_ligne_desc_ba.factor is working with unequal number of categor
   y <- tab$d
   z <- tab$e
   ligne <- create_ligne_desc_ba(x, y)
-  expect_equal(names(ligne), c("id", "variable", "niveau", gettext("before", domain = "R-simplestats"),
+  expect_equal(names(ligne), c("id", ".variable", "niveau", gettext("before", domain = "R-simplestats"),
                                gettext("after", domain = "R-simplestats"), "n", "p", "test"))
   expect_equal(ligne$niveau, as.character(1:4))
   expect_equivalent(ligne[[gettext("after")]][4], "0 (0%)")

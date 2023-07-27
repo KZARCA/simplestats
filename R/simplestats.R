@@ -6,7 +6,7 @@
 #' @name simplestats
 #'
 #'
-globalVariables(c(".", ".time", "term", "variable", "group_size", "..count..", ".n",
+globalVariables(c(".", ".time", "term", ".variable", "group_size", "..count..", ".n",
                   "test", "p.global", "niveau", "p", "id"))
 #' @importFrom utils read.csv
 #' @importFrom stats anova

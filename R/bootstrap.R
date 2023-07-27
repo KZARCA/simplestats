@@ -193,7 +193,7 @@ get_resBoot_anova <- function(tab, R, model_base, nCPU, updateProgress = functio
   if(!is.null(xlevels) && any(map_lgl(xlevels, ~ length(.) > 2))){
     resBoot_anova <- boot::boot(tab, get_boot_anova, R, progression = updateProgress, model_base = model_base, nvar = ncol(tab) - (length(varajust) + 1), parallel = "multicore", ncpus = nCPU, sim = "permutation")
     resBoot_anova$tab_anova_base <- clean_anova(model_base) %>%
-      dplyr::filter(!variable %in% varajust)
+      dplyr::filter(!.variable %in% varajust)
     resBoot_anova
   } else
     return(NULL)

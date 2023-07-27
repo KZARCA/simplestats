@@ -60,7 +60,7 @@ boot_tests <- function(tab, vardep, varindep, varajust){
       if (is.factor(tabx)) paste0(x, levels(tabx)[seq.int(2, nlevels(tabx))]) else x
     }) %>% list_c()
     expect_equal(added$id, map2(varindep, nrep, function(x, y) rep(x, y)) %>% list_c())
-    expect_equal(added$variable, map2(varindep, nrep, function(x, y) rep(label(tab[[x]]), y)) %>% list_c())
+    expect_equal(added$.variable, map2(varindep, nrep, function(x, y) rep(label(tab[[x]]), y)) %>% list_c())
     expect_equal(added$niveau, niveau)
     expect_true(all(is.na(added$multiple) == is.na(multiple)))
     expect_equal(added$term, term)
