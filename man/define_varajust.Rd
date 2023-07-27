@@ -5,6 +5,8 @@
 \title{Detect adjustment variables}
 \usage{
 define_varajust(tab, vardep, varindep, type, by_lasso = TRUE, all_vars = FALSE)
+
+define_varajust(tab, vardep, varindep, type, by_lasso = TRUE, all_vars = FALSE)
 }
 \arguments{
 \item{tab}{A data frame}
@@ -18,5 +20,7 @@ define_varajust(tab, vardep, varindep, type, by_lasso = TRUE, all_vars = FALSE)
 \item{by_lasso}{a logical: is the adjustment variable computed with lasso?}
 }
 \description{
+Detect adjustment variables
+
 Detect adjustment variables
 }

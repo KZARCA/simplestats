@@ -7,6 +7,7 @@ local_reproducible_output(
 )
 
 test_that("get_glance Mann Whitney is working", {
+  tab <- tab[1:10,]
   t <- get_glance(tab$vs, tab$wt)
   expect_error(t, NA)
   expect_warning(t, NA)

@@ -5,6 +5,8 @@
 \title{Search for multicolinearity}
 \usage{
 recherche_multicol(tab, vardep, varindep, varajust, type, pred = FALSE)
+
+recherche_multicol(tab, vardep, varindep, varajust, type, pred = FALSE)
 }
 \arguments{
 \item{tab}{A data frame}
@@ -19,7 +21,11 @@ recherche_multicol(tab, vardep, varindep, varajust, type, pred = FALSE)
 }
 \value{
 A character vector of all terms with a VIF > 5
+
+A character vector of all terms with a VIF > 5
 }
 \description{
+This function removes all terms of the model with a VIF > 5
+
 This function removes all terms of the model with a VIF > 5
 }

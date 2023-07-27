@@ -163,6 +163,7 @@ modify_mod <- function(x, ...){
   UseMethod("modify_mod")
 }
 
+#' @export
 modify_mod.default <- function(mod, tab, varindep, varajust, pred){
   warned <- attr(mod, "warning")
   if(is.null(mod$data)) mod$data <- tab
@@ -175,7 +176,7 @@ modify_mod.default <- function(mod, tab, varindep, varajust, pred){
   return(mod)
 }
 
-
+#' @export
 modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
   m <- tabm$m
   warned <- unique(attr(mod, "warning"))

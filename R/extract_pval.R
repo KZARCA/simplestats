@@ -216,7 +216,7 @@ clean_anova.mira <- function(mod){
 }
 
 clean_anova.default <- function(mod){
-  car::Anova(mod) %>%
+  try2(car::Anova(mod), warnings = "the printed representation of the hypothesis") %>%
     broom::tidy() %>%
     dplyr::rename(.variable = term) %>%
     dplyr::filter(.variable != "(Intercept)" & .variable != "Residuals" & .variable != "NULL")

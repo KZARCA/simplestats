@@ -29,7 +29,7 @@ test_that("get_cv_auc works with any number of cv and returns a list of double",
 
 test_that("predict takes account of shrinkage", {
   shrunk <- c(1,1,1)
-  tt <- standardize_tab(tbc)
+  tt <- standardize_tab(mice::tbc)
   mod <- with(tt, glm(sex ~ age + occ, family = "binomial"))
   expect_equal(predict(modify_mod_shrunk(mod)), predict(mod))
   expect_equivalent(predict(modify_mod_shrunk(mod, shrunk)), rowSums(model.matrix(mod)))

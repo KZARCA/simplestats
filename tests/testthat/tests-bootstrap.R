@@ -31,7 +31,7 @@ boot_tests <- function(tab, vardep, varindep, varajust){
     test_that("get_resBoot_anova works", {
       expect_is(resBoot_anova, "boot")
       expect_equal(dim(resBoot_anova$t)[2], length(varindep))
-      expect_equivalent(resBoot_anova$t0, broom::tidy(car::Anova(mod))$statistic[seq_len(length(varindep))])
+      expect_equivalent(resBoot_anova$t0, broom::tidy(suppressWarnings(car::Anova(mod)))$statistic[seq_len(length(varindep))])
     })
   }
   test_that("get_confint_p_boot works", {

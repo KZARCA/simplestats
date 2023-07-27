@@ -157,7 +157,7 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
 #' @export
 calculate_auc <- function(pred_obs){
   plot_ROC(pred_obs, thresholds = NA) %>%
-  plotROC::calc_auc() %>%
+  try2(plotROC::calc_auc(), warnings = "this following aesthetics") %>%
   extract2("AUC")
 }
 
