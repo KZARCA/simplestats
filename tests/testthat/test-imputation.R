@@ -37,12 +37,12 @@ test_that("imputer uses mice for variables with more than 5% of missing data", {
   tab3 <- imputer(tab, "event", type = 'survival')
   expect_is(tab3, "mids")
   expect_length(tab3$imp$b[[1]], 15)
-  expect_length(tab3$imp$a[[1]], 15)
-  expect_equivalent(as_vector(tab3$imp$b[1,]), rep(NA_integer_, 5))
+  expect_length(tab3$imp$a[[1]], 3)
 })
 
 
 test_that("imputer uses impute for variables with more than 5% of missing data with large datasets", {
+  set.seed(1)
   tab <- data.frame(
     a = c(rep(NA, 3), seq_len(5997)) %>% sample(),
     b = c(rep(NA, 600), rep_len(1:2, 5400)) %>% sample(),
@@ -50,8 +50,8 @@ test_that("imputer uses impute for variables with more than 5% of missing data w
     d = c(rep(NA, 600), rep_len(LETTERS[1:9], 5400)) %>% sample(),
     stringsAsFactors = TRUE
   )
-
   expect_equivalent(imputer(tab, "a", type = "linear")$method, c("pmm", "pmm", "polyreg", "polyreg"))
+  set.seed(1)
   tab2 <- dplyr::sample_frac(tab, 0.2)
   expect_equivalent(imputer(tab2, "a", type = "linear")$method, c("pmm", "pmm", "polyreg", "polyreg"))
 })

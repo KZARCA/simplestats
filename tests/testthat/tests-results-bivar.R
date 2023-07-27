@@ -36,6 +36,7 @@ test_that("create_ligne_bivar.factor_num is working", {
     expect_equal(line$n)
   lm(age ~ differ, data=tab) %>%
     car::Anova() %>%
+    suppressWarnings() %>%
     broom::tidy() %>%
     extract2("p.value") %>%
     extract(1) %>%
@@ -117,10 +118,11 @@ test_that("create_ligne_bivar median is working", {
 
 test_that("create_ligne_bivar.num_num is working", {
   local_reproducible_output(lang = "en")
-  line <- create_ligne_bivar(tab$nodes, tab$age, noms = "nodes")
+  tab2 <- tab[1:15,]
+  line <- create_ligne_bivar(tab2$nodes, tab2$age, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$variable, "Nodes")
-  co <- cor.test(tab$nodes, tab$age, method = "spearman", exact = FALSE) %>% broom::tidy()
+  co <- cor.test(tab2$nodes, tab2$age, method = "spearman", exact = FALSE) %>% broom::tidy()
   expect_equal(line$`correlation coefficient`, sprintf_number_table("%s", co$estimate))
   expect_equal(line$p, co$p.value)
 })

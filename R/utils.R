@@ -319,11 +319,11 @@ are_enough_cor <- function(tab, x, y, univ){
   } else if (is.factor(tab[[x]]) & is.factor(tab[[y]])) {
     all(table(tab) >= min_rows)
   } else if (is.factor(tab[[x]])){
-    counts <- group_by(tab, dplyr::across(x), .drop = FALSE) %>%
+    counts <- group_by(tab, dplyr::across(all_of(x)), .drop = FALSE) %>%
       dplyr::count()
     all(counts$n > min_rows)
   } else if (is.factor(tab[[y]])){
-    counts <- group_by(tab, dplyr::across(y), .drop = FALSE) %>%
+    counts <- group_by(tab, dplyr::across(all_of(y)), .drop = FALSE) %>%
       dplyr::count()
     all(counts$n > min_rows)
   }

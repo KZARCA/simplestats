@@ -22,9 +22,11 @@ test_that("make_tab_survival works with var_time, passage 1 & 2", {
 })
 test_that("make_tab_survival works with limit", {
   tab <- standardize_tab(colon)
-  lim0 <- as.numeric(make_tab_survival(tab, "status", var_time = "time", limit = 0)$status)
+  lim0 <- as.numeric(make_tab_survival(tab, "status", var_time = "time", limit = 1)$status)
   lim10k <- make_tab_survival(tab, "status", var_time = "time", limit = 10000)$status
+  liminf <- as.numeric(make_tab_survival(tab, "status", var_time = "time", limit = 0)$status)
   expect_equal(lim0, rep(0, nrow(tab)))
+  expect_equal(as.numeric(lim10k), liminf)
   expect_equal(lim10k, make_tab_survival(tab, "status", var_time = "time")$status)
 })
 

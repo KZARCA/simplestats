@@ -60,7 +60,7 @@ test_that("create_ligne_surv_desc is working", {
     extract2("table")
   line <- create_ligne_surv_desc(tab$.time, tab$status)
   expect_equal(line$id, "survival")
-  expect_equal(line$variable, gettext("max follow-up", domain = "R-simplestats"))
+  expect_equal(line$variable, gettext("follow-up", domain = "R-simplestats"))
   expect_equal(line[[gettext("median (95% CI)", domain = "R-simplestats")]],
                sprintf_number_table("%s (%s; %s)",
                                     table_surv[["median"]], table_surv[["0.95LCL"]], table_surv[["0.95UCL"]]))

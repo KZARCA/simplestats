@@ -44,7 +44,7 @@ test_that("extract_from_model is working",{
   tab <- standardize_tab(colon) %>% make_tab_survival("status", var_time = "time")
   mod <- lm(age ~ sex + rx + nodes, data = tab)
   expect_equal(extract_from_model(mod, "estimate"), coef(mod)[-1])
-  expect_equivalent(extract_from_model(car::Anova(mod), "statistic"), broom::tidy(car::Anova(mod))$statistic[seq_len(3)])
+  expect_equivalent(extract_from_model(suppressWarnings(car::Anova(mod)), "statistic"), broom::tidy(suppressWarnings(car::Anova(mod)))$statistic[seq_len(3)])
   mod2 <- coxph(Surv(.time, status) ~ sex + rx + nodes, data = tab)
   expect_equal(extract_from_model(mod2, "estimate"), coef(mod2))
 })

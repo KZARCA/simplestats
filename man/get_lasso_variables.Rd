@@ -11,6 +11,14 @@ get_lasso_variables(
   type = "logistic",
   sparse = TRUE
 )
+
+get_lasso_variables(
+  tab,
+  vardep,
+  varindep = character(0),
+  type = "logistic",
+  sparse = TRUE
+)
 }
 \arguments{
 \item{tab}{A data.frame}
@@ -25,7 +33,11 @@ get_lasso_variables(
 }
 \value{
 A character vector of the predictor variables
+
+A character vector of the predictor variables
 }
 \description{
+Variable selection by LASSO procedure
+
 Variable selection by LASSO procedure
 }

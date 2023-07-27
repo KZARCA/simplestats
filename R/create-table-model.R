@@ -84,6 +84,7 @@ add_varname.default <- function(tab, x, noms, ...){
   add_column(tab, id = noms, variable = label(x), .before = 1)
 }
 
+#' @export
 add_varname.factor <- function(tab, x, noms, one_line = FALSE, add_niveau = TRUE){
   if (one_line) add_varname.default(tab, x, noms)
   else {
@@ -95,6 +96,7 @@ add_varname.factor <- function(tab, x, noms, one_line = FALSE, add_niveau = TRUE
   }
 }
 
+#' @export
 add_varname.boot <- function(tableRet, resBoot){
   map2_df(resBoot$data[-1], names(resBoot$data[-1]), function(x,y){
     if(is.numeric(x)) {
@@ -121,6 +123,7 @@ add_varname.boot <- function(tableRet, resBoot){
     add_class("tabboot")
 }
 
+#' @export
 add_varname.lm <- function(tab_mod, mod){
   left <- map2_df(mod$model[-1], names(mod$model[-1]), function(x, y){
     if(is.numeric(x)) {
@@ -163,11 +166,13 @@ add_varname.lm <- function(tab_mod, mod){
     add_class(paste0("tab", class(mod)[1]))
 }
 
+#' @export
 add_varname.mira <- function(tab_mod, mod){
   mod <- getfit(mod, 1)
   add_varname(tab_mod, mod)
 }
 
+#' @export
 add_varname.coxph <- add_varname.lm
 
 get_all_boots <- function(model_base, varajust = NULL, nCPU = 1, R = NULL){
