@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: simplestats 0.15.1\n"
-"POT-Creation-Date: 2023-03-03 10:27\n"
+"Project-Id-Version: simplestats 0.16\n"
+"POT-Creation-Date: 2023-07-28 10:52\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -272,6 +272,9 @@ msgid "before"
 msgstr ""
 
 msgid "after"
+msgstr ""
+
+msgid "fitted probabilities numerically 0 or 1 occurred"
 msgstr ""
 
 msgid "-"
