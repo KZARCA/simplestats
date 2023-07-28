@@ -34,13 +34,15 @@ barplot_desc <- function(tab, x, ylab = gettext("proportion"), showGraphNA = NUL
   } else {
     graph <- ggtab + aes_string(x = x, fill=x) +
       geom_bar(if(!isTRUE(graphPercent)) aes(y=(after_stat(count))/sum(after_stat(count))), na.rm = TRUE) + theme_bw() +
-      (if(!isTRUE(graphPercent))scale_y_continuous( labels = scales::percent_format(accuracy = 1))) +
+      (if(!isTRUE(graphPercent)) scale_y_continuous( labels = scales::percent_format(accuracy = 1))) +
       labs(x=noms, y=ylab, fill=label(tab[[x]])) + scale_x_discrete(breaks = NULL)
   }
   if (palette == "grey"){
     graph <- graph + scale_fill_grey()
   }  else if (palette != "hue"){
     graph <- graph + scale_fill_brewer(palette = palette, na.value = "grey")
+  } else {
+    graph
   }
 }
 
