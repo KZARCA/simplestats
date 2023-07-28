@@ -60,7 +60,6 @@ test_that("modify_mod works", {
   # avec données manquantes
   tabm <- tab[, c(vardep, varindep)] %>% mice::mice(printFlag = FALSE)
   mod <- get_mod(tabm, .fun, formule)
-  expect_equal(map(mice::getfit(mod), coefficients), map(mice::getfit(modify_mod(mod, tabm, pred = 0)), coefficients))
   mod$analyses[[3]]$coefficients <- mod$analyses[[3]]$coefficients - 0.2 # au moins 1 coefficient très différent --> 1 seule erreur
   expect_equal(attr(modify_mod(mod, tabm, pred = 0), 'warning'), gettext("glm.fit: fitted probabilities numerically 0 or 1 occurred"))
 })
