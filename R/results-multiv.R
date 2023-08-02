@@ -163,11 +163,12 @@ modify_mod <- function(x, ...){
   UseMethod("modify_mod")
 }
 
+#' @export
 modify_mod.default <- function(mod, tab, varindep, varajust, pred){
   warned <- attr(mod, "warning")
   if(is.null(mod$data)) mod$data <- tab
   if (is.null(warned)) return(mod)
-  if(any(grepl("fitted probabilities numerically 0 or 1 occurred", warned), na.rm = TRUE)){
+  if(any(grepl(gettext("fitted probabilities numerically 0 or 1 occurred"), warned), na.rm = TRUE)){
     m <- keep_warning(filter_glm_fit(mod, tab, varindep, varajust, pred))
     if (!is.null(m)) mod <- m
   }
@@ -175,7 +176,7 @@ modify_mod.default <- function(mod, tab, varindep, varajust, pred){
   return(mod)
 }
 
-
+#' @export
 modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
   m <- tabm$m
   warned <- unique(attr(mod, "warning"))

@@ -5,7 +5,7 @@ tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "t
 test_that("create_ligne_desc.numeric is working", {
   line <- create_ligne_desc(tab$age, noms = "age")
   expect_equal(line$id, "age")
-  expect_equal(line$variable, "Age")
+  expect_equal(line$.variable, "Age")
   expect_equal(line[[gettext("mean (sd)", domain = "R-simplestats")]],
                sprintf_number_table("%s (%s)", mean(tab$age), sd(tab$age)))
   expect_equal(line[[gettext("mean (sd)", domain = "R-simplestats")]], "59.8 (11.9)")
@@ -38,7 +38,7 @@ test_that("create_ligne_desc.factor is working", {
   }
   line <- create_ligne_desc(tab$differ, noms = "differ")
   expect_equal(line$id, "differ")
-  expect_equal(line$variable, "Differ")
+  expect_equal(line$.variable, "Differ")
   expect_equal(line$`1`, test_all(tab, "differ", "1"))
   expect_equal(line$`2`, test_all(tab, "differ", "2"))
   expect_equal(line$`3`, test_all(tab, "differ", "3"))
@@ -48,7 +48,7 @@ test_that("create_ligne_desc.factor is working", {
 test_that("create_ligne_desc_export is working", {
   line <- create_ligne_desc_export(tab$differ, "differ")
   expect_equal(line$id, rep("differ", 3))
-  expect_equal(line$variable, rep("Differ", 3))
+  expect_equal(line$.variable, rep("Differ", 3))
   expect_equal(line$niveau, as.character(seq_len(3)))
   expect_equal(line$`n (%)`, c("186 (10%)", "1326 (73%)", "300 (17%)"))
 })
@@ -60,7 +60,7 @@ test_that("create_ligne_surv_desc is working", {
     extract2("table")
   line <- create_ligne_surv_desc(tab$.time, tab$status)
   expect_equal(line$id, "survival")
-  expect_equal(line$variable, gettext("follow-up", domain = "R-simplestats"))
+  expect_equal(line$.variable, gettext("follow-up", domain = "R-simplestats"))
   expect_equal(line[[gettext("median (95% CI)", domain = "R-simplestats")]],
                sprintf_number_table("%s (%s; %s)",
                                     table_surv[["median"]], table_surv[["0.95LCL"]], table_surv[["0.95UCL"]]))

@@ -71,7 +71,7 @@ add_pval_glob <- function(tab_mod, mod, en_test = FALSE , pred = FALSE){
   }
   mutate(tab_mod, p.global = vec_pval, p.global = ifelse(grepl("^ns\\(", term), NA, p.global)) %>%
     mutate(p.global = ifelse(!is.na(p.global), p.global,
-                             ifelse(variable == dplyr::lag(variable) & dplyr::lag(variable, default="NA") != "NA", NA, p.value))) %>%
+                             ifelse(.variable == dplyr::lag(.variable) & dplyr::lag(.variable, default="NA") != "NA", NA, p.value))) %>%
     add_class(class(tab_mod))
 }
 
@@ -81,7 +81,7 @@ add_varname <- function(x, y, ...){
 
 #' @export
 add_varname.default <- function(tab, x, noms, ...){
-  add_column(tab, id = noms, variable = label(x), .before = 1)
+  add_column(tab, id = noms, .variable = label(x), .before = 1)
 }
 
 #' @export
@@ -91,8 +91,8 @@ add_varname.factor <- function(tab, x, noms, one_line = FALSE, add_niveau = TRUE
     id <- c(rep(noms, nlevels(x)))
     variable <- c(rep(label(x), nlevels(x)))
     niveau <- levels(x)
-    if (add_niveau) add_column(tab, id, variable, niveau, .before = 1)
-    else add_column(tab, id, variable, .before = 1)
+    if (add_niveau) add_column(tab, id, .variable = variable, niveau, .before = 1)
+    else add_column(tab, id, .variable = variable, .before = 1)
   }
 }
 
@@ -117,7 +117,7 @@ add_varname.boot <- function(tableRet, resBoot){
       niveau <- sprintf("%s vs %s", levels(x)[-1], rep(levels(x)[1], nlevels(x) - 1))
       multiple <- NA
     }
-    tibble(id = id, variable = variable, niveau = niveau, multiple = multiple)
+    tibble(id = id, .variable = variable, niveau = niveau, multiple = multiple)
   }) %>%
     bind_cols(as_tibble(tableRet)) %>%
     add_class("tabboot")
@@ -154,11 +154,11 @@ add_varname.lm <- function(tab_mod, mod){
       niveau <- sprintf("%s vs %s", levels(x)[-1], rep(levels(x)[1], nlevels(x) - 1))
       multiple <- NA
     }
-    tibble(id = id, variable = variable, niveau = niveau, multiple = multiple)
+    tibble(id = id, .variable = variable, niveau = niveau, multiple = multiple)
   })
   if (tab_mod$term[1] == "(Intercept)") {
     left <- bind_rows(
-      tibble(id = "intercept", variable = "Intercept", niveau = "", multiple = NA),
+      tibble(id = "intercept", .variable = "Intercept", niveau = "", multiple = NA),
       left
     )
   }
@@ -247,7 +247,7 @@ create_table_bootstrap <- function(model_base, varajust = NULL, nCPU = 1, en_tes
   else if ("lm" %in% class(model_base)) "tablm"
   else if ("coxph" %in% class(model_base)) "tabcoxph"
   tab_complete %<>%
-    dplyr::filter(!variable %in% varajust_label) %>%
+    dplyr::filter(!.variable %in% varajust_label) %>%
     add_class(c2)
   return(tab_complete)
 }

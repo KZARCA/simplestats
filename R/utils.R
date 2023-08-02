@@ -297,7 +297,7 @@ show_table_markdown <- function(table){
 }
 
 prepare_table_export <- function(tab){
-  tab %<>% select(-variable)
+  tab %<>% select(-.variable)
   if (nrow(tab) > 1){
     tab$id[2:nrow(tab)] <- NA
   }

@@ -211,13 +211,13 @@ clean_anova.mira <- function(mod){
         }
       })
     }
-    tibble(variable = x, df = ifelse(length(xlevels[[x]]), length(xlevels[[x]]) - 1, 1), p.value = p.value)
+    tibble(.variable = x, df = ifelse(length(xlevels[[x]]), length(xlevels[[x]]) - 1, 1), p.value = p.value)
   })
 }
 
 clean_anova.default <- function(mod){
   try2(car::Anova(mod), warnings = "the printed representation of the hypothesis") %>%
     broom::tidy() %>%
-    dplyr::rename(variable = term) %>%
-    dplyr::filter(variable != "(Intercept)" & variable != "Residuals" & variable != "NULL")
+    dplyr::rename(.variable = term) %>%
+    dplyr::filter(.variable != "(Intercept)" & .variable != "Residuals" & .variable != "NULL")
 }

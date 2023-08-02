@@ -88,7 +88,7 @@ create_ligne_surv_desc <- function(time, censure){
                   gettext("n events", domain = "R-simplestats"),
                   gettext("survival rate (95% CI)", domain = "R-simplestats"))
 
-    d %<>% add_column(id = "survival", variable = gettext("follow-up", domain = "R-simplestats"), .before = 1)
+    d %<>% add_column(id = "survival", .variable = gettext("follow-up", domain = "R-simplestats"), .before = 1)
   }
 }
 
@@ -111,7 +111,7 @@ create_ligne_desc_export.factor <- function(x, noms, show_prop = TRUE){
     }
   }) %>% tibble()
   d %<>% add_varname(x, noms, add_niveau = TRUE)
-  column_names <- c("id", "variable", "niveau")
+  column_names <- c("id", ".variable", "niveau")
   if (show_prop) {
     colnames(d) <- c(column_names, "n (%)")
   } else {
@@ -224,7 +224,7 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
   ligne <- add_varname(ligne, x, noms) %>%
     add_column(niveau = c(gettext("before", domain = "R-simplestats"),
                           gettext("after", domain = "R-simplestats")),
-                          .after = "variable")
+                          .after = ".variable")
   }
   ligne
 }

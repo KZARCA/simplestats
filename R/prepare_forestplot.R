@@ -16,12 +16,12 @@ create_table_forestplot <- function(mod, varajust = NULL, inv = FALSE){
       mutate(prop = as.numeric(n)/sum(as.numeric(n), na.rm = TRUE)) %>%
       {if (!"niveau" %in% names(.)) mutate(., niveau = "") else .} %>%
       mutate(n = as.integer(n)) %>%
-      select(id, variable, niveau, n, prop)
+      select(id, .variable, niveau, n, prop)
   })
 
 
 
-  dplyr::left_join(tab_n, tab_model, by = c("id", "niveau", "variable")) %>%
+  dplyr::left_join(tab_n, tab_model, by = c("id", "niveau", ".variable")) %>%
     filter(!id %in% varajust) %>%
     structure(class = class(tab_model))
 }
@@ -35,10 +35,10 @@ prepare_forestplot <- function(tab_mod, ...){
 
   all_facs <- filter(tab_mod, niveau != "")
   facs <- all_facs %>% pull(id) %>% unique()
-  nm <- all_facs %>% pull(variable) %>% unique()
+  nm <- all_facs %>% pull(.variable) %>% unique()
 
   for (i in seq_along(facs)){
-    tab_mod <- tibble::add_row(tab_mod, tibble(id=facs[i], variable=nm[i]), .before = which(tab_mod$id == facs[i]))
+    tab_mod <- tibble::add_row(tab_mod, tibble(id=facs[i], .variable=nm[i]), .before = which(tab_mod$id == facs[i]))
   }
 
   tab_mod %>%
@@ -46,8 +46,8 @@ prepare_forestplot <- function(tab_mod, ...){
     purrr::map_dfr(~ .x %>%
                      tibble::add_row(id = NA, .before = 1)) %>%
     mutate(
-           variable = ifelse(!is.na(multiple) & multiple != 1, sprintf("%s (+%s)", variable, multiple), variable),
-           variable = ifelse(is.na(niveau) | niveau == "", variable, sprintf("   %s", niveau)),
+      .variable = ifelse(!is.na(multiple) & multiple != 1, sprintf("%s (+%s)", .variable, multiple), .variable),
+      .variable = ifelse(is.na(niveau) | niveau == "", .variable, sprintf("   %s", niveau)),
            estimate = fun(case_when(!is.na(estimate) ~ estimate,
                                     is.na(n) ~ NA_real_,
                                     TRUE ~ 0)),
@@ -63,7 +63,7 @@ prepare_forestplot <- function(tab_mod, ...){
            n = n,
            n_prop = ifelse(prop == 1, n, sprintf_number_table("%s (%s)", n, pourcent(prop, symbol = FALSE))),
            p = format_pval(p.value, keepNA = TRUE)) %>%
-      dplyr::select(variable, estimate, conf.low, conf.high, n, n_prop, formatted_estimates, p) %>%
+      dplyr::select(.variable, estimate, conf.low, conf.high, n, n_prop, formatted_estimates, p) %>%
     add_class(exClass)
 }
 
@@ -124,7 +124,7 @@ clip = c(fun(min_ci), fun(max_ci))
 
   headers <- c(NA, title_n, if(show_estimate) estimate_name, "p")
 
-  cols <- c("variable", "n_prop", if (show_estimate) "formatted_estimates", "p")
+  cols <- c(".variable", "n_prop", if (show_estimate) "formatted_estimates", "p")
 
 
   text <- tab_mod[cols] %>%
