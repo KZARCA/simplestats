@@ -179,7 +179,7 @@ modify_mod.default <- function(mod, tab, varindep, varajust, pred){
 }
 
 #' @export
-modify_mod.mira <- function(mod, imp, varindep, varajust, pred){
+modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
   m <- tabm$m
   warned <- unique(attr(mod, "warning"))
   if (is.null(warned)) return(mod)
