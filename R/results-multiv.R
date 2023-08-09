@@ -117,6 +117,8 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   mod <- get_mod(tab_m, .fun, formule) %>%
     modify_mod(tab_m, varindep, varajust, pred)
 
+  tab_m <- modify_imp(tab_m, mod)
+
   if (pred == 1){
     mod <- structure(c(mod, list(beta_std = standardize_beta(mod))),
                      class = class(mod))
@@ -177,7 +179,7 @@ modify_mod.default <- function(mod, tab, varindep, varajust, pred){
 }
 
 #' @export
-modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
+modify_mod.mira <- function(mod, imp, varindep, varajust, pred){
   m <- tabm$m
   warned <- unique(attr(mod, "warning"))
   if (is.null(warned)) return(mod)
@@ -188,7 +190,8 @@ modify_mod.mira <- function(mod, tabm, varindep, varajust, pred){
                                      mice::complete(tabm, i),
                                      varindep, varajust, pred)
     if(is_warning(mod2$analyses[[i]])){
-      return(mod2$analyses[[i]])
+      mod2$analyses[[i]] <- NULL
+      attr(mod2, "remove") <- c(attr(mod2, "remove"), i)
     }
   }
   mod2

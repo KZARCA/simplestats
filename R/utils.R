@@ -589,10 +589,9 @@ filter_glm_fit <- function(mod, tab, varindep, varajust, pred = 0){
   }
   if (is_error(mod2)) return(NULL)
   if (all(round(coef(mod), 2) == round(coef(mod2),2) , na.rm = TRUE)) {
-    return(mod2)
-  } else {
-    return(NULL)
+    attr(mod2, "warning") <- NULL
   }
+  mod2
 }
 
 #' @export

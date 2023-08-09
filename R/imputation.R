@@ -203,3 +203,13 @@ theme_custom <- function(vrb) {
     )
 }
 
+modify_imp <- function(tabm, mod){
+  if(!inherits(tabm, "mids")) return(tabm)
+  if (is.null(attr(mod, "remove"))) return(tabm)
+  rem <- attr(mod, "remove")
+  tabm$m <- tabm$m - length(rem)
+  tabm$imp <- map(tabm$imp, function(x){
+    x[-rem]
+  })
+  imp
+}
