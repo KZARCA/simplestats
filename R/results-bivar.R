@@ -231,7 +231,7 @@ create_ligne_cor <- function(x, y, compute_p = TRUE) {
                     p = res$p.value,
                     test = test$name)
   } else {
-    if (length(x) > 30 && is_homoscedatic(lm(y ~ x))){
+    if (is_normal(x) & is_normal(y) && is_homoscedatic(lm(y ~ x))){
       name_title <- paste(name_title, CI95)
       estimate <- cor(x, y, use = "complete.obs")
       z <- atanh(estimate)
