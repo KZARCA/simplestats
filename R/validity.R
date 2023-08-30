@@ -113,7 +113,7 @@ is_normal.data.frame <- function(df){
     map_lgl(seq_along(lev), function(i){
       filter(df, y == lev[i]) %>%
         pull(x) %>%
-        is_normal.numeric()
+        is_normal.default()
     }) %>%
       all()
   #} else TRUE
@@ -121,12 +121,12 @@ is_normal.data.frame <- function(df){
 
 #' @export
 #' @rdname is_normal
-is_normal.numeric <- function(x){
-  l <- length(x)
-  res <- replicate(1000, mean(resample(x, l, replace = TRUE) ))
-  res %>%
-    is_normal.default()
-}
+# is_normal.numeric <- function(x){
+#   l <- length(x)
+#   res <- replicate(1000, mean(resample(x, l, replace = TRUE) ))
+#   res %>%
+#     is_normal.default()
+# }
 
 is_normal.default <- function(x){
   f <- ecdf(x)
