@@ -211,5 +211,5 @@ modify_imp <- function(tabm, mod){
   tabm$imp <- map(tabm$imp, function(x){
     x[-rem]
   })
-  imp
+  tabm
 }
