@@ -12,19 +12,13 @@ create_spline <- function(tab, vardep, varindep, varajust = NULL, type){
   model <- NULL
   if (type == "survival") varindep <- remove_elements(varindep, ".time")
   varspline <- c(varindep, varajust)
-  varsnum <- Filter(function(x) is.numeric(x), tab[varspline]) %>% colnames()
+  varsnum <- Filter(function(x) is.numeric(x) & count_items(x) > 10, tab[varspline]) %>% colnames()
   varsnumGam <- varsnum %>%
     map_chr(function(x) {
-      if (count_items(tab[[x]]) > 10){
         ifelse(type == "survival", glue::glue("pspline({x})"), glue::glue("s({x}, k = 4)"))
-        #k <- min(9, length(table(tab[, x, drop = FALSE]))-1)
-        #ifelse(type == "survival", paste0(x, ", df = 0"), paste0(x, ", k = ", k))
-      } else
-        as.character(x)
     })
-
-  varsfac <- Filter(is.factor, tab[varindep]) %>% colnames()
-  varajust_fac <- Filter(is.factor, tab[varajust]) %>% colnames()
+  varsfac <- Filter(function(x) is.factor(x) | count_items(x) <= 10, tab[varindep]) %>% colnames()
+  varajust_fac <- Filter(function(x) is.factor(x) | count_items(x) <= 10, tab[varajust]) %>% colnames()
   if(length(varsnum)){
     right <- paste0(varsnumGam, collapse=" + ")
     rightLin <- paste0(varsnum, collapse=" + ")

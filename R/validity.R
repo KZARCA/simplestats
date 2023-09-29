@@ -119,15 +119,6 @@ is_normal.data.frame <- function(df){
   #} else TRUE
 }
 
-#' @export
-#' @rdname is_normal
-# is_normal.numeric <- function(x){
-#   l <- length(x)
-#   res <- replicate(1000, mean(resample(x, l, replace = TRUE) ))
-#   res %>%
-#     is_normal.default()
-# }
-
 is_normal.default <- function(x){
   f <- ecdf(x)
   percentile <- f(mean(x, na.rm=TRUE))
