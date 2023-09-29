@@ -119,6 +119,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
 
   tab_m <- modify_imp(tab_m, mod)
 
+
   if (pred == 1){
     mod <- structure(c(mod, list(beta_std = standardize_beta(mod))),
                      class = class(mod))
@@ -127,7 +128,9 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   if(!"data" %in% names(mod)){
       mod <- structure(c(mod, list(data = tab)),
                        class = class(mod))
-    }
+  }
+  mod$tab <- tab_m
+
 
   return(list(tab = tab_m, mod = mod, formule = formule, formule2 = formule2,
               imputer = resume_imputer))

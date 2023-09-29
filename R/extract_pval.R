@@ -190,7 +190,7 @@ clean_anova.mira <- function(mod){
     x$result[4]
   }
 
-  env <- find_env(deparse(mod$call[[2]]))
+  #env <- find_env(deparse(mod$call[[2]]))
 
   N <- nrow(getfit(mod, 1)$model)
   terms <- base::labels(terms(getfit(mod, 1)))
@@ -206,9 +206,9 @@ clean_anova.mira <- function(mod){
         extract2(1)
       suppressWarnings({
         if (length(getfit(mod)) >= 20) {
-          suppressWarnings(D2(mod, eval(mod2$call, envir = env), use = "likelihood") %>% find_pval())
+          suppressWarnings(D2(mod, eval(mod2$call, envir = mod), use = "likelihood") %>% find_pval())
         } else {
-          suppressWarnings(D1(mod, eval(mod2$call, envir = env)) %>% find_pval())
+          suppressWarnings(D1(mod, eval(mod2$call, envir = mod)) %>% find_pval())
         }
       })
     }

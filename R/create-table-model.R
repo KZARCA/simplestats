@@ -65,7 +65,8 @@ get_coefficients.mira <- function(mod, pred = 0){
 
 add_pval_glob <- function(tab_mod, mod, en_test = FALSE , pred = FALSE){
   vec_pval <- rep(NA, nrow(tab_mod))
-  if (!is.null(mod$xlevels) && any(map_lgl(mod$xlevels, ~ length(.) > 2))){
+  xlev <- if(inherits(mod, "mira")) getfit(mod, 1)$xlevels else mod$xlevels
+  if (!is.null(xlev) && any(map_lgl(xlev, ~ length(.) > 2))){
     pval_glob <- extract_pval_glob(mod, en_test)
     vec_pval[seq_along(pval_glob)] <- pval_glob
   }
