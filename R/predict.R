@@ -37,7 +37,13 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shru
   modify_mod_shrunk(mod, shrunk)
   if (is.null(tab)){
     label <- if (inherits(mod, "mira")) {
-      getfit(mod, 1)$model[[1]]
+      mm <- map(mod$analyses, function(x) {
+        x$model %>% row.names()
+      }) %>%
+        list_c() %>%
+        unique()
+      #getfit(mod, 1)$model[[1]]
+      mod$data[mm, ][[1]]
     } else {
       mod$model[[1]]
     }
@@ -106,7 +112,6 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
   res <- boot(tab, boot_auc, R = R, vardep = vardep, varindep = varindep,
        type = type, progression = updateProgress, parallel = "multicore", ncpus = nCPU)
   m <- res$t0[1]
-
 
   # Calculate the optimism (step 5) : bootstrap performance - test performance
   opti <- mean(res$t[, 1] - res$t[, 2], na.rm = TRUE)
