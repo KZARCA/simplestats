@@ -191,7 +191,6 @@ clean_anova.mira <- function(mod){
   }
 
   #env <- find_env(deparse(mod$call[[2]]))
-
   N <- nrow(getfit(mod, 1)$model)
   terms <- base::labels(terms(getfit(mod, 1)))
   xlevels <- getfit(mod, 1)$xlevels
