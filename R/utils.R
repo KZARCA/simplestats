@@ -315,7 +315,7 @@ are_enough_levels <- function(tab, x){
 are_enough_cor <- function(tab, x, y, univ){
   min_rows <- ifelse(univ, 0L, 3L)
   if (is.numeric(tab[[x]]) & is.numeric(tab[[y]])) {
-    nrow(tab) > min_rows
+    nrow(tab) > 3L
   } else if (is.factor(tab[[x]]) & is.factor(tab[[y]])) {
     all(table(tab) >= min_rows)
   } else if (is.factor(tab[[x]])){
