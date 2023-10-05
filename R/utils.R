@@ -336,7 +336,7 @@ remove_big_vif <- function(tab, vardep, varindep, varajust, type, infl, only_var
   elimine <- character(0)
   while (length(ajust) > 0 && max(ajust, na.rm = TRUE) > 5 & length(vars) > 1){
     big_vif <- which(ajust > 5)
-    if (varindep[1] %in% names(big_vif)) ajust[varindep[1]] <- 0
+    if (length(varindep) && varindep[1] %in% names(big_vif)) ajust[varindep[1]] <- 0
 
     gros <- names(ajust[which.max(ajust)])
     selected_vars <- selected_vars[selected_vars != gros]

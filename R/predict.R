@@ -177,9 +177,19 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
   if (identical(varajust, "ERROR_MODEL")){
     varajust <- character(0)
     return(c(NA, NA, NA, 1))
-  } else {
+  } else if (length(varajust)){
     el <- recherche_multicol(train, vardep, intersect(names(train), varindep), varajust, type, pred = TRUE)
     varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
+  }
+
+  varaux <- if (get_propDM(train[c(vardep, varindep, varajust)]) > 0.05){
+    find_varaux(train, vardep, varindep, varajust, type)
+  }
+
+  train <- train[c(vardep, varindep, varajust, varaux)]
+
+  if (ncol(train) < 2){
+    return(c(NA, NA, NA, 1))
   }
 
   results <- if (identical(el, "ERROR_MODEL2")){

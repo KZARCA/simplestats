@@ -90,7 +90,6 @@ format_precision <- function(tab, varindep){
 compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
   vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars %<>% add_elements(".time")
-  tab <- tab[vars]
   if (any(is.na(tab))){
     n_imputation <- ifelse(pred == 0, round(get_propDM(tab) * 100, 0), 5)
     tab_m <- imputer(tab, vardep, type = type, n_imputation = n_imputation)
@@ -99,10 +98,7 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
     tab_m <- tab
     resume_imputer <- FALSE
   }
-
-  # varajust_m <- prepare_varajust(tab, varajust, type)
-  # varindep_m <- prepare_varindep(tab, varindep, pred)
-  # allVars <- c(varindep_m, varajust_m)
+  tab <- tab[vars] #remove varaux
   allVars <- prepare_variables(tab, varindep, varajust, pred)
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
   formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::list_c(allVars), collapse = " + "))
