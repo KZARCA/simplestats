@@ -87,7 +87,7 @@ format_precision <- function(tab, varindep){
 #' @export
 #'
 #' @examples
-compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
+compute_mod <- function(tab, vardep, varindep, varajust = character(0), type, pred = 0){
   vars <- c(vardep, varindep, varajust)
   if (type == "survival") vars %<>% add_elements(".time")
   if (any(is.na(tab))){
@@ -98,7 +98,6 @@ compute_mod <- function(tab, vardep, varindep, varajust, type, pred = 0){
     tab_m <- tab
     resume_imputer <- FALSE
   }
-  tab <- tab[vars] #remove varaux
   allVars <- prepare_variables(tab, varindep, varajust, pred)
   vardep_m <- ifelse(type == "survival", sprintf("Surv(.time, %s)", vardep), vardep)
   formule <- sprintf("%s ~ %s", vardep_m, paste(purrr::list_c(allVars), collapse = " + "))

@@ -3,14 +3,11 @@
 \name{is_normal}
 \alias{is_normal}
 \alias{is_normal.data.frame}
-\alias{is_normal.numeric}
 \title{Can it be considered as normal?}
 \usage{
 is_normal(x)
 
 \method{is_normal}{data.frame}(df)
-
-\method{is_normal}{numeric}(x)
 }
 \arguments{
 \item{x}{Object to check}

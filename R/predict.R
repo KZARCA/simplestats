@@ -37,13 +37,13 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shru
   modify_mod_shrunk(mod, shrunk)
   if (is.null(tab)){
     label <- if (inherits(mod, "mira")) {
-      mm <- map(mod$analyses, function(x) {
-        x$model %>% row.names()
-      }) %>%
-        list_c() %>%
-        unique()
-      #getfit(mod, 1)$model[[1]]
-      mod$data[mm, ][[1]]
+      # mm <- map(mod$analyses, function(x) {
+      #   x$model %>% row.names()
+      # }) %>%
+      #   list_c() %>%
+      #   unique()
+      getfit(mod, 1)$model[[1]]
+      #mod$data[mm, ][[1]]
     } else {
       mod$model[[1]]
     }

@@ -4,7 +4,7 @@
 \alias{compute_mod}
 \title{Compute multivariable statistical model}
 \usage{
-compute_mod(tab, vardep, varindep, varajust, type, pred = 0)
+compute_mod(tab, vardep, varindep, varajust = character(0), type, pred = 0)
 }
 \arguments{
 \item{tab}{The data.frame}
