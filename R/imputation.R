@@ -30,8 +30,8 @@ imputer <- function(tab, vardep, type, n_imputation = 1, maxit = 5){
   #   tabm <- dplyr::select(tabm, -.time, -vardep)
   # }
   if(get_propDM(tab) < 0.05){
-    return(tab)
-  } else {
+    return(na.exclude(tab))
+  }
     # for (i in 1:length(tabm)){
     #   if (get_propDM(tabm[[i]]) < 0.05) {
     #     tab[[names(tabm)[i]]] <- impute(tabm[[i]]) # median
@@ -56,7 +56,7 @@ imputer <- function(tab, vardep, type, n_imputation = 1, maxit = 5){
       tabimp <- tab
     }
     return(tabimp)
-  }
+
 }
 
 
