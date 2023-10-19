@@ -455,7 +455,9 @@ plot_calibration <- function(tab_pred_obs, quantiles){
   x$low <- map_dbl(confint, 1)
   x$high <- map_dbl(confint, 2)
 
-  g <- try2(stats::loess(estimate ~ pred, x), warnings = c("NA/NaN/Inf", "zero-width neighborhood"))
+  g <- try2(stats::loess(estimate ~ pred, x), warnings = c("NA/NaN/Inf",
+                                                           "zero-width neighborhood",
+                                                           "other near singularities"))
 
   res <- ggplot(x) + aes(x = pred, y = estimate, ymin = low, ymax = high) + geom_errorbar(width = 0.01) + geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey") +
     geom_point(shape = 21, fill = "white", size = 2) +
@@ -463,7 +465,7 @@ plot_calibration <- function(tab_pred_obs, quantiles){
     scale_y_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0,1)) +
     xlab(gettext("Predicted Probability According to the Model", domain = "R-simplestats")) +
     ylab(gettext("Observed Proportion", domain = "R-simplestats")) +
-    geom_histogram(data = tab_pred_obs, aes(M, y = stat(count / sum(count))), inherit.aes = FALSE, bins = 100) +
+    geom_histogram(data = tab_pred_obs, aes(M, y = after_stat(count / sum(count))), inherit.aes = FALSE, bins = 100) +
     theme_bw()
 
   if(!is_warning(g)) {
