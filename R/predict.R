@@ -121,29 +121,42 @@ get_pred_perf <- function(tab, vardep, varindep = NULL, type = "logistic",
 }
 
 get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, progression = function() cat("=")){
-  tabs <- split_cv(tab, n)
-  map(seq_along(tabs), function(i){
-    progression()
-    train <- do.call(rbind, tabs[-i])
-    error_lasso <- 0
-    varajust <- get_lasso_variables(train, vardep, varindep, type)
-    if (identical(varajust, "ERROR_MODEL")){
-      varajust <- character(0)
-      error_lasso <- 1
-    } else {
-      el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
-      varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
-    }
-    results <- compute_mod(train, vardep, varindep, varajust, type, pred = 2)
-    if (!is_warning(results$mod)) {
-    AUC <- create_pred_obs(results$mod) %>%
-      calculate_auc()
-    } else {
-      AUC <- NULL
-      error_lasso <- 1
-    }
-    list(AUC, error_lasso)
-  })
+    tabs <- split_cv(tab, n)
+    map(seq_along(tabs), function(i){
+      progression()
+      train <- do.call(rbind, tabs[-i]) %>%
+        create_tabi("pred", keep = c(vardep, varindep))
+      error_lasso <- 0
+      varajust <- get_lasso_variables(train, vardep, varindep, type)
+      if (identical(varajust, "ERROR_MODEL")){
+        varajust <- character(0)
+        return(list(NULL, 1))
+      } else if (length(varajust)){
+        el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
+        varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
+      }
+      varaux <- if (get_propDM(train[c(vardep, varindep, varajust)]) > 0.05){
+        find_varaux(train, vardep, varindep, varajust, type)
+      }
+
+      train <- train[c(vardep, varindep, varajust, varaux)]
+      if (ncol(train) < 2){
+        return(list(NULL, 1))
+      }
+      results <- if (identical(el, "ERROR_MODEL2")){
+        compute_mod(train, vardep, character(0), varajust, type, pred = 2)
+      } else {
+        compute_mod(train, vardep, intersect(names(train), varindep), varajust, type, pred = 2)
+      }
+      if (!is_warning(results$mod)) {
+        AUC <- create_pred_obs(results$mod) %>%
+          calculate_auc()
+      } else {
+        AUC <- NULL
+        error_lasso <- 1
+      }
+      list(AUC, error_lasso)
+    })
 }
 
 #' Calculate AUC
