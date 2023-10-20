@@ -38,7 +38,7 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shru
   if (is.null(tab)){
     pred <- predict(mod)
     label <- if (inherits(mod, "mira")) {
-      mice::complete(mod$tab)[names(pred), ][[1]]
+      mice::complete(mod$tab)[as.numeric(names(pred)), ][[1]]
     } else {
       mod$model[[1]]
     }
