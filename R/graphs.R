@@ -124,8 +124,8 @@ print_plot_bivar <- function(tab, vardep, varindep, type = "linear"){
 plot_reglin <- function(tab, x, y, method = "lm"){
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
   if  (!identical(method, "lm")){
-    g <- try2(stats::loess(y ~ x, tab), errors = "NA/NaN/Inf")
-    if (is_error(g) && grepl("NA/NaN/Inf", attr(g, "message"))){
+    g <- try2(stats::loess(y ~ x, tab), errors = "(NaN|NA|Inf)")
+    if (is_error(g) && grepl("(NaN|NA|Inf)", attr(g, "message"))){
       return(
         ggplot(tab) + aes_string(x, y) + geom_point() + geom_smooth(method="lm", formula = y ~ poly(x, 3)) + theme_bw()
       )
@@ -457,7 +457,8 @@ plot_calibration <- function(tab_pred_obs, quantiles){
 
   g <- try2(stats::loess(estimate ~ pred, x), warnings = c("NA/NaN/Inf",
                                                            "zero-width neighborhood",
-                                                           "other near singularities"))
+                                                           "other near singularities",
+                                                           "NaN"))
 
   res <- ggplot(x) + aes(x = pred, y = estimate, ymin = low, ymax = high) + geom_errorbar(width = 0.01) + geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey") +
     geom_point(shape = 21, fill = "white", size = 2) +

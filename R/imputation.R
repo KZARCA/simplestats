@@ -51,7 +51,8 @@ imputer <- function(tab, vardep, type, n_imputation = 1, maxit = 5){
         method <- make.method(tab)
       }
       tabimp <- mice::mice(tab, printFlag = FALSE, seed = 1234567, m = n_imputation,
-                           predictorMatrix = predmat_mice, maxit = maxit, method = method)
+                           predictorMatrix = predmat_mice, maxit = maxit, method = method,
+                           visitSequence = "arabic")
     } else {
       tabimp <- tab
     }
@@ -113,7 +114,8 @@ find_varaux <- function(tab, vardep, varindep = character(0), varajust = charact
     as.logical() %>%
     as.factor()
   tab_aux <- tab[c(setdiff(names(tab), names(tabf)))]
-  get_lasso_variables(tab_aux, ".missing", sparse = FALSE)
+  varaux <- get_lasso_variables(tab_aux, ".missing", sparse = FALSE)
+  setdiff(varaux, recherche_multicol(tabi, vardep, varindep, varaux, type = "logistic"))
 }
 
 #' This code is a modification of the ggmice package - https://github.com/amices/ggmice)
