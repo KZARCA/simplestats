@@ -115,7 +115,7 @@ find_varaux <- function(tab, vardep, varindep = character(0), varajust = charact
     as.factor()
   tab_aux <- tab[c(setdiff(names(tab), names(tabf)))]
   varaux <- get_lasso_variables(tab_aux, ".missing", sparse = FALSE)
-  setdiff(varaux, recherche_multicol(tab_aux, vardep, varindep, varaux, type = "logistic"))
+  setdiff(varaux, recherche_multicol(tabf, vardep, varindep, varaux, type = "logistic"))
 }
 
 #' This code is a modification of the ggmice package - https://github.com/amices/ggmice)
