@@ -124,7 +124,7 @@ print_plot_bivar <- function(tab, vardep, varindep, type = "linear"){
 plot_reglin <- function(tab, x, y, method = "lm"){
   tab <- remove_missing(tab, na.rm = TRUE, vars=c(x, y))
   if  (!identical(method, "lm")){
-    g <- try2(stats::loess(y ~ x, tab), errors = "(NaN|NA|Inf)")
+    g <- try2(stats::loess(y ~ x, tab), errors = c("(NaN|NA|Inf)", "NA/NaN/Inf"))
     if (is_error(g) && grepl("(NaN|NA|Inf)", attr(g, "message"))){
       return(
         ggplot(tab) + aes_string(x, y) + geom_point() + geom_smooth(method="lm", formula = y ~ poly(x, 3)) + theme_bw()
