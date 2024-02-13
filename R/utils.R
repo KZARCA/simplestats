@@ -649,7 +649,12 @@ tryCatch_all <- function(expr) {
       err <<- e
       NULL
     }), warning=function(w) {
-      warn <<- w
+      if (is.null(warn)){
+        warn <<- w
+      } else {
+        warn$message <<- paste(warn$message, w$message, sep = " / ")
+      }
+
       invokeRestart("muffleWarning")
     })
   structure(list(value=value, warning=warn, error=err),
