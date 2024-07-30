@@ -646,15 +646,26 @@ tryCatch_all <- function(expr) {
   warn <- err <- NULL
   value <- withCallingHandlers(
     tryCatch(expr, error=function(e) {
+      call <- conditionCall(e)
+      if (!is.null(call)) {
+        if (identical(call[[1L]], quote(doTryCatch)))
+          call <- sys.call(-4L)
+      }
+      e$message <- paste(deparse(call, nlines = 1L), e$message)
       err <<- e
       NULL
     }), warning=function(w) {
       if (is.null(warn)){
+        call <- conditionCall(w)
+        if (!is.null(call)) {
+          if (identical(call[[1L]], quote(doTryCatch)))
+            call <- sys.call(-4L)
+        }
+        w$message <- paste(deparse(call, nlines = 1L), w$message)
         warn <<- w
       } else {
         warn$message <<- paste(warn$message, w$message, sep = " / ")
       }
-
       invokeRestart("muffleWarning")
     })
   structure(list(value=value, warning=warn, error=err),
