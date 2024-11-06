@@ -93,11 +93,12 @@ plot_forest <- function(mod, varajust = NULL, ...){
     } else {
       estimate_name <- "Hazard Ratio"
     }
-    breaks <- (seq(log(lower), log(upper), by = 0.2))
+
+    breaks <- exp(seq(log(lower), log(upper), by = 0.2))
     min_ci <- (.dots$min_ci %||% min(breaks))
     max_ci <- (.dots$max_ci %||% max(breaks))
     min_ci <- max(min_ci, log(1E-3))
-clip = c(fun(min_ci), fun(max_ci))
+    clip = c(fun(min_ci), fun(max_ci))
   } else {
     fun <- identity
     estimate_name <- "Coefficients"
