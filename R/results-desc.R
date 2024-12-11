@@ -73,6 +73,8 @@ create_ligne_surv_desc <- function(time, censure){
     n <- resume["n.start"]
     nEvent <- resume["events"]
     max <- max(surv$time, na.rm = TRUE)
+    surv_means <- sprintf_number_table("%s (±%s)", resume["rmean"],
+                           resume["se(rmean)"])
     d <- tibble(
       sprintf_number_table("%s (%s; %s)", med, CI[1], CI[2]),
       format_number(max),
@@ -80,13 +82,15 @@ create_ligne_surv_desc <- function(time, censure){
       nEvent,
       sprintf("%s (%s; %s)", pourcent(surv$surv[l], arrondi = 3),
               pourcent(surv$lower[l], arrondi = 3),
-              pourcent(surv$upper[l], arrondi = 3))
+              pourcent(surv$upper[l], arrondi = 3)),
+      surv_means
     )
 
     names(d) <- c(gettext("median (95% CI)", domain = "R-simplestats"),
                   gettext("max follow-up", domain = "R-simplestats"), "n",
                   gettext("n events", domain = "R-simplestats"),
-                  gettext("survival rate (95% CI)", domain = "R-simplestats"))
+                  gettext("survival rate (95% CI)", domain = "R-simplestats"),
+                  gettext("rmeans (SE)", domain = "R-simplestats"))
 
     d %<>% add_column(id = "survival", .variable = gettext("follow-up", domain = "R-simplestats"), .before = 1)
   }
