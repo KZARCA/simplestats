@@ -60,17 +60,28 @@ create_pred_obs <- function(mod, tab = NULL, vardep = NULL, as_prob = TRUE, shru
 
 #' @export
 predict.mira <- function(mod, ...){
+  .dots <- list(...)
   mods <- getfit(mod)
   pred <- map(mods, function(x) predict(x, ...))
   rownames <- map(pred, names) %>%
     Reduce(union, .)
-  map(pred, function(x){
-    diff <- setdiff(rownames, names(x))
-    x[diff] <- NA
-    x
-  }) %>%
-    as.data.frame() %>%
-    rowMeans(na.rm = TRUE)
+  if (isTRUE(.dots$se.fit)){
+    predictions <- map(pred, as_tibble) %>% dplyr::bind_rows()
+    mean_pred <- summarise(predictions, dplyr::across(everything(), mean, na.rm = T))
+    within_var <- mean_pred$se.fit#apply(predictions, 1, var)
+    between_var <- var(predictions$fit)
+    total_var <- within_var + between_var + (between_var / length(mods))
+    se <- sqrt(total_var)
+    data.frame(fit = mean_pred$fit, se.fit = se)
+  } else {
+    map(pred, function(x){
+      diff <- setdiff(rownames, names(x))
+      x[diff] <- NA
+      x
+    }) %>%
+      as.data.frame() %>%
+      rowMeans(na.rm = TRUE)
+  }
 }
 
 #' Get performance measures of a predictive model
