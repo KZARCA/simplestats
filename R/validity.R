@@ -120,6 +120,7 @@ is_normal.data.frame <- function(df){
 }
 
 is_normal.default <- function(x){
+  x <- as.double(x)
   f <- ecdf(x)
   percentile <- f(mean(x, na.rm=TRUE))
   skewness <- sum((x - mean(x, na.rm = TRUE))^3, na.rm = TRUE) / (length(x) * sd(x, na.rm = TRUE)^3)
