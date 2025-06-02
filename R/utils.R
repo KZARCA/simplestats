@@ -689,7 +689,11 @@ try2 <- function(expr, errors, warnings){
   if(missing(warnings)) warnings <- NULL
   res <- tryCatch_all(expr)
   if (is_error(res)){
-    all_cond <- map_lgl(errors, grepf, res$error$message)
+    all_cond <- map_lgl(errors, function(x){
+      if (grepf(x, res$error$message)) return(TRUE)
+      if (!is.null(res$error$parent) && grepf(x, res$error$parent)) return(TRUE)
+      FALSE
+    })
     if (all(all_cond == FALSE, na.rm = TRUE)){
       warning(paste(Sys.time(), "-", "Error: ", res$error$message))
     }
