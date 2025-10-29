@@ -12,7 +12,7 @@ create_table_forestplot <- function(mod, varajust = NULL, inv = FALSE){
   }
 
   tab_n <- purrr::map_dfr(unique(tab_model$id), function(x){
-    create_ligne_desc_export(mod$data[[x]], x, show_prop = FALSE) %>%
+    create_line_desc_export(mod$data[[x]], x, show_prop = FALSE) %>%
       mutate(prop = as.numeric(n)/sum(as.numeric(n), na.rm = TRUE)) %>%
       {if (!"niveau" %in% names(.)) mutate(., niveau = "") else .} %>%
       mutate(n = as.integer(n)) %>%

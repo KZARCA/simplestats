@@ -143,7 +143,7 @@ get_cv_auc <- function(tab, vardep, varindep = NULL, type = "logistic", n = 10, 
         varajust <- character(0)
         return(list(NULL, 1))
       } else if (length(varajust)){
-        el <- recherche_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
+        el <- find_multicol(train, vardep, varindep, varajust, type, pred = TRUE)
         varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
       }
       varaux <- if (get_propDM(train[c(vardep, varindep, varajust)]) > 0.05){
@@ -196,7 +196,7 @@ boot_auc <- function(data, indices, progression, vardep, varindep = NULL, type) 
     varajust <- character(0)
     return(c(NA, NA, NA, 1))
   } else if (length(varajust)){
-    el <- recherche_multicol(train, vardep, intersect(names(train), varindep), varajust, type, pred = TRUE)
+    el <- find_multicol(train, vardep, intersect(names(train), varindep), varajust, type, pred = TRUE)
     varajust <- if (identical(el, "ERROR_MODEL")) character(0) else remove_elements(varajust, el)
   }
 

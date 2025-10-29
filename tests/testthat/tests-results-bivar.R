@@ -3,8 +3,8 @@ library(survival)
 
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
 
-test_that("create_ligne_bivar.factor_num is working", {
-  line <- create_ligne_bivar(tab$differ, tab$age, noms = "age")
+test_that("create_line_bivar.factor_num is working", {
+  line <- create_line_bivar(tab$differ, tab$age, noms = "age")
   expect_equal(line$id, rep("age", 3))
   expect_equal(line$.variable, rep("Differ", 3))
   expect_equal(line$niveau, as.character(seq_len(3)))
@@ -45,10 +45,10 @@ test_that("create_ligne_bivar.factor_num is working", {
   expect_equal(line$test, c("Anova", NA, NA))
 })
 
-test_that("create_ligne_bivar.factor_fac is working", {
+test_that("create_line_bivar.factor_fac is working", {
   tab$node2 <- tab$node4
   tab$node2[1:100] <- NA
-  line <- create_ligne_bivar(tab$node2, tab$differ, noms = "node2")
+  line <- create_line_bivar(tab$node2, tab$differ, noms = "node2")
   expect_equal(line$id, rep("node2", 2))
   expect_equal(line$.variable, rep("Node4", 2))
   expect_equal(line$niveau, c("0", "1"))
@@ -78,8 +78,8 @@ test_that("create_ligne_bivar.factor_fac is working", {
   expect_equal(line$test, c("Chi2", NA))
 })
 
-test_that("create_ligne_bivar.num_fac is working", {
-  line <- create_ligne_bivar(tab$nodes, tab$differ, noms = "nodes")
+test_that("create_line_bivar.num_fac is working", {
+  line <- create_line_bivar(tab$nodes, tab$differ, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$.variable, "Nodes")
   test_m <- function(x){
@@ -96,8 +96,8 @@ test_that("create_ligne_bivar.num_fac is working", {
   expect_equal(line$test, "Kruskal-Wallis")
 })
 
-test_that("create_ligne_bivar median is working", {
-  line <- create_ligne_bivar(tab$nodes, tab$differ, noms = "nodes", summary = "median")
+test_that("create_line_bivar median is working", {
+  line <- create_line_bivar(tab$nodes, tab$differ, noms = "nodes", summary = "median")
   expect_equal(line$id, "nodes")
   expect_equal(line$.variable, "Nodes")
   test_m <- function(x){
@@ -116,10 +116,10 @@ test_that("create_ligne_bivar median is working", {
   expect_equal(line$test, "Kruskal-Wallis")
 })
 
-test_that("create_ligne_bivar.num_num is working", {
+test_that("create_line_bivar.num_num is working", {
   local_reproducible_output(lang = "en")
   tab2 <- tab[1:15,]
-  line <- create_ligne_bivar(tab2$nodes, tab2$age, noms = "nodes")
+  line <- create_line_bivar(tab2$nodes, tab2$age, noms = "nodes")
   expect_equal(line$id, "nodes")
   expect_equal(line$.variable, "Nodes")
   co <- cor.test(tab2$nodes, tab2$age, method = "spearman", exact = FALSE) %>% broom::tidy()
@@ -127,8 +127,8 @@ test_that("create_ligne_bivar.num_num is working", {
   expect_equal(line$p, co$p.value)
 })
 
-test_that("create_ligne_surv_bivar is working", {
-  line <- create_ligne_surv_bivar(tab$differ, tab$.time, "differ", tab$status)
+test_that("create_line_surv_bivar is working", {
+  line <- create_line_surv_bivar(tab$differ, tab$.time, "differ", tab$status)
   expect_equal(line$id, rep("differ", 3))
   expect_equal(line$.variable, rep("Differ", 3))
   expect_equal(line$niveau, as.character(seq_len(3)))

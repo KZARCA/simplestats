@@ -80,8 +80,8 @@ get_large_missing <- function(tab){
       all_vars <- names(tab)
       t <- tab[all_vars]
       elimine <- NULL
-      while(get_propDM(t) > 0.2 & length(all_vars) > 2 &
-            line_missing[ncol(pat) - 1] > 0.05 * nrow(t)) {
+      while(get_propDM(t) > 0.5 & length(all_vars) > 2 &
+            line_missing[ncol(pat) - 1] > 0.2 * nrow(t)) {
         elimine <- c(elimine, colnames(pat)[ncol(pat) - 1])
         all_vars <- setdiff(names(t), elimine)
         t <- t[all_vars]
@@ -116,7 +116,7 @@ find_varaux <- function(tab, vardep, varindep = character(0), varajust = charact
   tab_aux <- tab[c(setdiff(names(tab), names(tabf)))]
   varaux <- get_lasso_variables(tab_aux, ".missing", sparse = FALSE)
   if (length(varaux)){
-    varaux <- setdiff(varaux, recherche_multicol(tab %>% select(-.missing), vardep, varindep, varaux, type = type))
+    varaux <- setdiff(varaux, find_multicol(tab %>% select(-.missing), vardep, varindep, varaux, type = type))
   }
   varaux
 }

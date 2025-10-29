@@ -2,6 +2,7 @@
 % Please edit documentation in R/simplestats.R
 \docType{package}
 \name{simplestats}
+\alias{-package}
 \alias{simplestats}
 \title{simplestats: Stats made simple}
 \description{

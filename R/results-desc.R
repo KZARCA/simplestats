@@ -8,13 +8,13 @@
 #' @export
 #'
 #' @examples
-create_ligne_desc <- function(x, ...){
-  UseMethod("create_ligne_desc")
+create_line_desc <- function(x, ...){
+  UseMethod("create_line_desc")
 }
 
 #' @export
-#' @rdname create_ligne_desc
-create_ligne_desc.numeric <- function(x, noms, ...){ #si la variable est numérique
+#' @rdname create_line_desc
+create_line_desc.numeric <- function(x, noms, ...){ #si la variable est numérique
   moy <- base::mean(x, na.rm=TRUE)
   et <- sd(x, na.rm=TRUE)
   quant <- quantile(x, na.rm = TRUE)
@@ -34,8 +34,8 @@ create_ligne_desc.numeric <- function(x, noms, ...){ #si la variable est numéri
 }
 
 #' @export
-#' @rdname create_ligne_desc
-create_ligne_desc.factor <- function(x, noms, show_prop = TRUE){
+#' @rdname create_line_desc
+create_line_desc.factor <- function(x, noms, show_prop = TRUE){
   cont <- table(x)
   prop <- prop.table(cont) %>%  pourcent()
   map2(cont, prop, function(x, y) {
@@ -59,7 +59,7 @@ create_ligne_desc.factor <- function(x, noms, show_prop = TRUE){
 #' @export
 #'
 #' @examples
-create_ligne_surv_desc <- function(time, censure){
+create_line_surv_desc <- function(time, censure){
   tab_cens <- remove_na(time, censure)
   if (nrow(tab_cens) > 0){
     names(tab_cens) <- c(".time", "censure")
@@ -97,14 +97,14 @@ create_ligne_surv_desc <- function(time, censure){
 }
 
 #' @export
-#' @rdname create_ligne_desc
-create_ligne_desc_export <- function(x, ...){
-  UseMethod("create_ligne_desc_export")
+#' @rdname create_line_desc
+create_line_desc_export <- function(x, ...){
+  UseMethod("create_line_desc_export")
 }
 
 #' @export
-#' @rdname create_ligne_desc
-create_ligne_desc_export.factor <- function(x, noms, show_prop = TRUE){
+#' @rdname create_line_desc
+create_line_desc_export.factor <- function(x, noms, show_prop = TRUE){
   cont <- table(x) %>% unname()
   prop <- prop.table(cont) %>%  pourcent() %>% unname()
   d <- map2_chr(cont, prop, function(x, y) {
@@ -126,8 +126,8 @@ create_ligne_desc_export.factor <- function(x, noms, show_prop = TRUE){
 }
 
 #' @export
-#' @rdname create_ligne_desc
-create_ligne_desc_export.numeric <- create_ligne_desc.numeric
+#' @rdname create_line_desc
+create_line_desc_export.numeric <- create_line_desc.numeric
 
 #' Displays the descriptive analysis in markdown
 #'
@@ -141,22 +141,22 @@ create_ligne_desc_export.numeric <- create_ligne_desc.numeric
 #' @examples
 print_line_desc <- function(x, varname = label(x), type = "linear", time = NULL){
   shown <- if (type == "survival"){
-    create_ligne_surv_desc(time, x)
+    create_line_surv_desc(time, x)
   } else {
-    create_ligne_desc_export(x, noms = varname)
+    create_line_desc_export(x, noms = varname)
   }
   show_table_markdown(shown)
 }
 
 #' @export
-#' @rdname create_ligne_desc_ba
-create_ligne_desc_ba <- function(x, ...){
-  UseMethod("create_ligne_desc_ba")
+#' @rdname create_line_desc_ba
+create_line_desc_ba <- function(x, ...){
+  UseMethod("create_line_desc_ba")
 }
 
 #' @export
-#' @rdname create_ligne_desc_ba
-create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p = TRUE, summary = NULL){
+#' @rdname create_line_desc_ba
+create_line_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p = TRUE, summary = NULL){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   meanx <- mean(x, na.rm =  TRUE)
   meany <- mean(y, na.rm = TRUE)
@@ -234,8 +234,8 @@ create_ligne_desc_ba.numeric <- function(x, y, noms, invert = FALSE, compute_p =
 }
 
 #' @export
-#' @rdname create_ligne_desc_ba
-create_ligne_desc_ba.factor <- function(x, y, noms, compute_p = TRUE, ...){
+#' @rdname create_line_desc_ba
+create_line_desc_ba.factor <- function(x, y, noms, compute_p = TRUE, ...){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   x <- forcats::fct_expand(x, levels(y))
   y <- forcats::fct_expand(y, levels(x))

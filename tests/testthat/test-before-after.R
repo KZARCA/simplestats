@@ -8,10 +8,10 @@ tab <- data.frame(
   e = floor(runif(100, 3,7)) %>% as.factor()
 ) %>% standardize_tab()
 
-test_that("create_ligne_desc_ba.numeric is working", {
+test_that("create_line_desc_ba.numeric is working", {
   x <- tab$a
   y <- tab$b
-  ligne <- create_ligne_desc_ba(x, y, invert = T)[4:10]
+  ligne <- create_line_desc_ba(x, y, invert = T)[4:10]
   expect_equal(names(ligne), c(gettext("mean (sd)", domain = "R-simplestats"),
                               gettext("median [Q25-75]", domain = "R-simplestats"),
                               gettext("min", domain = "R-simplestats"),
@@ -32,10 +32,10 @@ test_that("create_ligne_desc_ba.numeric is working", {
 })
 
 
-test_that("create_ligne_desc_ba.numeric is working with median", {
+test_that("create_line_desc_ba.numeric is working with median", {
   x <- tab$a
   y <- tab$b
-  ligne <- create_ligne_desc_ba(x, y, invert = FALSE, summary = "median")[2:7]
+  ligne <- create_line_desc_ba(x, y, invert = FALSE, summary = "median")[2:7]
   qx <- quantile(x)
   qy <- quantile(y)
   expect_equal(ligne[[2]], sprintf_number_table("%s [%s; %s]", qx[3], qx[2], qx[4]))
@@ -44,17 +44,17 @@ test_that("create_ligne_desc_ba.numeric is working with median", {
   expect_equal(ligne[[6]], t.test(x, y, paired = TRUE)$p.value)
 })
 
-test_that("create_ligne_desc_ba.factor is working with unequal number of categories", {
+test_that("create_line_desc_ba.factor is working with unequal number of categories", {
   x <- tab$c
   y <- tab$d
   z <- tab$e
-  ligne <- create_ligne_desc_ba(x, y)
+  ligne <- create_line_desc_ba(x, y)
   expect_equal(names(ligne), c("id", ".variable", "niveau", gettext("before", domain = "R-simplestats"),
                                gettext("after", domain = "R-simplestats"), "n", "p", "test"))
   expect_equal(ligne$niveau, as.character(1:4))
   expect_equivalent(ligne[[gettext("after")]][4], "0 (0%)")
   expect_equal(ligne$test, c("McNemar-Bowker", rep(NA, 3)))
-  ligne <- create_ligne_desc_ba(y, z)
+  ligne <- create_line_desc_ba(y, z)
   expect_equivalent(ligne[[gettext("after")]][1:2], rep("0 (0%)", 2))
   expect_equivalent(ligne[[gettext("before")]][4:6], rep("0 (0%)", 3))
   expect_equal(ligne$test, c("McNemar-Bowker", rep(NA, 5)))

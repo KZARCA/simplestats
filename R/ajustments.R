@@ -82,7 +82,7 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
 #' @export
 #'
 #' @examples
-recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FALSE) {
+find_multicol <- function(tab, vardep, varindep, varajust, type, pred = FALSE) {
   if (length(varajust) == 0 && length(varindep) < 2) return(NULL)
   if (is.null(varajust)) varajust <- character(0)
   vars <- c(varindep, varajust)
@@ -339,7 +339,7 @@ define_varajust <- function(tab, vardep, varindep, type, by_lasso = TRUE, all_va
 #' @export
 #'
 #' @examples
-recherche_multicol <- function(tab, vardep, varindep, varajust, type, pred = FALSE) {
+find_multicol <- function(tab, vardep, varindep, varajust, type, pred = FALSE) {
   if (length(varajust) == 0 && length(varindep) < 2) return(NULL)
   if (is.null(varajust)) varajust <- character(0)
   vars <- c(varindep, varajust)

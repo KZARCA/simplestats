@@ -2,8 +2,8 @@ context("results-desc")
 library(survival)
 
 tab <- colon %>% standardize_tab() %>% make_tab_survival("status", var_time = "time")
-test_that("create_ligne_desc.numeric is working", {
-  line <- create_ligne_desc(tab$age, noms = "age")
+test_that("create_line_desc.numeric is working", {
+  line <- create_line_desc(tab$age, noms = "age")
   expect_equal(line$id, "age")
   expect_equal(line$.variable, "Age")
   expect_equal(line[[gettext("mean (sd)", domain = "R-simplestats")]],
@@ -23,7 +23,7 @@ test_that("create_ligne_desc.numeric is working", {
   expect_equal(line$n, 1858)
 })
 
-test_that("create_ligne_desc.factor is working", {
+test_that("create_line_desc.factor is working", {
   find_num_prop <- function(tab, vars, val, prop = FALSE){
     n <- sum(tab[[vars]] == val, na.rm = TRUE)
     if (!prop){
@@ -36,7 +36,7 @@ test_that("create_ligne_desc.factor is working", {
     sprintf_number_table("%s (%s)", find_num_prop(tab, vars, val),
                         find_num_prop(tab, vars, val, TRUE))
   }
-  line <- create_ligne_desc(tab$differ, noms = "differ")
+  line <- create_line_desc(tab$differ, noms = "differ")
   expect_equal(line$id, "differ")
   expect_equal(line$.variable, "Differ")
   expect_equal(line$`1`, test_all(tab, "differ", "1"))
@@ -45,20 +45,20 @@ test_that("create_ligne_desc.factor is working", {
 
 })
 
-test_that("create_ligne_desc_export is working", {
-  line <- create_ligne_desc_export(tab$differ, "differ")
+test_that("create_line_desc_export is working", {
+  line <- create_line_desc_export(tab$differ, "differ")
   expect_equal(line$id, rep("differ", 3))
   expect_equal(line$.variable, rep("Differ", 3))
   expect_equal(line$niveau, as.character(seq_len(3)))
   expect_equal(line$`n (%)`, c("186 (10%)", "1326 (73%)", "300 (17%)"))
 })
 
-test_that("create_ligne_surv_desc is working", {
+test_that("create_line_surv_desc is working", {
   surv <- survfit(Surv(.time, status) ~ 1, data = tab)
   table_surv <- surv %>%
     summary() %>%
     extract2("table")
-  line <- create_ligne_surv_desc(tab$.time, tab$status)
+  line <- create_line_surv_desc(tab$.time, tab$status)
   expect_equal(line$id, "survival")
   expect_equal(line$.variable, gettext("follow-up", domain = "R-simplestats"))
   expect_equal(line[[gettext("median (95% CI)", domain = "R-simplestats")]],

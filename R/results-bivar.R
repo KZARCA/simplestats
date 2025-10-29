@@ -12,13 +12,13 @@
 #' @export
 #'
 #' @examples
-create_ligne_bivar <- function(x, ...){
-  UseMethod("create_ligne_bivar")
+create_line_bivar <- function(x, ...){
+  UseMethod("create_line_bivar")
 }
 
 #' @export
-#' @rdname create_ligne_bivar
-create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, compute_p = TRUE, ...){
+#' @rdname create_line_bivar
+create_line_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, compute_p = TRUE, ...){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   if (is.factor(y)){ #fac~fac
     no_na <- remove_na(x, y)
@@ -79,8 +79,8 @@ create_ligne_bivar.factor <- function(x, y, noms, margin = 2, .drop = TRUE, comp
 }
 
 #' @export
-#' @rdname create_ligne_bivar
-create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE, summary = NULL){ #num~fac
+#' @rdname create_line_bivar
+create_line_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRUE, summary = NULL){ #num~fac
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   if(is.factor(y)){
     no_na <- remove_na(x, y)
@@ -133,7 +133,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
     }
   } else {
     no_na <- remove_na(x, y, drop_factor = TRUE)
-    ligne <- create_ligne_cor(no_na$x, no_na$y, compute_p = compute_p)
+    ligne <- create_line_cor(no_na$x, no_na$y, compute_p = compute_p)
     if (is.null(ligne)) return(NULL)
     ligne %<>%
       add_varname(x, noms)
@@ -154,7 +154,7 @@ create_ligne_bivar.numeric <- function(x, y, noms, .drop = TRUE, compute_p = TRU
 #' @export
 #'
 #' @examples
-create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
+create_line_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
   if(missing(noms)) noms <- tolower(make.names(label(x)))
   tab_cens <- create_tab_cens(x, time, censure) #remove_na(time, x, censure, drop_factor = TRUE)
   if (nrow(tab_cens) > 0){
@@ -213,7 +213,7 @@ create_ligne_surv_bivar <- function(x, time, noms, censure, compute_p = TRUE){
   }
 }
 
-create_ligne_cor <- function(x, y, compute_p = TRUE) {
+create_line_cor <- function(x, y, compute_p = TRUE) {
   l <- length(x)
   name_title <- gettext("correlation coefficient", domain = "R-simplestats")
   CI95 <- gettext("(95% CI)", domain = "R-simplestats")
@@ -271,9 +271,9 @@ create_ligne_cor <- function(x, y, compute_p = TRUE) {
 #' @examples
 print_line_bivar <- function(x, y, varname = label(x), censure = NULL, type = "linear"){
   shown <- if (type == "survival"){
-    create_ligne_surv_bivar(x = x, time = y, noms = varname, censure = censure)
+    create_line_surv_bivar(x = x, time = y, noms = varname, censure = censure)
   } else {
-    create_ligne_bivar(x, y, noms = varname)
+    create_line_bivar(x, y, noms = varname)
   }
   show_table_markdown(shown)
 }

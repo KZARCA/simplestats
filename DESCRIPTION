@@ -35,5 +35,5 @@ Imports:
   exact2x2(>= 1.6.5),
   broom(>= 0.7.0),
   forestplot(>= 2.0.1)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: testthat
